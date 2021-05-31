@@ -1,49 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/src/widgets/image.dart' as img;
+import 'package:super_media_bros_3/data/media_interface.dart';
 
-class GridLayout extends StatefulWidget {
-  int columnCount;
+import 'package:super_media_bros_3/models/media.dart';
 
-  GridLayout({this.columnCount = 3});
+class MediaGridLayout extends StatefulWidget {
+  final int columnCount; //TODO Set according to default preferences.
+  final bool horizontal;
+  final List<Media> media;
+
+  MediaGridLayout(
+      {this.columnCount = 3,
+      this.horizontal = false,
+      this.media = const <Media>[]});
 
   @override
-  State createState() => _GridLayoutState();
+  State createState() => _MediaGridLayoutState();
 }
 
-class _GridLayoutState extends State<GridLayout> {
-
+class _MediaGridLayoutState extends State<MediaGridLayout> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.columnCount),
-        itemBuilder: (BuildContext context, int index)) {
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: widget.columnCount,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 4.0,
+        ),
+        scrollDirection: widget.horizontal ? Axis.horizontal : Axis.vertical,
+        itemCount: widget.media.isNotEmpty ? widget.media.length : 6, //itemCount: widget.media.size();
+        itemBuilder: (BuildContext context, int index) {
+          if(MediaAccess.hasReadPermission) {
+            // return img.Image.asset('images/logo1.png');
 
-        }
-      ;
+          } else {
+            return buildGeneric(context, index);
+          }
+        },);
   }
 
-  Builder
+  Widget buildGeneric(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        return img.Image.asset('images/audio.png');
+      case 1:
+        return img.Image.asset('images/home.png');
+      case 2:
+        return img.Image.asset('images/logo1.png');
+      case 3:
+        return img.Image.network(
+            'https://www.stephenmorgan-portfolio.com/images/photos/DSC_0156.jpg');
+      case 4:
+        return img.Image.network(
+            'https://www.stephenmorgan-portfolio.com/images/jim1.png');
+      default:
+        return img.Image.network(
+            'https://www.stephenmorgan-portfolio.com/images/jim2.png');
+    }
+  }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(
-  //     width: double.infinity,
-  //     height: double.infinity,
-  //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0,),
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.start,
-  //       crossAxisAlignment: CrossAxisAlignment.baseline,
-  //       children: <Widget>[],
-  //     ),
-  //   );
-  // }
+
 
   List<Row> buildRows() {
     List<Row> rows = [];
 
-
     return rows;
   }
-
-
 }

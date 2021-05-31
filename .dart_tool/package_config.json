@@ -80,6 +80,24 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "permission_handler",
+      "rootUri": "file:///home/devin-bro/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-8.0.0+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "permission_handler_platform_interface",
+      "rootUri": "file:///home/devin-bro/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_platform_interface-3.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "plugin_platform_interface",
+      "rootUri": "file:///home/devin-bro/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///home/devin-bro/sdks/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -140,7 +158,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-05-22T06:03:04.495737Z",
+  "generated": "2021-05-31T03:10:07.844841Z",
   "generator": "pub",
   "generatorVersion": "2.13.0"
 }
