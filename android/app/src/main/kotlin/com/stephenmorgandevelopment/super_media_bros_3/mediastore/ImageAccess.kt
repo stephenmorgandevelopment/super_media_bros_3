@@ -1,24 +1,21 @@
 package com.stephenmorgandevelopment.supermediabros2.mediastore
 
-import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.provider.MediaStore
 import com.stephenmorgandevelopment.supermediabros2.models.Image
 import com.stephenmorgandevelopment.supermediabros2.models.Media
 import com.stephenmorgandevelopment.supermediabros2.models.MediaQuery
 import java.util.*
 import kotlin.collections.LinkedHashMap
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-import io.flutter.plugin.common.MethodChannel
 
 import android.provider.MediaStore.Images.ImageColumns.*
 import android.util.Log
+import android.util.Size
 import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 import kotlin.collections.ArrayList
 
 class ImageAccess(
@@ -27,8 +24,15 @@ class ImageAccess(
     object Prefs {
         var sortOrder = "datetaken"
     }
-    
-    
+
+    override fun getPathDataById(long: Long): Image {
+        return query(MediaQuery.Assemble.imagePathDataById(long))[0]
+    }
+
+    override fun getAllPathData(): List<Image> {
+        return query(MediaQuery.Assemble.allImagesPathData())
+    }
+
     override fun add(media: Media) {
         TODO("Not yet implemented")
     }
@@ -52,7 +56,7 @@ class ImageAccess(
     }
     
     private fun processQuery(cursor: Cursor, medias: ArrayList<Image>) {//: ArrayList<Image> {
-        val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
+        val idColumn = cursor.getColumnIndexOrThrow(_ID)
         
         while (cursor.moveToNext()) {
             val uri =
@@ -85,6 +89,15 @@ class ImageAccess(
         }
 //        return medias
     }
+
+//    fun getImageAsFile(image: Image) : File? {
+//        try {
+//            return File(image.uri.path!!)
+//        } catch(e: Exception) {
+//            Log.d("ImageAccess-kotlin", e.message.toString());
+//        }
+//        return null;
+//    }
     
     fun getImageAsByteArray(image: Image) : ByteArray? {
         contentResolver.openInputStream(image.uri)?.use { stream ->
@@ -108,11 +121,10 @@ class ImageAccess(
             null
         }
     }
-    
-    @SuppressLint("InlinedApi")
+
 //    fun getAllThumbnailsForImages(result: MethodChannel.Result) {
     fun getAllThumbnailsForImages() : List<ByteArray>? {
-        val mediaList = query(MediaQuery.Assemble.basicImage())
+        val mediaList = query(MediaQuery.Assemble.allImagesBasic())
         
         val compressedThumbnails: ArrayList<ByteArray> = ArrayList()
         for (image in mediaList) {
@@ -133,22 +145,32 @@ class ImageAccess(
     }
     
     private fun generateThumbnail(image: Image): ByteArray? {
-        contentResolver.openInputStream(image.uri)?.use { stream ->
-            val tmpBitmap = Bitmap.createScaledBitmap(
-                    BitmapFactory.decodeStream(stream),
-                    320,
-                    240,
-                    true)
-            
-            val outputStream = ByteArrayOutputStream()
-            val success = tmpBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-            
-            return if (success) {
-                outputStream.toByteArray()
-            } else {
-                null
-            }
+        val thumb = contentResolver.loadThumbnail(image.uri, Size(320, 240), null)
+    
+        val outputStream = ByteArrayOutputStream()
+        val success = thumb.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+    
+        return if (success) {
+            outputStream.toByteArray()
+        } else {
+            null
         }
-        return null
+//        contentResolver.openInputStream(image.uri)?.use { stream ->
+//            val tmpBitmap = Bitmap.createScaledBitmap(
+//                    BitmapFactory.decodeStream(stream),
+//                    320,
+//                    240,
+//                    true)
+//
+//            val outputStream = ByteArrayOutputStream()
+//            val success = tmpBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+//
+//            return if (success) {
+//                outputStream.toByteArray()
+//            } else {
+//                null
+//            }
+//        }
+//        return null
     }
 }

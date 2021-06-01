@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
 FLUTTER_ROOT=/home/devin-bro/sdks/flutter
-FLUTTER_APPLICATION_PATH=/mnt/8b1add8f-64e5-4be3-a68a-f43de47d29c6/and-stud-projs/super_media_bros_3
+FLUTTER_APPLICATION_PATH=/mnt/8b1add8f-64e5-4be3-a68a-f43de47d29c6/projects/super_media_bros_3
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build

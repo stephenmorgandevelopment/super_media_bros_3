@@ -10,4 +10,8 @@ interface MediaStoreWrapper {
     fun add(media: Media)
 
     fun delete(media: Media) : Boolean
+    
+    fun getPathDataById(long: Long): Media
+
+    fun getAllPathData(): List<Media>
 }

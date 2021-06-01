@@ -7,7 +7,7 @@ enum Type {
 }
 
 abstract class Media {
-  Uri? uri;
+  Uri uri;
   Map<String, String> metadata;
 
   Type _type;

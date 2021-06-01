@@ -8,11 +8,13 @@ class Image(override val uri: Uri) : Media() {
     override var type = Type.IMAGE
     
     @SuppressLint("InlinedApi")
-   
-
-    object Basic {
-        val basicDataColumns = arrayOf(_ID, BUCKET_DISPLAY_NAME, DISPLAY_NAME, DATE_TAKEN, ORIENTATION, IS_PRIVATE)
+    object Columns {
+        val basicDataColumns =
+                arrayOf(_ID, BUCKET_DISPLAY_NAME, DISPLAY_NAME,
+                        DATE_TAKEN, ORIENTATION, IS_PRIVATE, DATA)
         
+        val pathDataColumns =
+                arrayOf(_ID, DATA, DISPLAY_NAME, RELATIVE_PATH, VOLUME_NAME)
     }
     
 }

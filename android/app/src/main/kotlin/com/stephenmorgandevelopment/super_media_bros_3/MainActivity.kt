@@ -1,6 +1,5 @@
 package com.stephenmorgandevelopment.super_media_bros_3
 
-import android.provider.MediaStore
 import androidx.annotation.NonNull
 import com.stephenmorgandevelopment.supermediabros2.mediastore.ImageAccess
 import com.stephenmorgandevelopment.supermediabros2.models.MediaQuery
@@ -24,24 +23,44 @@ class MainActivity : FlutterActivity() {
                 MEDIA_DATA_CHANNEL
         ).setMethodCallHandler { call, result ->
             when(call.method) {
-                "getImages" -> getAllDataForAllImages(result)
-                "getAllImageThumbnails" -> getAllImageThumbnails(result)
+                "getAllImagesData" -> getAllDataForAllImages(result)
+                "getAllImagesThumbnails" -> getAllImageThumbnails(result)
+                "getAllImagesBasicData" -> getAllImagesBasicData(result)
+                "getAllImagesPathData" -> getAllImagesPathData(result)
             }
-            
-            
-//            if (call.method == "getImages") {
-//                getAllDataForAllImages(result)
-//            }
         }
     }
 
     private fun getAllDataForAllImages(result: MethodChannel.Result) {
-        val mediaList = imageAccess.query(MediaQuery.Assemble.empty())
+        val mediaList = imageAccess.query(MediaQuery.Assemble.allImagesData())
         if (mediaList.isNotEmpty()) {
             result.success(mediaList)
         } else {
             result.error(
                     "Android-Platform",
+                    "Error, check permissions.",
+                    null)
+        }
+    }
+    
+    private fun getAllImagesBasicData(result: MethodChannel.Result) {
+        val mediaList = imageAccess.query(MediaQuery.Assemble.allImagesBasic())
+        if (mediaList.isNotEmpty()) {
+            result.success(mediaList)
+        } else {
+            result.error(
+                    "Android-Platform",
+                    "Error, check permissions.",
+                    null)
+        }
+    }
+    
+    private fun getAllImagesPathData(result: MethodChannel.Result) {
+        val imageList = imageAccess.getAllPathData()
+        if(imageList.isNotEmpty()) {
+            result.success(imageList)
+        } else {
+            result.error("Android-Platform",
                     "Error, check permissions.",
                     null)
         }
@@ -59,4 +78,6 @@ class MainActivity : FlutterActivity() {
                     null)
         }
     }
+    
+    
 }

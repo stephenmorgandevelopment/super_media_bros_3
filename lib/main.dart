@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   _MyHomePageState() {
     checkPermissions();
     if (MediaAccess.hasReadPermission) {
-      this.mediaFuture = ImageAccess.getImages();
+      this.mediaFuture = ImageAccess.getAllImagesData();
     }
   }
 
