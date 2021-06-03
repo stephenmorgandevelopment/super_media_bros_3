@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,10 +52,11 @@ class MediaMessageCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case _kMedia:
-        Uri uri = readValue(buffer) as Uri;
+        Uri uri = Uri.parse(readValue(buffer) as String);
         Type _type = readValue(buffer) as Type;
-        Map<String, String> metadata = readValue(buffer) as Map<String, String>;
+        Map<Object?, Object?> map = readValue(buffer) as Map<Object?, Object?>;
 
+        Map<String, String> metadata = LinkedHashMap.from(map);
         return makeMedia(uri, _type, metadata);
       case _kType:
         switch(buffer.getUint8()) {
