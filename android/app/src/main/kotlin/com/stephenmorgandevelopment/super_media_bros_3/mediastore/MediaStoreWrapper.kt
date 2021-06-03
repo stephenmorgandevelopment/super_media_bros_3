@@ -1,7 +1,8 @@
-package com.stephenmorgandevelopment.supermediabros2.mediastore
+package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 
-import com.stephenmorgandevelopment.supermediabros2.models.Media
-import com.stephenmorgandevelopment.supermediabros2.models.MediaQuery
+import com.stephenmorgandevelopment.super_media_bros_3.models.Media
+import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
+
 
 interface MediaStoreWrapper {
 

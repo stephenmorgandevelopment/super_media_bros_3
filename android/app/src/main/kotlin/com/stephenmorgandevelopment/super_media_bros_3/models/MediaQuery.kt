@@ -1,8 +1,7 @@
-package com.stephenmorgandevelopment.supermediabros2.models
+package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.provider.BaseColumns
-import android.provider.MediaStore
-import com.stephenmorgandevelopment.supermediabros2.mediastore.ImageAccess
+import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ImageAccess
 
 val ID_SELECTION = "${BaseColumns._ID} = ?"
 

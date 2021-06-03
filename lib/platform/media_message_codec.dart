@@ -1,15 +1,14 @@
-import 'dart:ffi';
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:super_media_bros_3/models/media.dart';
+import 'package:super_media_bros_3/models/media.dart' as dumbAsFuckDartCantFigureThisOut;
 
 class MediaMessageCodec extends StandardMessageCodec {
   const MediaMessageCodec();
 
+  static const int _kMedia = 163;
   static const int _kUri = 164;
-  static const int _kMap = 165;
 
   static const int _kType = 166;
   static const int _kIMAGE = 200;
@@ -18,12 +17,12 @@ class MediaMessageCodec extends StandardMessageCodec {
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if (value is Uri) {
-      buffer.putUint8(_kUri);
+    if(value is Media) {
+      buffer.putUint8(_kMedia);
 
-      ByteBuffer uriByteBuffer = (value as ByteBuffer);
-      writeSize(buffer, uriByteBuffer.lengthInBytes);
-      buffer.putUint8List(uriByteBuffer.asUint8List());
+      writeValue(buffer, value.uri.toString());
+      writeValue(buffer, value.type);
+      writeValue(buffer, value);
     } else if (value is Type) {
       switch (value) {
         case Type.IMAGE:
@@ -39,39 +38,45 @@ class MediaMessageCodec extends StandardMessageCodec {
           buffer.putUint8(_kAUDIO);
           break;
       }
-    } else if (value is Map) {
-      buffer.putUint8(_kMap);
-
-      writeValue(buffer, value);
+    } else if(value is Uri) { // Left here in case I want to send Uri's later.
+      buffer.putUint8(_kUri);
+      super.writeValue(buffer, value.toString());
+    } else {
+      super.writeValue(buffer, value);
     }
   }
 
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
-    late Uri uri;
-    late Map<String, String> metadata;
-    // late Type _type;
-
     switch (type) {
-      case _kUri:
-        uri = readValue(buffer)! as Uri;
-        break;
-      case _kMap:
-        metadata = super.readValueOfType(type, buffer) as Map<String, String>;
-        break;
+      case _kMedia:
+        Uri uri = readValue(buffer) as Uri;
+        Type _type = readValue(buffer) as Type;
+        Map<String, String> metadata = readValue(buffer) as Map<String, String>;
+
+        return makeMedia(uri, _type, metadata);
       case _kType:
         switch(buffer.getUint8()) {
-          case _kIMAGE:
-            // return Image(uri, metadata: metadata);
-          case _kVIDEO:
-            // _type = Type.VIDEO;
-            break;
-          case _kAUDIO:
-            // _type = Type.AUDIO;
-            break;
+          case _kIMAGE: return Type.IMAGE;
+          case _kVIDEO: return Type.VIDEO;
+          case _kAUDIO: return Type.AUDIO;
+          default: return null;
         }
+      case _kUri:
+        return Uri.parse(readValue(buffer) as String);
+      default:
+        return super.readValueOfType(type, buffer);
     }
+  }
 
-
+  Media makeMedia(Uri uri, Type type, Map<String, String> metadata) {
+    switch(type) {
+      case Type.IMAGE:
+        return dumbAsFuckDartCantFigureThisOut.Image(uri, metadata: metadata);
+      case Type.VIDEO:
+        return Video(uri, metadata: metadata);
+      case Type.AUDIO:
+        return Audio(uri, metadata: metadata);
+    }
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:super_media_bros_3/data/image_access.dart';
@@ -39,17 +37,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<List<Media>> mediaFuture;
+  Future<List<Media>> mediaFuture = ImageAccess.getAllImagesData();
+  late List<Media> testList;
 
   _MyHomePageState() {
-    checkPermissions();
-    if (MediaAccess.hasReadPermission) {
-      this.mediaFuture = ImageAccess.getAllImagesData();
-    }
+    // checkPermissions();
+    // if (MediaAccess.hasReadPermission) {
+    //   this.mediaFuture = ImageAccess.getAllImagesData();
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
+    checkPermissions();
+    // if(testList != null && testList.isEmpty) {
+    //   setState(() {
+    //
+    //   });
+    // }
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -59,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder(
         future: mediaFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Media>> snapshot) {
-          if (snapshot.hasData) {
-            return MediaGridLayout(media: snapshot.data ?? <Media>[]);
-          } else {
+          if (!MediaAccess.hasReadPermission) {
             return Center(
               child: Text(
                 'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
@@ -72,6 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
             // return MediaGridLayout();
+            // } else if (snapshot.hasData) {
+          } else  {
+            return MediaGridLayout(media: testList);
+            // return MediaGridLayout(media: snapshot.data ?? <Media>[]);
+          // } else {
+          //   return MediaGridLayout(media: testList ?? <Media>[]);
           }
         },
       ),
@@ -80,14 +90,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> checkPermissions() async {
+    testList = await ImageAccess.getAllImagesData();
+
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
 
       setState(() {
-        if (MediaAccess.hasReadPermission) {
-          this.mediaFuture = ImageAccess.getImages();
-        }
+        // if (MediaAccess.hasReadPermission) {
+        //   this.mediaFuture = ImageAccess.getAllImagesData();
+        // }
       });
+    // } else {
+    //   this.testList = await ImageAccess.getAllImagesData();
+    //
+    //   setState(() {
+    //
+    //   });
     }
   }
 }

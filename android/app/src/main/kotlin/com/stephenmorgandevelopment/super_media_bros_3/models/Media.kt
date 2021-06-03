@@ -1,4 +1,4 @@
-package com.stephenmorgandevelopment.supermediabros2.models
+package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.net.Uri
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:super_media_bros_3/models/media.dart';
+import 'package:super_media_bros_3/platform/media_message_codec.dart';
 
 abstract class MediaAccess {
   static bool _hasReadPermission = false;
@@ -10,7 +11,10 @@ abstract class MediaAccess {
   static const String MEDIA_DATA_CHANNEL =
       'com.stephenmorgandevelopment.super_media_bros_3/media_data';
 
-  static const platform = const MethodChannel(MEDIA_DATA_CHANNEL);
+  static MethodChannel channel = const MethodChannel(
+    MEDIA_DATA_CHANNEL,
+    StandardMethodCodec(MediaMessageCodec()),
+  );
 
   static Future<List<Media>> getData() async {
 

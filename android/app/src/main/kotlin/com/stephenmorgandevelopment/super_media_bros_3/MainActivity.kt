@@ -1,13 +1,18 @@
 package com.stephenmorgandevelopment.super_media_bros_3
 
 import androidx.annotation.NonNull
-import com.stephenmorgandevelopment.supermediabros2.mediastore.ImageAccess
-import com.stephenmorgandevelopment.supermediabros2.models.MediaQuery
+import com.stephenmorgandevelopment.super_media_bros_3.flutter.FlutterMediaMessageCodec
+import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ImageAccess
+import com.stephenmorgandevelopment.super_media_bros_3.models.Media
+import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
+
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.StandardMethodCodec
 
-private const val MEDIA_DATA_CHANNEL = "com.stephenmorgandevelopment.super_media_bros_3/media_data"
+private const val MEDIA_DATA_CHANNEL
+    = "com.stephenmorgandevelopment.super_media_bros_3/media_data"
 
 class MainActivity : FlutterActivity() {
 
@@ -20,19 +25,21 @@ class MainActivity : FlutterActivity() {
 
         MethodChannel(
                 flutterEngine.dartExecutor.binaryMessenger,
-                MEDIA_DATA_CHANNEL
+                MEDIA_DATA_CHANNEL,
+                StandardMethodCodec(FlutterMediaMessageCodec())
         ).setMethodCallHandler { call, result ->
             when(call.method) {
                 "getAllImagesData" -> getAllDataForAllImages(result)
                 "getAllImagesThumbnails" -> getAllImageThumbnails(result)
                 "getAllImagesBasicData" -> getAllImagesBasicData(result)
                 "getAllImagesPathData" -> getAllImagesPathData(result)
+                else -> result.notImplemented()
             }
         }
     }
 
     private fun getAllDataForAllImages(result: MethodChannel.Result) {
-        val mediaList = imageAccess.query(MediaQuery.Assemble.allImagesData())
+        val mediaList: List<Media> = imageAccess.query(MediaQuery.Assemble.allImagesData())
         if (mediaList.isNotEmpty()) {
             result.success(mediaList)
         } else {

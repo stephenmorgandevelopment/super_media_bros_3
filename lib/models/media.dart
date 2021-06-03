@@ -26,16 +26,16 @@ abstract class Media {
 //TODO individual files has an affect on apk/install/compile size.
 
 class Image extends Media {
-  Image(uri, {metadata}) : super(uri, Type.IMAGE, metadata: metadata ?? null);
+  Image(Uri uri, {Map<String, String> metadata = const <String, String>{}}) : super(uri, Type.IMAGE, metadata: metadata);
   //TODO Put a predefined Map<> here for lightweight instances with limited metadata.
 }
 
 class Video extends Media {
-  Video(uri, {metadata}) : super(uri, Type.VIDEO, metadata: metadata ?? null);
+  Video(Uri uri, {Map<String, String> metadata = const <String, String>{}}) : super(uri, Type.VIDEO, metadata: metadata);
   //TODO Put a predefined Map<> here for lightweight instances with limited metadata.
 }
 
 class Audio extends Media {
-  Audio(uri, {metadata}) : super(uri, Type.AUDIO, metadata: metadata ?? null);
+  Audio(Uri uri, {Map<String, String> metadata = const <String, String>{}}) : super(uri, Type.AUDIO, metadata: metadata);
   //TODO Put a predefined Map<> here for lightweight instances with limited metadata.
 }

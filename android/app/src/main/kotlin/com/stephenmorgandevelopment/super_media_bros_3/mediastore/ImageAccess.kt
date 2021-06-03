@@ -1,13 +1,10 @@
-package com.stephenmorgandevelopment.supermediabros2.mediastore
+package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import com.stephenmorgandevelopment.supermediabros2.models.Image
-import com.stephenmorgandevelopment.supermediabros2.models.Media
-import com.stephenmorgandevelopment.supermediabros2.models.MediaQuery
+
 import java.util.*
 import kotlin.collections.LinkedHashMap
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -15,6 +12,10 @@ import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Images.ImageColumns.*
 import android.util.Log
 import android.util.Size
+import com.stephenmorgandevelopment.super_media_bros_3.models.Image
+import com.stephenmorgandevelopment.super_media_bros_3.models.Media
+import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
+
 import java.io.ByteArrayOutputStream
 import kotlin.collections.ArrayList
 

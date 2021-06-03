@@ -11,8 +11,7 @@ class ImageAccess extends MediaAccess {
     List<Media>? results;
     try {
       results = Platform.isAndroid
-          ? await MediaAccess.platform
-              .invokeListMethod<Media>('getAllImagesData')
+          ? await MediaAccess.channel.invokeListMethod<Media>('getAllImagesData')
           : await nothing();
     } catch (e) {
       log(e.toString());
@@ -25,8 +24,7 @@ class ImageAccess extends MediaAccess {
     List<Image>? results;
     try {
       results = Platform.isAndroid
-          ? await MediaAccess.platform
-              .invokeListMethod<Image>('getAllImagesPathData')
+          ? await MediaAccess.channel.invokeListMethod<Image>('getAllImagesPathData')
           : await nothing();
     } catch (e) {
       log(e.toString());
@@ -39,8 +37,7 @@ class ImageAccess extends MediaAccess {
     List<dynamic>? results;
     try {
       results = Platform.isAndroid
-          ? await MediaAccess.platform
-              .invokeListMethod('getAllImagesThumbnails')
+          ? await MediaAccess.channel.invokeListMethod('getAllImagesThumbnails')
           : await nothing();
     } catch (e) {
       log(e.toString());
