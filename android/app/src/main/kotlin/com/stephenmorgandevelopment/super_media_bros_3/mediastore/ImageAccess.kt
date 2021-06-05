@@ -102,7 +102,7 @@ class ImageAccess(
     
     fun getImageAsByteArray(image: Image) : ByteArray? {
         contentResolver.openInputStream(image.uri)?.use { stream ->
-            return  stream.readBytes()
+            return stream.readBytes()
         }
         return null
     }

@@ -34,6 +34,7 @@ class MainActivity : FlutterActivity() {
             when(call.method) {
                 "getAllImagesData" -> getAllDataForAllImages(result)
                 "getImageThumbnail" -> getImageThumbnail(result, call.argument<Image>("image"))
+                "getImage" -> getImage(result, call.argument<Image>("image"))
                 "getAllImagesBasicData" -> getAllImagesBasicData(result)
                 "getAllImagesPathData" -> getAllImagesPathData(result)
                 "getAllImageThumbnails" -> getAllImageThumbnails(result)
@@ -54,6 +55,22 @@ class MainActivity : FlutterActivity() {
         } else {
             result.error("Android-Platform:getImageThumbnail()",
                     "image was null.",
+                    null)
+        }
+    }
+    
+    private fun getImage(result: MethodChannel.Result, media: Media?) {
+        if(media == null) {
+            Log.i("AndroidPlatform:getData()", "media is null")
+            return
+        }
+        val image = imageAccess.getImageAsByteArray(media as Image)
+        if(image != null) {
+            result.success(image)
+        } else {
+            result.error(
+                    "Android-Platform:getImageThumbnail()",
+                    "image was empty null for ${media.metadata[MediaStore.MediaColumns.DISPLAY_NAME]}",
                     null)
         }
     }

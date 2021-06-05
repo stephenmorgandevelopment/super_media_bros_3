@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:super_media_bros_3/bloc/image_screen_bloc.dart';
 import 'package:super_media_bros_3/data/image_access.dart';
 import 'package:super_media_bros_3/data/media_interface.dart';
 import 'package:super_media_bros_3/models/media.dart';
@@ -76,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // return MediaGridLayout();
             // } else if (snapshot.hasData) {
           } else  {
-            return MediaGridLayout(media: testList);
+            return MediaGridLayout(ImageScreenBloc(testList));
             // return MediaGridLayout(media: snapshot.data ?? <Media>[]);
           // } else {
           //   return MediaGridLayout(media: testList ?? <Media>[]);
@@ -92,8 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
+      testList = await ImageAccess.getAllImagesData();
 
       setState(() {
+
         // if (MediaAccess.hasReadPermission) {
         //   this.mediaFuture = ImageAccess.getAllImagesData();
         // }

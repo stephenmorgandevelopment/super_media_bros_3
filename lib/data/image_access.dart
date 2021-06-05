@@ -46,6 +46,19 @@ class ImageAccess extends MediaAccess {
     return null;
   }
 
+  static Future<Uint8List?> getImage(Image image) async {
+    Uint8List? imageBytes;
+    try {
+      imageBytes = await MediaAccess.channel.invokeMethod<Uint8List>(
+          'getImage',
+          {'image': image});
+    } catch(e) {
+      log("ImageAccess-dart: line 56");
+      log(e.toString());
+    }
+    return imageBytes;
+  }
+
   static Future<Uint8List?> getImageThumbnail(Image image) async {
     Uint8List? thumbnail;
     try {
@@ -53,7 +66,7 @@ class ImageAccess extends MediaAccess {
             'getImageThumbnail',
             {'image': image});
     } catch(e) {
-      log("ImageAccess-dart: line 55");
+      log("ImageAccess-dart: line 69");
       log(e.toString());
     }
     return thumbnail;//?? Uint8List(0);
@@ -64,7 +77,7 @@ class ImageAccess extends MediaAccess {
     try {
       results =  await MediaAccess.channel.invokeListMethod<Uint8List>('getAllImageThumbnails');
     } catch (e) {
-      log("ImageAccess-dart: line 59");
+      log("ImageAccess-dart: line 80");
       log(e.toString());
     }
 

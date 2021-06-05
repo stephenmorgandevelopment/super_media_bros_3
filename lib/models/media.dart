@@ -7,10 +7,10 @@ enum Type {
 }
 
 abstract class Media {
-  Uri uri;
+  final Uri uri;
   Map<String, String> metadata;
 
-  Type _type;
+  final Type _type;
   Type get type => _type;
 
   Media(this.uri, this._type, {this.metadata = const <String, String>{}});
@@ -18,8 +18,6 @@ abstract class Media {
   void addMetadata(Map<String, String> metadata) {
     this.metadata = metadata;
   }
-
-
 }
 
 //TODO Experiment and see if splitting the following classes into
