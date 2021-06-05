@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,9 @@ class MediaMessageCodec extends StandardMessageCodec {
       buffer.putUint8(_kMedia);
 
       writeValue(buffer, value.uri.toString());
+      // writeValue(buffer, value.uri as String);
       writeValue(buffer, value.type);
-      writeValue(buffer, value);
+      writeValue(buffer, value.metadata);
     } else if (value is Type) {
       switch (value) {
         case Type.IMAGE:

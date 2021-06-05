@@ -46,19 +46,17 @@ class ImageAccess extends MediaAccess {
     return null;
   }
 
-  static Future<Uint8List> getImageThumbnail(Image image) async {
+  static Future<Uint8List?> getImageThumbnail(Image image) async {
     Uint8List? thumbnail;
     try {
-      thumbnail = Platform.isAndroid
-          ? await MediaAccess.channel.invokeMethod<Uint8List>(
+      thumbnail = await MediaAccess.channel.invokeMethod<Uint8List>(
             'getImageThumbnail',
-            {'image': image})
-          : null;
+            {'image': image});
     } catch(e) {
       log("ImageAccess-dart: line 55");
       log(e.toString());
     }
-    return thumbnail ?? Uint8List(0);
+    return thumbnail;//?? Uint8List(0);
   }
 
   static Future<List<Uint8List>> getAllImageThumbnails() async {

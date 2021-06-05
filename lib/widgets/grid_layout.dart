@@ -28,7 +28,7 @@ class MediaGridLayout extends StatefulWidget {
 
 class _MediaGridLayoutState extends State<MediaGridLayout> {
   Future<Media?>? mediaData(int index) => ImageAccess.getData(widget.media[index]);
-  Future<List<Uint8List>> thumbnails = ImageAccess.getAllImageThumbnails();
+  // Future<List<Uint8List>> thumbnails = ImageAccess.getAllImageThumbnails();
 
   @override
   Widget build(BuildContext context) {
@@ -43,23 +43,38 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
       //itemCount: widget.media.size();
       itemBuilder: (BuildContext context, int index) {
         return FutureBuilder(
-            future: thumbnails,
-            // future: ImageAccess.getImageThumbnail(widget.media[index] as my.Image),
-            builder: (BuildContext context, AsyncSnapshot<List<Uint8List>> snapshot) {
-              if (snapshot.hasData) {
-                // log("GridLayout ${snapshot.data.toString()}");
-                // return Text(snapshot.data!.metadata.toString());
-                return img.Image.memory(
-                    snapshot.data![index],
-                );
-              } else if(snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              } else {
-                return img.Image.asset('images/logo1.png');
-              }
-          },
-
-        );
+            future: getThumbnailBytes(widget.media[index]),
+            builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                        // log("GridLayout ${snapshot.data.toString()}");
+                        // return Text(snapshot.data!.metadata.toString());
+                        return img.Image.memory(
+                            snapshot.data!,
+                        );
+                      } else if(snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      } else {
+                        return img.Image.asset('images/logo1.png');
+                      }
+            });
+        // return FutureBuilder(
+        //     future: thumbnails,
+        //     // future: ImageAccess.getImageThumbnail(widget.media[index] as my.Image),
+        //     builder: (BuildContext context, AsyncSnapshot<List<Uint8List>> snapshot) {
+        //       if (snapshot.hasData) {
+        //         // log("GridLayout ${snapshot.data.toString()}");
+        //         // return Text(snapshot.data!.metadata.toString());
+        //         return img.Image.memory(
+        //             snapshot.data![index],
+        //         );
+        //       } else if(snapshot.hasError) {
+        //         return Text(snapshot.error.toString());
+        //       } else {
+        //         return img.Image.asset('images/logo1.png');
+        //       }
+        //   },
+        //
+        // );
 
         if (widget.media.isNotEmpty) {
           // return getFullImage(widget.media[index]) ??
@@ -71,11 +86,22 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
     );
   }
 
+  Future<Uint8List?> getThumbnailBytes(Media media) async {
+    switch(media.type) {
+      case Type.IMAGE:
+        return await ImageAccess.getImageThumbnail(media as my.Image);
+      case Type.VIDEO:
+        return null;
+      case Type.AUDIO:
+        return null;
+    }
+  }
+
   Future<Widget?> getThumbnail(Media media) async {
     switch (media.type) {
       case Type.IMAGE:
         return img.Image.memory(
-            await ImageAccess.getImageThumbnail(media as my.Image));
+            await ImageAccess.getImageThumbnail(media as my.Image) ?? Uint8List(0));
       case Type.VIDEO:
         return null;
       case Type.AUDIO:
