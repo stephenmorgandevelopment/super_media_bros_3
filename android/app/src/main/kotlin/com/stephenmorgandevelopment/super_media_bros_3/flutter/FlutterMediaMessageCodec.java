@@ -9,11 +9,17 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.Video;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.flutter.plugin.common.StandardMessageCodec;
 
 public class FlutterMediaMessageCodec extends StandardMessageCodec {
+	public static final FlutterMediaMessageCodec INSTANCE = new FlutterMediaMessageCodec();
+	
+	public FlutterMediaMessageCodec() {
+	
+	}
 	
 	private static final byte DATA_TYPE_MEDIA = (byte) 163;
 	private static final byte DATA_TYPE_URI = (byte) 164;
@@ -62,7 +68,12 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 			case DATA_TYPE_MEDIA:
 				Uri uri = Uri.parse((String) readValue(buffer));
 				Media.Type _type = (Media.Type) readValue(buffer);
-				Map<String, String> metadata = (Map<String, String>) readValue(buffer);
+				Map<Object, Object> map = (Map<Object, Object>) readValue(buffer);
+				
+				Map<String, String> metadata = new LinkedHashMap<>();
+				for(Map.Entry<Object, Object> entry : map.entrySet()) {
+					metadata.put(entry.getKey().toString(), entry.getValue().toString());
+				}
 				
 				return makeMedia(uri, _type, metadata);
 			case DATA_TYPE_TYPE:

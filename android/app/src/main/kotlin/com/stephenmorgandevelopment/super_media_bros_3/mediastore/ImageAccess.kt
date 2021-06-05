@@ -124,6 +124,23 @@ class ImageAccess(
     }
 
 //    fun getAllThumbnailsForImages(result: MethodChannel.Result) {
+    fun getImageThumbnail(image: Image): ByteArray? = generateThumbnail(image) //?: byteArrayOf()
+    
+    fun getImageThumbnailsAsByteArray(images: List<Image>) : List<ByteArray>? {
+        val compressedThumbnails: ArrayList<ByteArray> = ArrayList()
+    
+        for (image in images) {
+            val thumbnail = generateThumbnail(image)
+            if (thumbnail != null) {
+                compressedThumbnails.add(thumbnail)
+            } else {
+                Log.e("ImageAccess", "Failed to create thumbnail for ${image.metadata[DISPLAY_NAME]}.")
+            }
+        }
+    
+        return compressedThumbnails
+    }
+    
     fun getAllThumbnailsForImages() : List<ByteArray>? {
         val mediaList = query(MediaQuery.Assemble.allImagesBasic())
         
@@ -152,6 +169,7 @@ class ImageAccess(
         val success = thumb.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
     
         return if (success) {
+            Log.i("ImageAccess-Kotlin", "Successfully made thumbnail for ${image.metadata[DISPLAY_NAME]}")
             outputStream.toByteArray()
         } else {
             null

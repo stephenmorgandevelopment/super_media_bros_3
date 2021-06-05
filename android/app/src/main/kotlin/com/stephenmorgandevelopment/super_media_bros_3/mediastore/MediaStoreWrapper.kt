@@ -15,4 +15,5 @@ interface MediaStoreWrapper {
     fun getPathDataById(long: Long): Media
 
     fun getAllPathData(): List<Media>
+
 }

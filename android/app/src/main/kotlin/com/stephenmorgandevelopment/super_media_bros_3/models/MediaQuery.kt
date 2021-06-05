@@ -1,6 +1,7 @@
 package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.provider.BaseColumns
+import android.provider.MediaStore
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ImageAccess
 
 val ID_SELECTION = "${BaseColumns._ID} = ?"
@@ -27,6 +28,15 @@ data class MediaQuery(
                         ID_SELECTION,
                         arrayOf(long.toString()),
                         sortBy)
+        
+        fun imageData(media: Media) : MediaQuery =
+            MediaQuery(
+                    Image.Columns.pathDataColumns,
+                    ID_SELECTION,
+                    arrayOf(media.metadata[MediaStore.MediaColumns._ID].toString()),
+                    null
+            )
+
         
         fun basicVideo(): MediaQuery {
             return MediaQuery(arrayOf("TBD"), "TBD", arrayOf("TBD"), "TBD")

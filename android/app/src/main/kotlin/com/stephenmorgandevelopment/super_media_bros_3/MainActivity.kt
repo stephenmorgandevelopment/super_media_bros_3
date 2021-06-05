@@ -1,8 +1,11 @@
 package com.stephenmorgandevelopment.super_media_bros_3
 
+import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.NonNull
-import com.stephenmorgandevelopment.super_media_bros_3.flutter.FlutterMediaMessageCodec
+import com.stephenmorgandevelopment.super_media_bros_3.flutter.*
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ImageAccess
+import com.stephenmorgandevelopment.super_media_bros_3.models.Image
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 
@@ -26,15 +29,32 @@ class MainActivity : FlutterActivity() {
         MethodChannel(
                 flutterEngine.dartExecutor.binaryMessenger,
                 MEDIA_DATA_CHANNEL,
-                StandardMethodCodec(FlutterMediaMessageCodec())
+                StandardMethodCodec(FlutterMediaMessageCodec.INSTANCE)
         ).setMethodCallHandler { call, result ->
             when(call.method) {
                 "getAllImagesData" -> getAllDataForAllImages(result)
-                "getAllImagesThumbnails" -> getAllImageThumbnails(result)
+                "getImageThumbnail" -> getImageThumbnail(result, call.argument<Image>("image"))
                 "getAllImagesBasicData" -> getAllImagesBasicData(result)
                 "getAllImagesPathData" -> getAllImagesPathData(result)
+                "getAllImageThumbnails" -> getAllImageThumbnails(result)
+                "getData" -> getData(result, call.argument<Media>("media")!!)
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    private fun getData(result: MethodChannel.Result, media: Media?) {
+        if(media == null) {
+            Log.i("AndroidPlatform:getData()", "media is null")
+            return
+        }
+        val img = (imageAccess.query(MediaQuery.Assemble.imageData(media)))[0]
+        if(img != null) {
+            result.success(img)
+        } else {
+            result.error("Android-Platform:getImageThumbnail()",
+                    "image was null.",
+                    null)
         }
     }
 
@@ -69,6 +89,24 @@ class MainActivity : FlutterActivity() {
         } else {
             result.error("Android-Platform",
                     "Error, check permissions.",
+                    null)
+        }
+    }
+    
+    private fun getImageThumbnail(result: MethodChannel.Result, image: Image?) {
+        if(image == null) {
+            Log.d("Android-Platform-MainActivity", "image was null.")
+            result.error("Android-Platform:getImageThumbnail()",
+                    "image was null.",
+                    null)
+        }
+        val thumbnail: ByteArray? = imageAccess.getImageThumbnail(image!!)
+        if(thumbnail != null) {
+            result.success(thumbnail)
+        } else {
+            result.error(
+                    "Android-Platform:getImageThumbnail()",
+                    "thumbnail was empty null for ${image.metadata[MediaStore.MediaColumns.DISPLAY_NAME]}",
                     null)
         }
     }
