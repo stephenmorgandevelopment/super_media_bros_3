@@ -4,8 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:super_media_bros_3/models/media.dart';
-import 'package:super_media_bros_3/models/media.dart' as dumbAsFuckDartCantFigureThisOut;
+import 'package:super_media_bros_3/models/media_data.dart';
 
 class MediaMessageCodec extends StandardMessageCodec {
   const MediaMessageCodec();
@@ -20,7 +19,7 @@ class MediaMessageCodec extends StandardMessageCodec {
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if(value is Media) {
+    if(value is MediaData) {
       buffer.putUint8(_kMedia);
 
       writeValue(buffer, value.uri.toString());
@@ -74,14 +73,14 @@ class MediaMessageCodec extends StandardMessageCodec {
     }
   }
 
-  Media makeMedia(Uri uri, Type type, Map<String, String> metadata) {
+  MediaData makeMedia(Uri uri, Type type, Map<String, String> metadata) {
     switch(type) {
       case Type.IMAGE:
-        return dumbAsFuckDartCantFigureThisOut.Image(uri, metadata: metadata);
+        return ImageData(uri, Source.LOCAL, metadata: metadata);
       case Type.VIDEO:
-        return Video(uri, metadata: metadata);
+        return VideoData(uri, Source.LOCAL, metadata: metadata);
       case Type.AUDIO:
-        return Audio(uri, metadata: metadata);
+        return AudioData(uri, Source.LOCAL, metadata: metadata);
     }
   }
 }

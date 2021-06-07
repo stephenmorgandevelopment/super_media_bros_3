@@ -5,40 +5,40 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:super_media_bros_3/data/media_interface.dart';
-import 'package:super_media_bros_3/models/media.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 
 class ImageAccess extends MediaAccess {
-  static Future<List<Media>> getAllImagesData() async {
-    List<Media>? results;
+  static Future<List<MediaData>> getAllImagesData() async {
+    List<MediaData>? results;
     try {
       results = Platform.isAndroid
-          ? await MediaAccess.channel.invokeListMethod<Media>('getAllImagesData')
+          ? await MediaAccess.channel.invokeListMethod<MediaData>('getAllImagesData')
           : await nothing();
     } catch (e) {
       log("ImageAccess-dart: line 18");
       log(e.toString());
     }
 
-    return results ?? <Image>[];
+    return results ?? <ImageData>[];
   }
 
-  static Future<List<Image>> getAllImagesPathData() async {
-    List<Image>? results;
+  static Future<List<ImageData>> getAllImagesPathData() async {
+    List<ImageData>? results;
     try {
       results = Platform.isAndroid
-          ? await MediaAccess.channel.invokeListMethod<Image>('getAllImagesPathData')
+          ? await MediaAccess.channel.invokeListMethod<ImageData>('getAllImagesPathData')
           : await nothing();
     } catch (e) {
       log("ImageAccess-dart: line 31");
       log(e.toString());
     }
 
-    return results ?? <Image>[];
+    return results ?? <ImageData>[];
   }
 
-  static Future<Media?>? getData(Media media) {
+  static Future<MediaData?>? getData(MediaData media) {
     try {
-      return MediaAccess.channel.invokeMethod<Media>('getData', {'media': media});
+      return MediaAccess.channel.invokeMethod<MediaData>('getData', {'media': media});
     } catch(e) {
       log("ImageAccess-dart: line 43");
       log(e.toString());
@@ -46,12 +46,12 @@ class ImageAccess extends MediaAccess {
     return null;
   }
 
-  static Future<Uint8List?> getImage(Image image) async {
+  static Future<Uint8List?> getImageAsBytes(MediaData media) async {
     Uint8List? imageBytes;
     try {
       imageBytes = await MediaAccess.channel.invokeMethod<Uint8List>(
           'getImage',
-          {'image': image});
+          {'image': media});
     } catch(e) {
       log("ImageAccess-dart: line 56");
       log(e.toString());
@@ -59,7 +59,7 @@ class ImageAccess extends MediaAccess {
     return imageBytes;
   }
 
-  static Future<Uint8List?> getImageThumbnail(Image image) async {
+  static Future<Uint8List?> getImageThumbnail(MediaData image) async {
     Uint8List? thumbnail;
     try {
       thumbnail = await MediaAccess.channel.invokeMethod<Uint8List>(
@@ -84,5 +84,5 @@ class ImageAccess extends MediaAccess {
     return results ?? <Uint8List>[];
   }
 
-  static Future<List<Image>> nothing() async => <Image>[];
+  static Future<List<ImageData>> nothing() async => <ImageData>[];
 }

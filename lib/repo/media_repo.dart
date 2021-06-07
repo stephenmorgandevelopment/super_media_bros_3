@@ -1,5 +1,5 @@
 
 
-class MediaRepo {
-
+abstract class MediaRepo {
+  const MediaRepo();
 }

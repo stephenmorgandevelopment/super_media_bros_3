@@ -19,15 +19,13 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 import java.io.ByteArrayOutputStream
 import kotlin.collections.ArrayList
 
-class ImageAccess(
-        val contentResolver: ContentResolver
-) : MediaStoreWrapper {
+class ImageAccess(val contentResolver: ContentResolver) : MediaStoreWrapper {
     object Prefs {
         var sortOrder = "datetaken"
     }
 
     override fun getPathDataById(long: Long): Image {
-        return query(MediaQuery.Assemble.imagePathDataById(long))[0]
+        return query(MediaQuery.Assemble.pathDataById(long))[0]
     }
 
     override fun getAllPathData(): List<Image> {
@@ -43,20 +41,19 @@ class ImageAccess(
     }
     
     override fun query(query: MediaQuery): List<Image> {
-        val medias = ArrayList<Image>()
-        
-        contentResolver.query(
+        val mediaList =  contentResolver.query(
                 EXTERNAL_CONTENT_URI,
                 query.projection,
                 query.selection,
                 query.selectionArgs,
                 query.sortOrder
-        )?.use { cursor -> processQuery(cursor, medias) }
+        )?.use { cursor -> processQuery(cursor) }
         
-        return medias
+        return mediaList ?: ArrayList()
     }
     
-    private fun processQuery(cursor: Cursor, medias: ArrayList<Image>) {//: ArrayList<Image> {
+    private fun processQuery(cursor: Cursor) : ArrayList<Image> {//: ArrayList<Image> {
+        val medias = ArrayList<Image>()
         val idColumn = cursor.getColumnIndexOrThrow(_ID)
         
         while (cursor.moveToNext()) {
@@ -88,7 +85,7 @@ class ImageAccess(
             image.addMetadata(metadata)
             medias.add(image)
         }
-//        return medias
+        return medias
     }
 
 //    fun getImageAsFile(image: Image) : File? {
@@ -126,7 +123,7 @@ class ImageAccess(
 //    fun getAllThumbnailsForImages(result: MethodChannel.Result) {
     fun getImageThumbnail(image: Image): ByteArray? = generateThumbnail(image) //?: byteArrayOf()
     
-    fun getImageThumbnailsAsByteArray(images: List<Image>) : List<ByteArray>? {
+    fun getImageThumbnailsAsByteArray(images: List<Image>) : List<ByteArray> {
         val compressedThumbnails: ArrayList<ByteArray> = ArrayList()
     
         for (image in images) {
@@ -174,22 +171,5 @@ class ImageAccess(
         } else {
             null
         }
-//        contentResolver.openInputStream(image.uri)?.use { stream ->
-//            val tmpBitmap = Bitmap.createScaledBitmap(
-//                    BitmapFactory.decodeStream(stream),
-//                    320,
-//                    240,
-//                    true)
-//
-//            val outputStream = ByteArrayOutputStream()
-//            val success = tmpBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-//
-//            return if (success) {
-//                outputStream.toByteArray()
-//            } else {
-//                null
-//            }
-//        }
-//        return null
     }
 }

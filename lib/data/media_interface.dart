@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:super_media_bros_3/models/media.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/platform/media_message_codec.dart';
 
 abstract class MediaAccess {
@@ -16,9 +16,9 @@ abstract class MediaAccess {
     StandardMethodCodec(MediaMessageCodec()),
   );
 
-  static Future<List<Media>> getData() async {
+  static Future<List<MediaData>> getData() async {
 
-    return <Media>[];
+    return <MediaData>[];
   }
 
   static Future<void> requestPermission() async {

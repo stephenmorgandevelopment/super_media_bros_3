@@ -1,4 +1,4 @@
-package com.stephenmorgandevelopment.super_media_bros_3.flutter;
+package com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils;
 
 import android.net.Uri;
 

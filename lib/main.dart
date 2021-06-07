@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:super_media_bros_3/bloc/image_screen_bloc.dart';
 import 'package:super_media_bros_3/data/image_access.dart';
 import 'package:super_media_bros_3/data/media_interface.dart';
-import 'package:super_media_bros_3/models/media.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/grid_layout.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -38,8 +38,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<Media>> mediaFuture = ImageAccess.getAllImagesData();
-  late List<Media> testList;
+  Future<List<MediaData>> mediaFuture = ImageAccess.getAllImagesData();
+  late List<MediaData> testList;
 
   _MyHomePageState() {
     checkPermissions();
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: FutureBuilder(
         future: mediaFuture,
-        builder: (BuildContext context, AsyncSnapshot<List<Media>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<MediaData>> snapshot) {
           if (!MediaAccess.hasReadPermission) {
             return Center(
               child: Text(
