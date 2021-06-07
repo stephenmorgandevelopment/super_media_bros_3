@@ -34,8 +34,5 @@ abstract class MediaAccess {
         _hasReadPermission = false;
       }
     }
-
-    // return false;
   }
-
 }
