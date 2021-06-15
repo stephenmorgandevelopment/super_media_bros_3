@@ -1,12 +1,9 @@
 import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
-
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
 import 'package:super_media_bros_3/widgets/image_view.dart';
@@ -76,6 +73,10 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
       case Type.AUDIO:
       //TODO Instantiate and navigate to audio player
       //TODO Start player service.
+
+      default:
+        log(widget.bloc.type.toString() + index);
+        break;
     }
   }
 }

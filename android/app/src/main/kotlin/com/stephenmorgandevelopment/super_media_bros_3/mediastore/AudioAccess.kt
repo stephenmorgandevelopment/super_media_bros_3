@@ -3,14 +3,18 @@ package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
+import android.graphics.Bitmap
 import com.stephenmorgandevelopment.super_media_bros_3.models.Audio
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 
 import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Audio.AudioColumns.*
+import android.util.Log
+import android.util.Size
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
+import java.io.ByteArrayOutputStream
 
-class AudioAccess(val contentResolver: ContentResolver) : MediaStoreWrapper   {
+class AudioAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver) {
     override fun add(media: Media) {
         TODO("Not yet implemented")
     }
@@ -23,8 +27,8 @@ class AudioAccess(val contentResolver: ContentResolver) : MediaStoreWrapper   {
         TODO("Not yet implemented")
     }
 
-    override fun getAllPathData(): List<Media>? {
-        TODO("Not yet implemented")
+    override fun getAllPathData(): List<Media> {
+        return query(MediaQuery.Assemble.allPathData())
     }
 
     override fun query(query: MediaQuery): List<Audio> {

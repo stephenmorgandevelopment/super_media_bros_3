@@ -5,7 +5,7 @@ import android.net.Uri
 import android.provider.MediaStore.Images.ImageColumns.*
 import java.lang.reflect.Constructor
 
-class Image(override val uri: Uri) : Media() {
+class Image(uri: Uri) : Media(uri) {
     override var type = Type.IMAGE
     
     constructor(uri: Uri, metadata: Map<String, String>) : this(uri) {

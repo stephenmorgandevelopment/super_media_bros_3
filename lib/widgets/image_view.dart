@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -29,6 +30,8 @@ class ImageView extends StatefulWidget {
   }
 }
 
+
+
 class _ImageViewState extends State<ImageView> {
   final Image _image;
   bool optionsShowing = false;
@@ -48,7 +51,7 @@ class _ImageViewState extends State<ImageView> {
           ),
           Container(
             child: Material(
-              child: ImageOptionsTop(),
+              child: ImageOptionsTop(widget.media),
               type: MaterialType.transparency,
             ),
             constraints: BoxConstraints.expand(),
@@ -59,7 +62,7 @@ class _ImageViewState extends State<ImageView> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 24.0),
             child: Material(
-              child: ImageOptionsBottom(),
+              child: ImageOptionsBottom(widget.media),
               type: MaterialType.transparency,
             ),
             constraints: BoxConstraints.expand(),
@@ -83,7 +86,14 @@ class _ImageViewState extends State<ImageView> {
   }
 }
 
+
 class ImageOptionsTop extends StatelessWidget {
+  static final double iconsize = 56.0;
+
+  final MediaResource media;
+
+  ImageOptionsTop(this.media);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -98,7 +108,7 @@ class ImageOptionsTop extends StatelessWidget {
     return <Widget> [
       IconButton(
           onPressed: () => onPressed("share"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.share_outlined,
             color: Colors.white38,
@@ -106,7 +116,7 @@ class ImageOptionsTop extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("addto"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.add_to_photos_outlined,
             color: Colors.white38,
@@ -114,7 +124,7 @@ class ImageOptionsTop extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("favorite"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.favorite_border,
             color: Colors.white38,
@@ -139,8 +149,17 @@ class ImageOptionsTop extends StatelessWidget {
 }
 
 class ImageOptionsBottom extends StatelessWidget {
+  static final double iconsize = 44.0;
+  late BuildContext ctx;
+
+  final MediaResource media;
+
+  ImageOptionsBottom(this.media);
+
   @override
   Widget build(BuildContext context) {
+    this.ctx = context;
+
     return Row(
       children: makeOptions(),
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -153,7 +172,7 @@ class ImageOptionsBottom extends StatelessWidget {
     return <Widget>[
       IconButton(
           onPressed: () => onPressed("bytes"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.code,
             color: Colors.white38,
@@ -161,7 +180,7 @@ class ImageOptionsBottom extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("edit"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.tune,
             color: Colors.white38,
@@ -169,7 +188,7 @@ class ImageOptionsBottom extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("copy"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.content_copy,
             color: Colors.white38,
@@ -177,7 +196,7 @@ class ImageOptionsBottom extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("move"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.drive_file_move_outlined,
             color: Colors.white38,
@@ -185,7 +204,7 @@ class ImageOptionsBottom extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("delete"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.delete_outlined,
             color: Colors.white38,
@@ -193,7 +212,7 @@ class ImageOptionsBottom extends StatelessWidget {
           )),
       IconButton(
           onPressed: () => onPressed("details"),
-          iconSize: 48.0,
+          iconSize: iconsize,
           icon: Icon(
             Icons.info_outlined,
             color: Colors.white38,
@@ -202,10 +221,31 @@ class ImageOptionsBottom extends StatelessWidget {
     ];
   }
 
-  void onPressed(String button) {
+  void onPressed(String button) async {
     switch (button) {
       case "bytes":
 
+        Uint8List? bytes = media.bytes ??
+            await media.file?.readAsBytes();
+
+        if(bytes != null) {
+          ByteData bdata = bytes.buffer.asByteData(0, bytes.lengthInBytes);
+          StringBuffer stringBuffer = StringBuffer();
+          for(int i = 0; i < bdata.lengthInBytes; i + 512) {
+            if((bdata.lengthInBytes - i) > 512) {
+              stringBuffer.write(bdata.buffer.asByteData(i, 512));
+            } else {
+              stringBuffer.write(bdata.buffer.asByteData(i, (bdata.lengthInBytes - i)));
+            }
+
+          }
+          Widget text = Text(
+            stringBuffer.toString(),
+            softWrap: true,
+          );
+
+          Navigator.push(ctx, MaterialPageRoute(builder: (context) => text));
+        }
         break;
       case "edit":
 

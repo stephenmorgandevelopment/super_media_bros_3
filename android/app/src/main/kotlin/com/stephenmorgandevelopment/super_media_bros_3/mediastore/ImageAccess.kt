@@ -19,7 +19,7 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 import java.io.ByteArrayOutputStream
 import kotlin.collections.ArrayList
 
-class ImageAccess(val contentResolver: ContentResolver) : MediaStoreWrapper {
+class ImageAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver) {
     object Prefs {
         var sortOrder = "datetaken"
     }
@@ -29,7 +29,7 @@ class ImageAccess(val contentResolver: ContentResolver) : MediaStoreWrapper {
     }
 
     override fun getAllPathData(): List<Image> {
-        return query(MediaQuery.Assemble.allImagesPathData())
+        return query(MediaQuery.Assemble.allPathData())
     }
 
     override fun add(media: Media) {
@@ -159,17 +159,17 @@ class ImageAccess(val contentResolver: ContentResolver) : MediaStoreWrapper {
         }
     }
     
-    private fun generateThumbnail(image: Image): ByteArray? {
-        val thumb = contentResolver.loadThumbnail(image.uri, Size(320, 240), null)
-    
-        val outputStream = ByteArrayOutputStream()
-        val success = thumb.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-    
-        return if (success) {
-            Log.i("ImageAccess-Kotlin", "Successfully made thumbnail for ${image.metadata[DISPLAY_NAME]}")
-            outputStream.toByteArray()
-        } else {
-            null
-        }
-    }
+//    private fun generateThumbnail(image: Image): ByteArray? {
+//        val thumb = contentResolver.loadThumbnail(image.uri, Size(320, 240), null)
+//
+//        val outputStream = ByteArrayOutputStream()
+//        val success = thumb.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+//
+//        return if (success) {
+//            Log.i("ImageAccess-Kotlin", "Successfully made thumbnail for ${image.metadata[DISPLAY_NAME]}")
+//            outputStream.toByteArray()
+//        } else {
+//            null
+//        }
+//    }
 }

@@ -5,26 +5,30 @@ import android.provider.MediaStore
 import android.util.Log
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.AudioAccess
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ImageAccess
+import com.stephenmorgandevelopment.super_media_bros_3.mediastore.MediaAccess
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.VideoAccess
 import com.stephenmorgandevelopment.super_media_bros_3.models.Image
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
+import com.stephenmorgandevelopment.super_media_bros_3.models.Video
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.MethodCallHandler {
-    private var imageAccess: ImageAccess = ImageAccess(contentResolver)
-    private var videoAccess: VideoAccess = VideoAccess(contentResolver)
-    private var audioAccess: AudioAccess = AudioAccess(contentResolver)
+    private val TAG = "MediaMethodCallHandler"
 
-    init {
-//        imageAccess = ImageAccess(contentResolver)
-//        videoAccess = VideoAccess(contentResolver)
-//        audioAccess = AudioAccess(contentResolver)
-    }
+    private val mediaAccess: MediaAccess = MediaAccess(contentResolver)
+    private val imageAccess: ImageAccess = ImageAccess(contentResolver)
+    private val videoAccess: VideoAccess = VideoAccess(contentResolver)
+    private val audioAccess: AudioAccess = AudioAccess(contentResolver)
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when(call.method) {
+            // Media queries
+            "getAllData" -> getAllData(result, call.argument<Media.Type>("type"))
+            "getThumbnail" -> getThumbnail(result, call.argument<Media>("media"))
+
+            // Image queries
             "getAllImagesData" -> getAllDataForAllImages(result)
             "getImageThumbnail" -> getImageThumbnail(result, call.argument<Image>("image"))
             "getImage" -> getImage(result, call.argument<Image>("image"))
@@ -32,20 +36,105 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             "getAllImagesPathData" -> getAllImagesPathData(result)
             "getAllImageThumbnails" -> getAllImageThumbnails(result)
             "getData" -> getData(result, call.argument<Media>("media")!!)
+
+            // Video queries
+            "getAllVideosData" -> getAllVideosData(result)
+            "getVideoThumbnail" -> getVideoThumbnail(result, call.argument<Media>("video"))
+
+            // Audio queries
+            "getAllAudioData" -> getAllAudioData(result)
+            "getAlbumArtwork" -> getAlbumArtwork(result, call.argument<Media>("audio"))
+
             else -> result.notImplemented()
         }
     }
 
+    private fun getAllData(result: MethodChannel.Result, type: Media.Type?) {
+        val mediaList = when(type) {
+            Media.Type.IMAGE -> imageAccess.query(MediaQuery.Assemble.allImagesData())    //getAllDataForAllImages(result)
+            Media.Type.VIDEO -> videoAccess.query(MediaQuery.Assemble.allImagesData())    //getAllVideosData(result)
+            Media.Type.AUDIO -> audioAccess.query(MediaQuery.Assemble.allImagesData()) //getAllAudioData(result)
+            else -> ArrayList()
+        }
+
+        if (mediaList.isNotEmpty()) {
+            result.success(mediaList)
+        } else {
+            result.error(
+                    TAG,
+                    "Error, check permissions.",
+                    null)
+        }
+    }
+
+    private fun getThumbnail(result: MethodChannel.Result, media: Media?) {
+        if(media == null) {
+            Log.d(TAG, "media was null.")
+            result.error(TAG,
+                    "media was null.",
+                    null)
+        }
+        val thumbnail: ByteArray? = mediaAccess.getThumbnail(media!!)
+        if(thumbnail != null) {
+            result.success(thumbnail)
+        } else {
+            result.error(
+                    TAG,
+                    "thumbnail was empty null for ${media.metadata[MediaStore.MediaColumns.DISPLAY_NAME]}",
+                    null)
+        }
+    }
+
+    private fun getAllAudioData(result: MethodChannel.Result) {
+        val mediaList: List<Media> = audioAccess.query(MediaQuery.Assemble.allImagesData())
+        if (mediaList.isNotEmpty()) {
+            result.success(mediaList)
+        } else {
+            result.error(
+                    TAG,
+                    "Error, check permissions.",
+                    null)
+        }
+    }
+
+    private fun getAlbumArtwork(result: MethodChannel.Result, media: Media?) {
+        if(media == null) {
+            Log.i(TAG, "media is null")
+            return
+        }
+        TODO("Call audioAccess.generateThumbnail")
+    }
+
+    private fun getAllVideosData(result: MethodChannel.Result) {
+        val mediaList: List<Media> = videoAccess.query(MediaQuery.Assemble.allImagesData())
+        if (mediaList.isNotEmpty()) {
+            result.success(mediaList)
+        } else {
+            result.error(
+                    TAG,
+                    "Error, check permissions.",
+                    null)
+        }
+    }
+
+    private fun getVideoThumbnail(result: MethodChannel.Result, media: Media?) {
+        if(media == null) {
+            Log.i(TAG, "media is null")
+            return
+        }
+        TODO("Call videoAccess.generateThumbnail")
+    }
+
     private fun getData(result: MethodChannel.Result, media: Media?) {
         if(media == null) {
-            Log.i("AndroidPlatform:getData()", "media is null")
+            Log.i(TAG, "media is null")
             return
         }
         val queryResult = imageAccess.query(MediaQuery.Assemble.imageData(media));
         if(queryResult.isNotEmpty()) {
             result.success(queryResult[0])
         } else {
-            result.error("Android-Platform:getImageThumbnail()",
+            result.error(TAG,
                     "image was null.",
                     null)
         }
@@ -53,7 +142,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
 
     private fun getImage(result: MethodChannel.Result, media: Media?) {
         if(media == null) {
-            Log.i("AndroidPlatform:getData()", "media is null")
+            Log.i(TAG, "media is null")
             return
         }
         val image = imageAccess.getImageAsByteArray(media as Image)
@@ -61,7 +150,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             result.success(image)
         } else {
             result.error(
-                    "Android-Platform:getImageThumbnail()",
+                    TAG,
                     "image was empty null for ${media.metadata[MediaStore.MediaColumns.DISPLAY_NAME]}",
                     null)
         }
@@ -73,7 +162,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             result.success(mediaList)
         } else {
             result.error(
-                    "Android-Platform",
+                    TAG,
                     "Error, check permissions.",
                     null)
         }
@@ -85,7 +174,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             result.success(mediaList)
         } else {
             result.error(
-                    "Android-Platform",
+                    TAG,
                     "Error, check permissions.",
                     null)
         }
@@ -96,7 +185,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
         if(imageList.isNotEmpty()) {
             result.success(imageList)
         } else {
-            result.error("Android-Platform",
+            result.error(TAG,
                     "Error, check permissions.",
                     null)
         }
@@ -104,7 +193,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
 
     private fun getImageThumbnail(result: MethodChannel.Result, image: Image?) {
         if(image == null) {
-            Log.d("Android-Platform-MainActivity", "image was null.")
+            Log.d(TAG, "image was null.")
             result.error("Android-Platform:getImageThumbnail()",
                     "image was null.",
                     null)
@@ -114,7 +203,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             result.success(thumbnail)
         } else {
             result.error(
-                    "Android-Platform:getImageThumbnail()",
+                    TAG,
                     "thumbnail was empty null for ${image.metadata[MediaStore.MediaColumns.DISPLAY_NAME]}",
                     null)
         }
@@ -127,7 +216,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             result.success(thumbnails)
         } else {
             result.error(
-                    "getAllThumbnailsForImages",
+                    TAG,
                     "compressedThumbnails is empty",
                     null)
         }

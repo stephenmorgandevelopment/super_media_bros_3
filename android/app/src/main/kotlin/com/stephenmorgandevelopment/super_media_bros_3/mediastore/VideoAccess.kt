@@ -3,16 +3,20 @@ package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.provider.MediaStore
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 
 import android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Video.VideoColumns.*
+import android.util.Log
+import android.util.Size
 import com.stephenmorgandevelopment.super_media_bros_3.models.Video
+import java.io.ByteArrayOutputStream
 
 
-class VideoAccess(val contentResolver: ContentResolver) : MediaStoreWrapper  {
+class VideoAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver)  {
     override fun add(media: Media) {
         TODO("Not yet implemented")
     }
@@ -25,9 +29,12 @@ class VideoAccess(val contentResolver: ContentResolver) : MediaStoreWrapper  {
         TODO("Not yet implemented")
     }
 
-    override fun getAllPathData(): List<Media>? {
-        TODO("Not yet implemented")
+    override fun getAllPathData(): List<Video> {
+        return query(MediaQuery.Assemble.allPathData())
     }
+
+    //TODO Test various uses of this vs EXTERNAL_CONTENT_URI
+    val extVolume = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
 
     override fun query(query: MediaQuery): List<Video> {
         val mediaList =  contentResolver.query(

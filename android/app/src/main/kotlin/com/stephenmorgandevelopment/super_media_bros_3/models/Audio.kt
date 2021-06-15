@@ -2,7 +2,7 @@ package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.net.Uri
 
-class Audio(override val uri: Uri) : Media() {
+class Audio(uri: Uri) : Media(uri) {
     override var type = Type.AUDIO
     
     constructor(uri: Uri, metadata: Map<String, String>) : this(uri) {

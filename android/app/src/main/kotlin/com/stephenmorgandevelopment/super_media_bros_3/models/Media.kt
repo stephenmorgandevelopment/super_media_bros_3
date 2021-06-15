@@ -2,8 +2,7 @@ package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.net.Uri
 
-abstract class Media {
-    open val uri: Uri? = null
+abstract class Media(open val uri: Uri) {
     open lateinit var type: Type
 
     open val metadata: MutableMap<String, String> = LinkedHashMap()
