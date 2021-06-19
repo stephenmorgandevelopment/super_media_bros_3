@@ -1,11 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
-import 'package:super_media_bros_3/widgets/grid_layout.dart';
+import 'package:super_media_bros_3/widgets/grid_view.dart';
 
 class MediaTabPager extends StatefulWidget {
   final List<List<MediaData>> allMediaData;
-  // late List<MediaBloc> blocs;
 
   MediaTabPager(this.allMediaData);
 
@@ -43,13 +43,50 @@ class _MediaTabPagerState extends State<MediaTabPager>
 
   @override
   Widget build(BuildContext context) {
+    // AppBar bar = context.findAncestorWidgetOfExactType<AppBar>() ?? AppBar();
+
+    // return Scaffold(
+    //   body: Column(
+    //     verticalDirection: VerticalDirection.down,
+    //     mainAxisAlignment: MainAxisAlignment.start,
+    //     mainAxisSize: MainAxisSize.min,
+    //     children: [
+    //       TabBar(
+    //         controller: _tabController,
+    //         tabs: homeTabs,
+    //         isScrollable: false,
+    //         indicator: TabbedTheme.tabIndicator,
+    //       ),
+    //       // SliverAppBar(
+    //       //   floating: true,
+    //       //   pinned: true,
+    //       //   bottom: TabBar(
+    //       //     controller: _tabController,
+    //       //     tabs: homeTabs,
+    //       //     isScrollable: false,
+    //       //     indicator: TabbedTheme.tabIndicator,
+    //       //   ),
+    //       // ),
+    //       TabBarView(
+    //         controller: _tabController,
+    //         children: homeTabs.map((Tab tab) {
+    //           final String label = tab.text!.toLowerCase();
+    //           return MediaGridLayout(getBloc(tab.text!));
+    //         }).toList(),
+    //       )
+    //     ],
+    //   ),
+    // );
+
     return Scaffold(
-      appBar: AppBar(
-          bottom: TabBar(
-        controller: _tabController,
-        tabs: homeTabs,
-        isScrollable: false,
-      )),
+      // appBar: AppBar(
+      //     title: Text('Super Media Bros'),
+      //     bottom: TabBar(
+      //       controller: _tabController,
+      //       tabs: homeTabs,
+      //       isScrollable: false,
+      //       indicator: TabbedTheme.tabIndicator,
+      //     )),
       body: TabBarView(
         controller: _tabController,
         children: homeTabs.map((Tab tab) {

@@ -32,9 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Super Media Bros',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData.dark(),
       home: MyHomePage(title: 'Super Media Bros'),
     );
   }
@@ -65,11 +63,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    mediaFuture = MyApp.buildData();
+    if (MediaAccess.hasReadPermission) {
+      mediaFuture = MyApp.buildData();
+    }
   }
 
   _MyHomePageState() {
     checkPermissions();
+
+    mediaFuture = MyApp.buildData();
     // if (MediaAccess.hasReadPermission) {
     //   this.mediaFuture = ImageAccess.getAllImagesData();
     // }
@@ -77,22 +79,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      // child: MediaTabPager(mediaFuture),
-      child: FutureBuilder(
+    // return SafeArea(
+    // child: MediaTabPager(mediaFuture),
+    // child: FutureBuilder(
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: FutureBuilder(
           future: mediaFuture,
           builder: (BuildContext context,
               AsyncSnapshot<List<List<MediaData>>> snapshot) {
             if (!MediaAccess.hasReadPermission) {
-              return Center(
-                child: Text(
-                  'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
-                  style: TextStyle(
-                    color: Colors.greenAccent[700],
-                    fontSize: 24.0,
-                  ),
-                ),
-              );
+              return explainPermission;
             } else {
               if (snapshot.hasData && snapshot.data != null) {
                 return MediaTabPager(snapshot.data!);
@@ -101,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             return Text('Well....this is awkard.\nHow did we get here???');
           }),
+      // ),
     );
   } // @override
   // Widget build(BuildContext context) {
@@ -140,8 +138,23 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
       // buildImageData();
+      mediaFuture = MyApp.buildData();
 
-      setState(() {});
+      setState(() {
+        // initState();
+      });
+    } else {
+      mediaFuture = MyApp.buildData();
     }
   }
+
+  Widget explainPermission = Center(
+    child: Text(
+      'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
+      style: TextStyle(
+        color: Colors.greenAccent[700],
+        fontSize: 24.0,
+      ),
+    ),
+  );
 }
