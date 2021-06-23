@@ -3,8 +3,6 @@ package com.stephenmorgandevelopment.super_media_bros_3
 import androidx.annotation.NonNull
 import com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils.FlutterMediaMessageCodec
 import com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils.MediaMethodCallHandler
-import com.stephenmorgandevelopment.super_media_bros_3.models.Image
-import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

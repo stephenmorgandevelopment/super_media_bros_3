@@ -19,11 +19,7 @@ class MyApp extends StatelessWidget {
     List<MediaData> imageList = await MediaAccess.getAllData(Type.IMAGE);
     List<MediaData> videoList = await MediaAccess.getAllData(Type.VIDEO);
     List<MediaData> audioList = await MediaAccess.getAllData(Type.AUDIO);
-    // imageList = await MediaAccess.getAllData(Type.IMAGE);
-    // videoList = await MediaAccess.getAllData(Type.VIDEO);
-    // audioList = await MediaAccess.getAllData(Type.AUDIO);
 
-    // setState(() {});
     return List.from(<List<MediaData>>[imageList, videoList, audioList]);
   }
 
@@ -48,16 +44,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Future<List<MediaData>> mediaFuture = ImageAccess.getAllData();
   late Future<List<List<MediaData>>> mediaFuture;
-
-  // late MediaBloc imageBloc;
-  // late MediaBloc videoBloc;
-  // late MediaBloc audioBloc;
-
-  // late List<MediaData> imageList;
-  // late List<MediaData> videoList;
-  // late List<MediaData> audioList;
 
   @override
   void initState() {
@@ -72,19 +59,16 @@ class _MyHomePageState extends State<MyHomePage> {
     checkPermissions();
 
     mediaFuture = MyApp.buildData();
-    // if (MediaAccess.hasReadPermission) {
-    //   this.mediaFuture = ImageAccess.getAllImagesData();
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    // return SafeArea(
-    // child: MediaTabPager(mediaFuture),
-    // child: FutureBuilder(
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: FutureBuilder(
+    return SafeArea(
+      // child: MediaTabPager(mediaFuture),
+      child: FutureBuilder(
+          // return Scaffold(
+          //   appBar: AppBar(title: Text(widget.title)),
+          //   body: FutureBuilder(
           future: mediaFuture,
           builder: (BuildContext context,
               AsyncSnapshot<List<List<MediaData>>> snapshot) {
@@ -101,40 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // ),
     );
   } // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text(widget.title),
-  //     ),
-  //     body: FutureBuilder(
-  //       future: mediaFuture,
-  //       builder: (BuildContext context,
-  //           AsyncSnapshot<List<List<MediaData>>> snapshot) {
-  //         if (!MediaAccess.hasReadPermission) {
-  //           return Center(
-  //             child: Text(
-  //               'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
-  //               style: TextStyle(
-  //                 color: Colors.greenAccent[700],
-  //                 fontSize: 24.0,
-  //               ),
-  //             ),
-  //           );
-  //         } else {
-  //           return Tabbed
-  //           // return MediaGridLayout(ImageScreenBloc(imageList));
-  //         }
-  //       },
-  //     ),
-  //     // body: MediaGridLayout(),
-  //   );
-  // }
 
   Future<void> checkPermissions() async {
-    // testList = await ImageAccess.getAllData();
-    // testList = await VideoAccess.getAllData();
-    // testList = await AudioAccess.getAllData();
-
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
       // buildImageData();
