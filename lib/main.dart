@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/data/media_interface.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/needs_permission_text.dart';
 import 'package:super_media_bros_3/widgets/tabbed_pager.dart';
+import 'package:super_media_bros_3/widgets/video_view.dart';
 
 void main() {
   runApp(
@@ -30,6 +32,9 @@ class MyApp extends StatelessWidget {
       title: 'Super Media Bros',
       theme: ThemeData.dark(),
       home: MyHomePage(title: 'Super Media Bros'),
+      routes: {
+        NeedsPermissionText.NEEDS_PERMISSION: (context) => NeedsPermissionText(),
+      },
     );
   }
 }
@@ -66,9 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
       // child: MediaTabPager(mediaFuture),
       child: FutureBuilder(
-          // return Scaffold(
-          //   appBar: AppBar(title: Text(widget.title)),
-          //   body: FutureBuilder(
           future: mediaFuture,
           builder: (BuildContext context,
               AsyncSnapshot<List<List<MediaData>>> snapshot) {

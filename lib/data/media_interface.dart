@@ -38,6 +38,8 @@ abstract class MediaAccess {
     return null;
   }
 
+
+
   static Future<void> requestPermission() async {
     var status = await Permission.storage.status;
     if (status.isGranted) {

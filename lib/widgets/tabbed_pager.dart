@@ -101,7 +101,6 @@ class _MediaTabPagerState extends State<MediaTabPager>
       body: TabBarView(
         controller: _tabController,
         children: homeTabs.map((Tab tab) {
-          String label = tab.key.toString();
           return MediaGridLayout(getBloc(tab));
         }).toList(),
       ),

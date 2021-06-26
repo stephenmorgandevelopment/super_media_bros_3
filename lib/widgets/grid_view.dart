@@ -68,15 +68,15 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
   }
 
   Future<void> navigate(BuildContext context, index) async {
-    MediaResource media = await mediaFuture(index);
+    widget.bloc.currentIndex = index;
     switch (widget.bloc.type) {
       case Type.IMAGE:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ImageView(media)));
+            context, MaterialPageRoute(builder: (context) => ImageView(widget.bloc)));
         break;
       case Type.VIDEO:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => VideoView(media)));
+            context, MaterialPageRoute(builder: (context) => VideoView(widget.bloc)));
         break;
       case Type.AUDIO:
       //TODO Instantiate and navigate to audio player
