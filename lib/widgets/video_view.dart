@@ -1,8 +1,12 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
 import 'package:super_media_bros_3/widgets/media_controls.dart';
+import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
@@ -53,14 +57,15 @@ class _VideoViewState extends State<VideoView> {
               children: [
                 SafeArea(
                   child: GestureDetector(
-                    child: AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      child: VideoPlayer(_controller),
-                    ),
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                    ),),
                     onTap: () => toggleControls(),
                   ),
                 ),
-                MediaControls(widget.bloc.currentMedia!.data, _controller),
+                MediaControls(_controller, onPressed),
               ],
             );
           } else {
@@ -86,18 +91,77 @@ class _VideoViewState extends State<VideoView> {
     );
   }
 
-  void processPan(dynamic details) async {
-    late MediaResource media;
+  TextStyle detailsTextStyle = TextStyle(
+    color: Colors.white,
+    backgroundColor: Colors.black38,
+    fontSize: 18.0,
+  );
 
-    if (isLeftFling) {
-      media = await widget.bloc.getNextMedia()!;
-    } else {
-      media = await widget.bloc.getPreviousMedia()!;
+  void onPressed(String btnTag) async {
+    switch (btnTag) {
+      case "play-pause":
+        if (_controller.value.isPlaying) {
+          _controller.pause();
+        } else {
+          _controller.play();
+        }
+        setState(() {});
+        break;
+      case "seek-fwd":
+        int curPos = (await _controller.position)?.inMilliseconds ?? 0;
+        Duration newPos = Duration(milliseconds: (curPos + MediaOptions.seekForwardTime));
+        _controller.seekTo(newPos);
+        break;
+      case "seek-back":
+        int curPos = (await _controller.position)?.inMilliseconds ?? 0;
+        Duration newPos =
+        Duration(milliseconds: (curPos - MediaOptions.seekBackwardsTime));
+        _controller.seekTo(newPos);
+        break;
+      case NEXT_TAG:
+        await widget.bloc.getNextMedia();
+        changeMedia();
+        break;
+      case PREV_TAG:
+        await widget.bloc.getPreviousMedia();
+        changeMedia();
+        break;
+      case DETAILS_TAG:
+        List<Widget> dataTexts = List.empty(growable: true);
+
+        Map<String, String> metadata = widget.bloc.currentMedia!.data.metadata;
+        for(MapEntry entry in metadata.entries) {
+          dataTexts.add(
+              Text("${entry.key}: ${entry.value}", style: detailsTextStyle,)
+          );
+        }
+
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => SafeArea(
+                child: Column(
+                children: dataTexts,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            )));
+        break;
+      case "speed":
+
+        break;
     }
-    changeMediaTo(media);
   }
 
-  void changeMediaTo(MediaResource media) async {
+  void processPan(dynamic details) async {
+    if (isLeftFling) {
+      await widget.bloc.getNextMedia();
+    } else {
+      await widget.bloc.getPreviousMedia();
+    }
+    changeMedia();
+  }
+
+  void changeMedia() async {
     await _controller.pause();
     // this.dispose();
 
@@ -108,7 +172,10 @@ class _VideoViewState extends State<VideoView> {
   }
 
   void toggleControls() {
+    log("toggleControls called.");
     controlsShowing = !controlsShowing;
-    setState(() {});
+    setState(() {
+      log('setState - called.');
+    });
   }
 }

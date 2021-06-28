@@ -261,7 +261,7 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///home/dev-ian/.pub-cache/hosted/pub.dartlang.org/win32-2.2.3",
+      "rootUri": "file:///home/dev-ian/.pub-cache/hosted/pub.dartlang.org/win32-2.2.4",
       "packageUri": "lib/",
       "languageVersion": "2.13"
     },
@@ -278,7 +278,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-06-23T07:14:00.494259Z",
+  "generated": "2021-06-27T22:42:06.189721Z",
   "generator": "pub",
   "generatorVersion": "2.13.3"
 }

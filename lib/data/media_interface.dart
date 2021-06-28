@@ -57,7 +57,7 @@ abstract class MediaAccess {
 
   static Future<List<MediaData>> getAllData(Type mediaType) async {
     List<MediaData>? results;
-    if (mediaType == null) {}
+
     try {
       results = Platform.isAndroid
           ? await MediaAccess.channel.invokeListMethod<MediaData>(

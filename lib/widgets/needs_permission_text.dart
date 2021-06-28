@@ -8,7 +8,8 @@ class NeedsPermissionText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
+        'The primary function of this app is to display your media and play it all in one place\n' +
+            'Without access to media on your device or in the cloud, this app is effectively useless.',
         style: TextStyle(
           color: Colors.greenAccent[700],
           fontSize: 24.0,

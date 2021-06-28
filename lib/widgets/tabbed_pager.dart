@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
+import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
 
 class MediaTabPager extends StatefulWidget {
-  final List<List<MediaData>> allMediaData;
+  final List<MediaBloc> mainMediaBlocs;
 
-  MediaTabPager(this.allMediaData);
+  MediaTabPager(this.mainMediaBlocs);
 
   @override
   State createState() => _MediaTabPagerState();
@@ -19,16 +20,15 @@ const String PICTURES_TAG = 'Pictures';
 const String VIDEOS_TAG = 'Videos';
 const String AUDIO_TAG = 'Music';
 
+const Key HOME_KEY = Key(HOME_TAG);
+const Key IMAGE_KEY = Key(PICTURES_TAG);
+const Key VIDEO_KEY = Key(VIDEOS_TAG);
+const Key AUDIO_KEY = Key(AUDIO_TAG);
+
 class _MediaTabPagerState extends State<MediaTabPager>
     with SingleTickerProviderStateMixin {
+
   static const List<Tab> homeTabs = <Tab>[
-    // Tab(
-    //   text: SUPER_MEDIA_TAG,
-    //   icon: Icon(Icons.home),
-    // ),
-    // Tab(text: PICTURES_TAG, icon: Icon(Icons.image)),
-    // Tab(text: VIDEOS_TAG, icon: Icon(Icons.movie)),
-    // Tab(text: AUDIO_TAG, icon: Icon(Icons.library_music)),
     Tab(
       icon: Icon(Icons.home),
       key: HOME_KEY,
@@ -54,41 +54,6 @@ class _MediaTabPagerState extends State<MediaTabPager>
 
   @override
   Widget build(BuildContext context) {
-    // AppBar bar = context.findAncestorWidgetOfExactType<AppBar>() ?? AppBar();
-
-    // return Scaffold(
-    //   body: Column(
-    //     verticalDirection: VerticalDirection.down,
-    //     mainAxisAlignment: MainAxisAlignment.start,
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: [
-    //       TabBar(
-    //         controller: _tabController,
-    //         tabs: homeTabs,
-    //         isScrollable: false,
-    //         indicator: TabbedTheme.tabIndicator,
-    //       ),
-    //       // SliverAppBar(
-    //       //   floating: true,
-    //       //   pinned: true,
-    //       //   bottom: TabBar(
-    //       //     controller: _tabController,
-    //       //     tabs: homeTabs,
-    //       //     isScrollable: false,
-    //       //     indicator: TabbedTheme.tabIndicator,
-    //       //   ),
-    //       // ),
-    //       TabBarView(
-    //         controller: _tabController,
-    //         children: homeTabs.map((Tab tab) {
-    //           final String label = tab.text!.toLowerCase();
-    //           return MediaGridLayout(getBloc(tab.text!));
-    //         }).toList(),
-    //       )
-    //     ],
-    //   ),
-    // );
-
     return Scaffold(
       appBar: AppBar(
           title: Text('Super Media Bros'),
@@ -107,55 +72,15 @@ class _MediaTabPagerState extends State<MediaTabPager>
     );
   }
 
-  // List<Widget> tabViews = homeTabs.map((Tab tab) {
-  //   final String label = tab.text!.toLowerCase();
-  //   return MediaGridLayout(getBloc(tab.text!));
-  // }).toList();
-
-  static const Key HOME_KEY = Key(HOME_TAG);
-  static const Key IMAGE_KEY = Key(PICTURES_TAG);
-  static const Key VIDEO_KEY = Key(VIDEOS_TAG);
-  static const Key AUDIO_KEY = Key(AUDIO_TAG);
-
   MediaBloc getBloc(Tab tab) {
     if (tab.key == IMAGE_KEY) {
-      return MediaBloc(widget.allMediaData[0], Type.IMAGE);
+      return widget.mainMediaBlocs[0];
     } else if (tab.key == VIDEO_KEY) {
-      return MediaBloc(widget.allMediaData[1], Type.VIDEO);
+      return widget.mainMediaBlocs[1];
     } else if (tab.key == AUDIO_KEY) {
-      return MediaBloc(widget.allMediaData[2], Type.AUDIO);
+      return widget.mainMediaBlocs[2];
     } else {
-      List<MediaData> allData = List.from(widget.allMediaData[0]);
-      allData.addAll(widget.allMediaData[1]);
-      allData.addAll(widget.allMediaData[2]);
-
-      return MediaBloc(allData, null);
+      return MediaBloc.empty();
     }
-
-    // switch (tab.key) {
-    //   case IMAGE_KEY:
-    // return MediaBloc(
-    //     widget.allMediaData
-    //         .reduce((first, second) => first..addAll(second)),
-    //     null);
-    // List<MediaData> allData = List.from(widget.allMediaData[0]);
-    // allData.addAll(widget.allMediaData[1]);
-    // allData.addAll(widget.allMediaData[2]);
-
-    // return MediaBloc(allData, null);
-    // case PICTURES_TAG:
-    //   return MediaBloc(widget.allMediaData[0], Type.IMAGE);
-    // case VIDEOS_TAG:
-    //   return MediaBloc(widget.allMediaData[1], Type.VIDEO);
-    // case AUDIO_TAG:
-    //   return MediaBloc(widget.allMediaData[2], Type.AUDIO);
-    //
-    // default:
-    //   return MediaBloc(
-    //       List.empty(),
-    //       // widget.allMediaData
-    //       //     .reduce((first, second) => first..addAll(second)),
-    //       null);
-    // }
   }
 }

@@ -33,13 +33,14 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
       mainAxisSpacing: 6.0,
     );
 
-    return GridView.builder(
-      gridDelegate: delegate,
-      scrollDirection: widget.horizontal ? Axis.horizontal : Axis.vertical,
-      itemCount: widget.bloc.mediaList.length,
-      itemBuilder: (BuildContext context, int index) => builder(context, index),
-
-      // itemBuilder: (BuildContext context, int index) {
+    return Material(
+      type: MaterialType.transparency,
+      child: GridView.builder(
+        gridDelegate: delegate,
+        scrollDirection: widget.horizontal ? Axis.horizontal : Axis.vertical,
+        itemCount: widget.bloc.mediaList.length,
+        itemBuilder: builder,   //(BuildContext context, int index) => builder(context, index),
+      ),
     );
   }
 
@@ -49,7 +50,6 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
         builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             return InkResponse(
-              //Will be tyring to implement MatDes.
               onTap: () {
                 navigate(context, index);
               },

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/data/media_interface.dart';
@@ -13,21 +15,43 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static late MediaBloc imageBloc;
-  static late MediaBloc videoBloc;
-  static late MediaBloc audioBloc;
+  static late MediaBloc _imageBloc;
+  static late MediaBloc _videoBloc;
+  static late MediaBloc _audioBloc;
+  static bool _isReady = false;
+  static late Future<void> _initialized;
 
-  static Future<List<List<MediaData>>> buildData() async {
+
+  MyApp();
+
+  static Future<List<MediaBloc>> get mainBlocs async {
+    if(_isReady) {
+      return List.from({_imageBloc, _videoBloc, _audioBloc}, growable: true,);
+    } else {
+      log("mainBlocs called - not ready yet.");
+      await _initialized;
+      log("mainBlocs after await _initialized - ready: ${_isReady.toString()}");
+      return mainBlocs;
+    }
+  }
+
+  static Future<void> initData() async {
     List<MediaData> imageList = await MediaAccess.getAllData(Type.IMAGE);
     List<MediaData> videoList = await MediaAccess.getAllData(Type.VIDEO);
     List<MediaData> audioList = await MediaAccess.getAllData(Type.AUDIO);
 
-    return List.from(<List<MediaData>>[imageList, videoList, audioList]);
+    _imageBloc = MediaBloc(imageList, Type.IMAGE);
+    _videoBloc = MediaBloc(videoList, Type.VIDEO);
+    _audioBloc = MediaBloc(audioList, Type.AUDIO);
+
+    _isReady = true;
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _initialized = initData();
+
     return MaterialApp(
       title: 'Super Media Bros',
       theme: ThemeData.dark(),
@@ -49,66 +73,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<List<List<MediaData>>> mediaFuture;
+  Future<List<MediaBloc>> mediaFuture = MyApp.mainBlocs;
 
   @override
   void initState() {
     super.initState();
-
-    if (MediaAccess.hasReadPermission) {
-      mediaFuture = MyApp.buildData();
-    }
   }
 
   _MyHomePageState() {
     checkPermissions();
-
-    mediaFuture = MyApp.buildData();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      // child: MediaTabPager(mediaFuture),
       child: FutureBuilder(
           future: mediaFuture,
           builder: (BuildContext context,
-              AsyncSnapshot<List<List<MediaData>>> snapshot) {
-            if (!MediaAccess.hasReadPermission) {
-              return explainPermission;
-            } else {
-              if (snapshot.hasData && snapshot.data != null) {
-                return MediaTabPager(snapshot.data!);
-              } // return MediaGridLayout(ImageScreenBloc(imageList));
+              AsyncSnapshot<List<MediaBloc>> snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return MediaTabPager(snapshot.data!);
             }
 
-            return Text('Well....this is awkard.\nHow did we get here???');
+            if (!MediaAccess.hasReadPermission) {
+              return explainPermission;
+            }
+
+            return Center(child: CircularProgressIndicator());
+            // return Text('Well....this is awkard.\nHow did we get here???');
           }),
-      // ),
     );
   } // @override
 
   Future<void> checkPermissions() async {
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
-      // buildImageData();
-      mediaFuture = MyApp.buildData();
-
-      setState(() {
-        // initState();
-      });
-    } else {
-      mediaFuture = MyApp.buildData();
+      // mediaFuture = MyApp.mainBlocs;
+      setState(() {});
     }
+
+    mediaFuture = MyApp.mainBlocs;
   }
 
-  Widget explainPermission = Center(
-    child: Text(
-      'This is a media app dumbass...\nWTF you expect it to do without access to media?!??!??!',
-      style: TextStyle(
-        color: Colors.greenAccent[700],
-        fontSize: 24.0,
-      ),
-    ),
-  );
+  Widget get explainPermission => NeedsPermissionText();
+  void explainPerms() {
+    Navigator.pushNamed(context, NeedsPermissionText.NEEDS_PERMISSION);
+  }
+
 }
