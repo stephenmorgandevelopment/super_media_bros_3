@@ -23,6 +23,8 @@ class MediaBloc {
     loadCurrentMedia();
   }
 
+  bool isPlaying = false;
+
   @protected
   MediaResource? _currentMedia;
   MediaResource? get currentMedia => _currentMedia;
@@ -30,7 +32,7 @@ class MediaBloc {
   bool get isEmpty => this == MediaBloc.empty();
 
   MediaBloc(this.mediaList, this.type, {this.repo = const MediaRepo()});
-  MediaBloc.empty() : this(List.empty(), null);
+  MediaBloc.empty() : this(List.empty(growable: true), null);
 
   Future<MediaResource>? getNextMedia() async {
     if(_currentIndex >= mediaList.length) {

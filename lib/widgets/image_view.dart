@@ -5,15 +5,20 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
+import 'package:super_media_bros_3/widgets/image_controls.dart';
+import 'package:super_media_bros_3/widgets/media_view.dart';
+import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
 
-class ImageView extends StatefulWidget {
-  final MediaBloc bloc;
+class ImageView extends StatefulWidget with MediaView {
+  final MediaBloc _bloc;
 
-  ImageView(this.bloc);
+  bool get isPlaying => _bloc.isPlaying;
+
+  ImageView(this._bloc);
 
   @override
   State createState() {
-    return _ImageViewState(MediaResource.getImage(bloc.currentMedia!));
+    return _ImageViewState(MediaResource.getImage(_bloc.currentMedia!));
   }
 }
 
@@ -27,46 +32,76 @@ class _ImageViewState extends State<ImageView> {
   @override
   Widget build(BuildContext context) {
     if (optionsShowing) {
-      return Stack(
-        children: [
-          Center(
-            child: GestureDetector(
-              child: _image,
-              onTap: _toggleOptions,
-            ),
+      return SafeArea(
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              GestureDetector(
+                child: _image,
+                onTap: _toggleOptions,
+              ),
+              ImageControls(SuperMediaButtons(context, onPressed)),
+            ],
           ),
-          Container(
-            child: Material(
-              child: Text("Placeholder"),
-              // child: ImageOptionsTop(widget.bloc.currentMedia),
-              type: MaterialType.transparency,
-            ),
-            constraints: BoxConstraints.expand(),
-            alignment: Alignment.bottomRight,
-            margin: EdgeInsets.symmetric(vertical: 100.0, horizontal: 22.0),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 24.0),
-            child: Material(
-              child: Text('Placeholder'),
-              type: MaterialType.transparency,
-            ),
-            constraints: BoxConstraints.expand(),
-            alignment: Alignment.bottomCenter,
-          ),
-        ],
+        ),
       );
     } else {
-      return GestureDetector(
-        child: _image,
-        onTap: _toggleOptions,
-        onPanEnd: (details) => processPan(details),
-        onPanUpdate: (details) => {
-          isLeftFling = (details.delta.dx < 0)},
+      return Center(
+        child: GestureDetector(
+          child: _image,
+          onTap: _toggleOptions,
+          onPanEnd: (details) => processPan(details),
+          onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
+        ),
       );
     }
   }
 
+  TextStyle detailsTextStyle = TextStyle(
+    color: Colors.white,
+    backgroundColor: Colors.black38,
+    fontSize: 18.0,
+  );
+
+  void onPressed(String btnTag) async {
+    switch (btnTag) {
+      case PLAY_TAG:
+        // TODO play slideshow.
+        break;
+      case NEXT_TAG:
+        changeMediaTo(await widget._bloc.getNextMedia()!);
+        break;
+      case PREV_TAG:
+        changeMediaTo(await widget._bloc.getPreviousMedia()!);
+        break;
+      case DETAILS_TAG:
+        List<Widget> dataTexts = List.empty(growable: true);
+
+        Map<String, String> metadata = widget._bloc.currentMedia!.data.metadata;
+        for (MapEntry entry in metadata.entries) {
+          dataTexts.add(Text(
+            "${entry.key}: ${entry.value}",
+            style: detailsTextStyle,
+          ));
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SafeArea(
+              child: Column(
+                children: dataTexts,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            ),
+          ),
+        );
+        break;
+    }
+  }
 
   void _toggleOptions() {
     optionsShowing = !optionsShowing;
@@ -77,18 +112,16 @@ class _ImageViewState extends State<ImageView> {
     late MediaResource media;
 
     if (isLeftFling) {
-      media = await widget.bloc.getNextMedia()!;
+      media = await widget._bloc.getNextMedia()!;
     } else {
-      media = await widget.bloc.getPreviousMedia()!;
+      media = await widget._bloc.getPreviousMedia()!;
     }
     changeMediaTo(media);
   }
 
   void changeMediaTo(MediaResource media) async {
     _image = MediaResource.getImage(media);
-    setState(() {
-
-    });
+    setState(() {});
   }
 }
 

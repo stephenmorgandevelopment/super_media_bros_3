@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
-import 'package:super_media_bros_3/widgets/media_controls.dart';
+import 'package:super_media_bros_3/widgets/media_view.dart';
 
 const String PLAY_TAG = "play-pause";
 const String SPEED_TAG = "speed";
@@ -26,16 +26,28 @@ class SuperMediaButtons {
   SuperMediaButtons(this.context, this.onPressed);
 
   List<IconButton> get controlButtons => <IconButton>[
-    playBtn, speedBtn, prevBtn, seekBackBtn, seekFwdBtn, nextBtn, detailsBtn,
+    videoPlayBtn, speedBtn, prevBtn, seekBackBtn, seekFwdBtn, nextBtn, detailsBtn,
     shareBtn, addToBtn, favoriteBtn, bytesBtn, editBtn, copyBtn, moveBtn,
-    deleteBtn, imgDetailsBtn
+    deleteBtn, imgDetailsBtn, playBtn
   ];
 
   IconButton get playBtn => IconButton(
       onPressed: () => onPressed("play-pause"),
+      iconSize: MediaOptions.iconsize * 1.25,
+      icon: Icon(
+        // (context.widget as VideoControls).controller.value.isPlaying
+        (context.widget as MediaView).isPlaying
+            ? Icons.pause_circle_filled_outlined
+            : Icons.play_circle_fill_outlined,
+        color: Colors.white38,
+        semanticLabel: "Start or stop slideshow or audio playback.",
+      ));
+
+  IconButton get videoPlayBtn => IconButton(
+      onPressed: () => onPressed("play-pause"),
       iconSize: MediaOptions.iconsize * 2.5,
       icon: Icon(
-        (context.widget as MediaControls).controller.value.isPlaying
+        (context.widget as MediaView).isPlaying
             ? Icons.pause_circle_filled_outlined
             : Icons.play_circle_fill_outlined,
         color: Colors.white38,

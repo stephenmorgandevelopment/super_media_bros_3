@@ -1,19 +1,22 @@
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
-import 'package:super_media_bros_3/widgets/media_controls.dart';
+import 'package:super_media_bros_3/widgets/media_view.dart';
+import 'package:super_media_bros_3/widgets/video_controls.dart';
 import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoView extends StatefulWidget {
-  static final String VIDEO_VIEW = 'video_view';
-  final MediaBloc bloc;
+class VideoView extends StatefulWidget with MediaView {
+  static const String VIDEO_VIEW = 'video_view';
+  final MediaBloc _bloc;
 
-  VideoView(this.bloc);
+  bool get isPlaying => _bloc.isPlaying;
+
+  VideoView(this._bloc);
+
   VideoView.asPagedRoute() : this(MediaBloc.empty());
 
   @override
@@ -25,23 +28,34 @@ class _VideoViewState extends State<VideoView> {
   bool controlsShowing = false;
 
   late VideoPlayerController _controller;
+
+  VideoPlayerController get controller => _controller;
+
   late Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {
-    _controller = VideoPlayerController.file(widget.bloc.currentMedia!.file!);
+    _controller = VideoPlayerController.file(widget._bloc.currentMedia!.file!);
 
     _initializeVideoPlayerFuture = _controller.initialize();
 
-    _initializeVideoPlayerFuture.whenComplete(() => {
-          if (!_controller.value.isPlaying) {_controller.play()}
-        });
+    _initializeVideoPlayerFuture.whenComplete(() {
+      _controller.addListener(updateBlocState);
+      if (!_controller.value.isPlaying) {
+        _controller.play();
+      }
+    });
 
     super.initState();
   }
 
+  void updateBlocState() {
+    widget._bloc.isPlaying = _controller.value.isPlaying;
+  }
+
   @override
   void dispose() {
+    _controller.removeListener(updateBlocState);
     _controller.dispose();
     super.dispose();
   }
@@ -50,39 +64,60 @@ class _VideoViewState extends State<VideoView> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
+      builder: (BuildContext ctxt, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (controlsShowing) {
-            return Stack(
-              children: [
-                SafeArea(
-                  child: GestureDetector(
-                    child: Center(
+            return SafeArea(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: GestureDetector(
                       child: AspectRatio(
                         aspectRatio: _controller.value.aspectRatio,
                         child: VideoPlayer(_controller),
-                    ),),
-                    onTap: () => toggleControls(),
+                      ),
+                      onTap: () => toggleControls(),
+                    ),
                   ),
-                ),
-                MediaControls(_controller, onPressed),
-              ],
+                  Center(
+                      child:
+                          VideoControls(SuperMediaButtons(context, onPressed))),
+                ],
+              ),
             );
+
+            // return Stack(
+            //   children: [
+            //     SafeArea(
+            //       child: GestureDetector(
+            //         child: Center(
+            //           child: AspectRatio(
+            //             aspectRatio: _controller.value.aspectRatio,
+            //             child: VideoPlayer(_controller),
+            //           ),
+            //         ),
+            //         onTap: () => toggleControls(),
+            //       ),
+            //     ),
+            //     VideoControls(_controller, onPressed),
+            //   ],
+            // );
           } else {
-            return Stack(children: [
-              SafeArea(
+            return SafeArea(
+              child: Center(
                 child: GestureDetector(
                   child: AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   ),
                   onTap: () => toggleControls(),
-                    onPanEnd: (details) => processPan(details),
-                    onPanUpdate: (details) => {
-                      isLeftFling = (details.delta.dx < 0)},
+                  onPanEnd: (details) => processPan(details),
+                  onPanUpdate: (details) =>
+                      {isLeftFling = (details.delta.dx < 0)},
                 ),
-              )
-            ]);
+              ),
+            );
           }
         } else {
           return Center(child: CircularProgressIndicator());
@@ -99,7 +134,7 @@ class _VideoViewState extends State<VideoView> {
 
   void onPressed(String btnTag) async {
     switch (btnTag) {
-      case "play-pause":
+      case PLAY_TAG:
         if (_controller.value.isPlaying) {
           _controller.pause();
         } else {
@@ -107,66 +142,69 @@ class _VideoViewState extends State<VideoView> {
         }
         setState(() {});
         break;
-      case "seek-fwd":
-        int curPos = (await _controller.position)?.inMilliseconds ?? 0;
-        Duration newPos = Duration(milliseconds: (curPos + MediaOptions.seekForwardTime));
-        _controller.seekTo(newPos);
-        break;
-      case "seek-back":
+      case SEEK_FWD_TAG:
         int curPos = (await _controller.position)?.inMilliseconds ?? 0;
         Duration newPos =
-        Duration(milliseconds: (curPos - MediaOptions.seekBackwardsTime));
+            Duration(milliseconds: (curPos + MediaOptions.seekForwardTime));
+        _controller.seekTo(newPos);
+        break;
+      case SEEK_BACK_TAG:
+        int curPos = (await _controller.position)?.inMilliseconds ?? 0;
+        Duration newPos =
+            Duration(milliseconds: (curPos - MediaOptions.seekBackwardsTime));
         _controller.seekTo(newPos);
         break;
       case NEXT_TAG:
-        await widget.bloc.getNextMedia();
+        await widget._bloc.getNextMedia();
         changeMedia();
         break;
       case PREV_TAG:
-        await widget.bloc.getPreviousMedia();
+        await widget._bloc.getPreviousMedia();
         changeMedia();
         break;
       case DETAILS_TAG:
         List<Widget> dataTexts = List.empty(growable: true);
 
-        Map<String, String> metadata = widget.bloc.currentMedia!.data.metadata;
-        for(MapEntry entry in metadata.entries) {
-          dataTexts.add(
-              Text("${entry.key}: ${entry.value}", style: detailsTextStyle,)
-          );
+        Map<String, String> metadata = widget._bloc.currentMedia!.data.metadata;
+        for (MapEntry entry in metadata.entries) {
+          dataTexts.add(Text(
+            "${entry.key}: ${entry.value}",
+            style: detailsTextStyle,
+          ));
         }
 
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => SafeArea(
-                child: Column(
-                children: dataTexts,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-            )));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SafeArea(
+                      child: Column(
+                        children: dataTexts,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    )));
         break;
       case "speed":
-
+        // TODO Make and display speed slider/selector.
         break;
     }
   }
 
   void processPan(dynamic details) async {
     if (isLeftFling) {
-      await widget.bloc.getNextMedia();
+      await widget._bloc.getNextMedia();
     } else {
-      await widget.bloc.getPreviousMedia();
+      await widget._bloc.getPreviousMedia();
     }
     changeMedia();
   }
 
   void changeMedia() async {
     await _controller.pause();
-    // this.dispose();
 
-    MaterialPageRoute videoRoute = MaterialPageRoute(
-        builder: (context) => VideoView(widget.bloc));
+    MaterialPageRoute videoRoute =
+        MaterialPageRoute(builder: (context) => VideoView(widget._bloc));
 
     Navigator.pushReplacement(context, videoRoute);
   }

@@ -100,7 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
             }
 
             return Center(child: CircularProgressIndicator());
-            // return Text('Well....this is awkard.\nHow did we get here???');
           }),
     );
   } // @override
