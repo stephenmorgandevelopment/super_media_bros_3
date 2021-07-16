@@ -39,25 +39,54 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
       height: 50.0,
       alignment: Alignment.bottomCenter,
       child: Material(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(formatTime(currentPosition)),
-            Slider(
-              min: 0.00,
-              divisions: null,
-              max: _bloc.durationSeconds,
-              value: _bloc.currentPosition,
-              // label: _bloc
-              //     .currentPosition
-              //     .toString(),
-              onChanged: (position) => onSeekChanged(position),
-              onChangeEnd: (position) => onUserChanged(position),
-            ),
-            Text(formatDuration()),
+        child: StreamBuilder(
+          stream: _bloc.currentPositionStream,
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+            if(snapshot.hasData) {
+              return buildSlider(snapshot.data!);
+            } else {
+              return placeHolderBox();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildSlider(double data) {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(formatTime(data)),
+          Slider(
+            min: 0.00,
+            divisions: null,
+            max: _bloc.durationSeconds,
+            value: data,
+            // label: _bloc
+            //     .currentPosition
+            //     .toString(),
+            onChanged: (position) => onSeekChanged(position),
+            onChangeEnd: (position) => onUserChanged(position),
+          ),
+          Text(formatDuration()),
+        ],
+      );
+  }
+
+  Widget placeHolderBox() {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment(-0.5, -0.6),
+          radius: 0.15,
+          colors: <Color>[
+            Color(0xFFEEEEEE),
+            Color(0xFF111133),
           ],
+          stops: <double>[0.9, 1.0],
         ),
       ),
     );

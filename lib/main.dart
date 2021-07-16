@@ -20,12 +20,14 @@ class MyApp extends StatelessWidget {
   static bool _isReady = false;
   static late Future<void> _initialized;
 
-
   MyApp();
 
   static Future<List<MediaBloc>> get mainBlocs async {
-    if(_isReady) {
-      return List.from({_imageBloc, _videoBloc, _audioBloc}, growable: true,);
+    if (_isReady) {
+      return List.from(
+        {_imageBloc, _videoBloc, _audioBloc},
+        growable: true,
+      );
     } else {
       log("mainBlocs called - not ready yet.");
       await _initialized;
@@ -56,7 +58,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(),
       home: MyHomePage(title: 'Super Media Bros'),
       routes: {
-        NeedsPermissionText.NEEDS_PERMISSION: (context) => NeedsPermissionText(),
+        NeedsPermissionText.NEEDS_PERMISSION: (context) =>
+            NeedsPermissionText(),
       },
     );
   }
@@ -85,22 +88,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: FutureBuilder(
-          future: mediaFuture,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<MediaBloc>> snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return MediaTabPager(snapshot.data!);
-            }
+    return FutureBuilder(
+        future: mediaFuture,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<MediaBloc>> snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            return SafeArea(
+              child: MediaTabPager(snapshot.data!),
+            );
+          }
 
-            if (!MediaAccess.hasReadPermission) {
-              return explainPermission;
-            }
+          if (!MediaAccess.hasReadPermission) {
+            return explainPermission;
+          }
 
-            return Center(child: CircularProgressIndicator());
-          }),
-    );
+          return Center(child: CircularProgressIndicator());
+        });
   } // @override
 
   Future<void> checkPermissions() async {
@@ -114,8 +117,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget get explainPermission => NeedsPermissionText();
+
   void explainPerms() {
     Navigator.pushNamed(context, NeedsPermissionText.NEEDS_PERMISSION);
   }
-
 }

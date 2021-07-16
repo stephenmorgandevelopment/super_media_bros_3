@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
 import 'package:super_media_bros_3/widgets/details_widget.dart';
@@ -32,8 +31,8 @@ class _ImageViewState extends State<ImageView> {
   Widget build(BuildContext context) {
     if (optionsShowing) {
       return SafeArea(
-        child: Material(
-          child: Stack(
+        child: Scaffold(
+          body: Stack(
             alignment: Alignment.center,
             children: [
               GestureDetector(
@@ -47,8 +46,8 @@ class _ImageViewState extends State<ImageView> {
       );
     } else {
       return SafeArea(
-        child: Material(
-          child: GestureDetector(
+        child: Scaffold(
+          body: GestureDetector(
             child: Center(child: _image),
             onTap: _toggleOptions,
             onPanEnd: (details) => processPan(details),

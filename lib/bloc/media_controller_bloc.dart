@@ -1,5 +1,6 @@
-import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/controllers/image_slideshow_controller.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
@@ -40,21 +41,27 @@ class MediaControllerBloc {
   Duration get duration => Duration(
       milliseconds: int.parse(_bloc.currentMedia!.data.metadata['duration']!));
 
-  double get durationSeconds =>
-      int.parse(_bloc.currentMedia!.data.metadata['duration']!) / 1000;
+  double get durationSeconds => duration.inSeconds.toDouble();
+      // int.parse(_bloc.currentMedia!.data.metadata['duration']!) / 1000;
 
   double get currentPosition => _bloc.type == Type.VIDEO
       ? controller.value.position.inSeconds.toDouble()
       : 0.0; // TODO Implement audio player.
 
+  final _currentPositionSink = PublishSubject<double>();
+  Stream<double> get currentPositionStream =>
+      _currentPositionSink.stream;
+
   void seekTo(int position) {
     if(_bloc.type == Type.VIDEO) {
+
       controller.seekTo(Duration(seconds: position));
     } else if(_bloc.type == Type.AUDIO) {
       // TODO Implement audio player.
     }
   }
 
+  late VoidCallback _currentTimeListener;
   void initAsVideo() {
     _videoController = _bloc.currentMedia!.data.isLocal()
         ? VideoPlayerController.file(_bloc.currentMedia!.file!)
@@ -68,12 +75,21 @@ class MediaControllerBloc {
         controller.play();
       }
     });
+    
+    currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
+    _videoController?.addListener(currentTimeListener);
   }
   
+  
+  
   void dispose() {
+    _videoController?.removeListener(_currentTimeListener);
+    _currentPositionSink.close();
     // _slideshowController?.dispose();
     _videoController?.dispose();
     // _audioController?.dispose();
+
+    
   }
 
 }
