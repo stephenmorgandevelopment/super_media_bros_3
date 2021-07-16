@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
-import 'package:super_media_bros_3/widgets/media_view.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
 const String PLAY_TAG = "play-pause";
 const String SPEED_TAG = "speed";
@@ -32,11 +32,10 @@ class SuperMediaButtons {
   ];
 
   IconButton get playBtn => IconButton(
-      onPressed: () => onPressed("play-pause"),
+      onPressed: () => onPressed(PLAY_TAG),
       iconSize: MediaOptions.iconsize * 1.25,
       icon: Icon(
-        // (context.widget as VideoControls).controller.value.isPlaying
-        (context.widget as MediaView).isPlaying
+        MediaControllerBlocProvider.of(context).isPlaying
             ? Icons.pause_circle_filled_outlined
             : Icons.play_circle_fill_outlined,
         color: Colors.white38,
@@ -44,10 +43,10 @@ class SuperMediaButtons {
       ));
 
   IconButton get videoPlayBtn => IconButton(
-      onPressed: () => onPressed("play-pause"),
+      onPressed: () => onPressed(PLAY_TAG),
       iconSize: MediaOptions.iconsize * 2.5,
       icon: Icon(
-        (context.widget as MediaView).isPlaying
+        MediaControllerBlocProvider.of(context).isPlaying
             ? Icons.pause_circle_filled_outlined
             : Icons.play_circle_fill_outlined,
         color: Colors.white38,
@@ -55,7 +54,7 @@ class SuperMediaButtons {
       ));
 
   IconButton get speedBtn => IconButton(
-      onPressed: () => onPressed("speed"),
+      onPressed: () => onPressed(SPEED_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.slow_motion_video_outlined,

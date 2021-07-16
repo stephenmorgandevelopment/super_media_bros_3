@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class MediaGestureDetector extends GestureDetector {
-  Widget? child;
+  final Widget? child;
 
   MediaGestureDetector({this.child});
 

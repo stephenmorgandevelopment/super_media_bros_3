@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/widgets.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 
 class MediaResource {
@@ -30,21 +29,4 @@ class MediaResource {
       MediaData data,
       File file) : this(data, null, file);
 
-  static Image getImage(MediaResource media) {
-    Image image = media.bytes != null
-        ? Image.memory(
-        media.bytes!,
-      fit: BoxFit.contain,
-      alignment: Alignment.center,
-      isAntiAlias: true,
-    )
-        : Image.file(
-      media.file!,
-      fit: BoxFit.contain,
-      alignment: Alignment.center,
-      isAntiAlias: true,
-    );
-
-    return image;
-  }
 }

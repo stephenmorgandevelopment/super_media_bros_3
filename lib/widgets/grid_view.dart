@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/image_view.dart';
 import 'package:super_media_bros_3/widgets/video_view.dart';
 
@@ -38,8 +39,9 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
       child: GridView.builder(
         gridDelegate: delegate,
         scrollDirection: widget.horizontal ? Axis.horizontal : Axis.vertical,
-        itemCount: widget.bloc.mediaList.length,
-        itemBuilder: builder,   //(BuildContext context, int index) => builder(context, index),
+        itemCount: widget.bloc.count,
+        itemBuilder:
+            builder, //(BuildContext context, int index) => builder(context, index),
       ),
     );
   }
@@ -72,11 +74,20 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
     switch (widget.bloc.type) {
       case Type.IMAGE:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ImageView(widget.bloc)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => MediaControllerBlocProvider(widget.bloc,
+                  child: ImageView(widget.bloc))),
+        );
         break;
       case Type.VIDEO:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => VideoView(widget.bloc)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => MediaControllerBlocProvider(widget.bloc,
+                child: VideoView()),
+          ),
+        );
         break;
       case Type.AUDIO:
       //TODO Instantiate and navigate to audio player

@@ -42,6 +42,10 @@ file
 2.12
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.2/
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.2/lib/
+intl
+2.12
+file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0/
+file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0/lib/
 js
 2.12
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/js-0.6.3/
@@ -90,6 +94,10 @@ process
 2.12
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.1/
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.1/lib/
+rxdart
+2.12
+file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/rxdart-0.27.1/
+file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/rxdart-0.27.1/lib/
 shared_preferences
 2.12
 file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.6/

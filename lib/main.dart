@@ -6,7 +6,6 @@ import 'package:super_media_bros_3/data/media_interface.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/needs_permission_text.dart';
 import 'package:super_media_bros_3/widgets/tabbed_pager.dart';
-import 'package:super_media_bros_3/widgets/video_view.dart';
 
 void main() {
   runApp(

@@ -23,7 +23,9 @@ class MediaBloc {
     loadCurrentMedia();
   }
 
-  bool isPlaying = false;
+  int get count => mediaList.length;
+
+  bool get isPlaying => false;
 
   @protected
   MediaResource? _currentMedia;
@@ -77,4 +79,5 @@ class MediaBloc {
       return Future.error(NeedsPermissionText.NEEDS_PERMISSION);
     }
   }
+
 }

@@ -1,58 +1,59 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_resource.dart';
-import 'package:super_media_bros_3/widgets/image_controls.dart';
+import 'package:super_media_bros_3/widgets/details_widget.dart';
+import 'package:super_media_bros_3/widgets/controls/image_controls.dart';
 import 'package:super_media_bros_3/widgets/media_view.dart';
 import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
 
 class ImageView extends StatefulWidget with MediaView {
   final MediaBloc _bloc;
 
-  bool get isPlaying => _bloc.isPlaying;
-
   ImageView(this._bloc);
 
   @override
-  State createState() {
-    return _ImageViewState(MediaResource.getImage(_bloc.currentMedia!));
-  }
+  State createState() => _ImageViewState();
 }
 
 class _ImageViewState extends State<ImageView> {
-  Image _image;
+  late Image _image;
   bool optionsShowing = false;
   bool isLeftFling = false;
 
-  _ImageViewState(this._image);
+  @override
+  void initState() {
+    _image = getImage(widget._bloc.currentMedia!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     if (optionsShowing) {
       return SafeArea(
-        child: Center(
+        child: Material(
           child: Stack(
             alignment: Alignment.center,
             children: [
               GestureDetector(
-                child: _image,
+                child: Center(child: _image),
                 onTap: _toggleOptions,
               ),
-              ImageControls(SuperMediaButtons(context, onPressed)),
+              ImageControls(onPressed),
             ],
           ),
         ),
       );
     } else {
-      return Center(
-        child: GestureDetector(
-          child: _image,
-          onTap: _toggleOptions,
-          onPanEnd: (details) => processPan(details),
-          onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
+      return SafeArea(
+        child: Material(
+          child: GestureDetector(
+            child: Center(child: _image),
+            onTap: _toggleOptions,
+            onPanEnd: (details) => processPan(details),
+            onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
+          ),
         ),
       );
     }
@@ -76,29 +77,11 @@ class _ImageViewState extends State<ImageView> {
         changeMediaTo(await widget._bloc.getPreviousMedia()!);
         break;
       case DETAILS_TAG:
-        List<Widget> dataTexts = List.empty(growable: true);
-
-        Map<String, String> metadata = widget._bloc.currentMedia!.data.metadata;
-        for (MapEntry entry in metadata.entries) {
-          dataTexts.add(Text(
-            "${entry.key}: ${entry.value}",
-            style: detailsTextStyle,
-          ));
-        }
-
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SafeArea(
-              child: Column(
-                children: dataTexts,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-            ),
-          ),
-        );
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DetailsWidget(widget._bloc.currentMedia!.data)));
         break;
     }
   }
@@ -120,8 +103,26 @@ class _ImageViewState extends State<ImageView> {
   }
 
   void changeMediaTo(MediaResource media) async {
-    _image = MediaResource.getImage(media);
+    _image = getImage(media);
     setState(() {});
+  }
+
+  Image getImage(MediaResource media) {
+    Image image = media.bytes != null
+        ? Image.memory(
+      media.bytes!,
+      fit: BoxFit.contain,
+      alignment: Alignment.center,
+      isAntiAlias: true,
+    )
+        : Image.file(
+      media.file!,
+      fit: BoxFit.contain,
+      alignment: Alignment.center,
+      isAntiAlias: true,
+    );
+
+    return image;
   }
 }
 

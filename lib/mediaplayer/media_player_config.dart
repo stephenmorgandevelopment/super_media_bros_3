@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaPlayerConfig {
@@ -42,7 +41,7 @@ class MediaPlayerConfig {
       })) {
       // if(key.contains(TAG))
       String k = key.replaceAll(TAG, "");
-      config[key] = prefs.getString(key)!;
+      _config[k] = prefs.getString(k)!;
     }
   }
 }
