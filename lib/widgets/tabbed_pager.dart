@@ -1,8 +1,16 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
+import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
+import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
+import 'package:video_player/video_player.dart';
 
 class MediaTabPager extends StatefulWidget {
   final List<MediaBloc> mainMediaBlocs;
@@ -54,6 +62,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          leading: menuBtn,
           title: Text('Super Media Bros'),
           bottom: TabBar(
             controller: _tabController,
@@ -67,6 +76,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
           return MediaGridLayout(getBloc(tab));
         }).toList(),
       ),
+      // drawer: , // Settings menu eventually.
     );
   }
 
@@ -78,7 +88,32 @@ class _MediaTabPagerState extends State<MediaTabPager>
     } else if (tab.key == AUDIO_KEY) {
       return widget.mainMediaBlocs[2];
     } else {
-      return MediaBloc.empty();
+      return MediaBloc.empty(null);
     }
+  }
+
+  Widget get menuBtn =>
+      IconButton(
+        onPressed: () => editControls(Type.VIDEO),
+        icon: Icon(
+          Icons.menu_outlined,
+          color: Colors.white,
+        ),
+      );
+
+  void editControls(Type type) async {
+    var controller = VideoPlayerController.asset('images/test.mp4');
+    MediaData data = VideoData(Uri.parse(controller.dataSource), Source.LOCAL);
+    MediaBloc bloc = MediaBloc(<MediaData>[data], Type.VIDEO);
+    bloc.loadCurrentMedia();
+
+    controller.dispose();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              MediaControllerBlocProvider(bloc,
+                  child: EditControls(type))),
+    );
   }
 }

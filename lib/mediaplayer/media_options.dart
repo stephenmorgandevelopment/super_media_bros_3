@@ -3,4 +3,6 @@ class MediaOptions {
   static int seekBackwardsTime = 3500;
 
   static double iconsize = 52.0;
+  static double videoPlayBtnMultiplier = 2.5;
+  static double playBtnMultiplier = videoPlayBtnMultiplier / 2;
 }

@@ -7,7 +7,7 @@ import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provid
 import 'package:super_media_bros_3/widgets/details_widget.dart';
 import 'package:super_media_bros_3/widgets/media_view.dart';
 import 'package:super_media_bros_3/widgets/controls/video_controls.dart';
-import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget with MediaView {
@@ -26,20 +26,18 @@ class VideoView extends StatefulWidget with MediaView {
 }
 
 class _VideoViewState extends State<VideoView> {
-  bool isLeftFling = false;
-  bool controlsShowing = false;
-
+  VideoControls? controls;
   late MediaControllerBloc _bloc;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool isLeftFling = false;
+  bool controlsShowing = false;
+  bool speedSelectorShowing = false;
 
   @override
   void didChangeDependencies() {
     _bloc = MediaControllerBlocProvider.of(context);
     log("didChangeDependencies was called.");
+
     super.didChangeDependencies();
   }
 
@@ -59,6 +57,7 @@ class _VideoViewState extends State<VideoView> {
             return SafeArea(
               child: Scaffold(
                 body: Stack(
+                  fit: StackFit.expand,
                   alignment: Alignment.center,
                   children: [
                     Center(
@@ -70,7 +69,11 @@ class _VideoViewState extends State<VideoView> {
                         onTap: () => toggleControls(),
                       ),
                     ),
-                    Center(child: VideoControls(onPressed)),
+                    VideoControls(onPressed),
+                    // speedSelectorShowing
+                    //     ? ControlGroup(<Widget>[SpeedSelectSlider()],
+                    //         Position(bottom: 220.0, right: 20.0, left: 20.0))
+                    //     : Text(""),
                   ],
                 ),
               ),
@@ -100,7 +103,43 @@ class _VideoViewState extends State<VideoView> {
     );
   }
 
+  // List<Widget> buildTree() {
+  //   List<Widget> widgetTree =
+  //       List.from(<Widget>[videoPlayerWidget], growable: true);
+  //
+  //   if (controlsShowing) {
+  //     if (controls == null) {
+  //       controls = VideoControls(onPressed);
+  //     }
+  //
+  //     widgetTree.add(Expanded(child: controls!));
+  //   }
+  //
+  //   if (speedSelectorShowing) {
+  //     Position curPos = Position(bottom: 220.0, right: 20.0, left: 20.0);
+  //     widgetTree.add(ControlGroup(<Widget>[SpeedSelectSlider()], curPos));
+  //   }
+  //
+  //   return widgetTree;
+  // }
+
+  dynamic get videoPlayerWidget => GestureDetector(
+        onTap: () => toggleControls(),
+        onPanEnd: (details) => processPan(details),
+        onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: _bloc.controller.value.aspectRatio,
+            child: VideoPlayer(_bloc.controller),
+          ),
+        ),
+      );
+
   void processPan(dynamic details) async {
+    if (controlsShowing) {
+      return;
+    }
+
     if (isLeftFling) {
       await _bloc.bloc.getNextMedia();
     } else {
@@ -172,7 +211,8 @@ class _VideoViewState extends State<VideoView> {
                     DetailsWidget(dummy.bloc.currentMedia!.data)));
         break;
       case SPEED_TAG:
-        // TODO Make and display speed slider/selector.
+        speedSelectorShowing = !speedSelectorShowing;
+        initState();
         break;
     }
   }

@@ -109,11 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> checkPermissions() async {
     if (!MediaAccess.hasReadPermission) {
       await MediaAccess.requestPermission();
-      // mediaFuture = MyApp.mainBlocs;
+      mediaFuture = MyApp.mainBlocs;
       setState(() {});
+    } else {
+      mediaFuture = MyApp.mainBlocs;
     }
 
-    mediaFuture = MyApp.mainBlocs;
+    // mediaFuture = MyApp.mainBlocs;
   }
 
   Widget get explainPermission => NeedsPermissionText();

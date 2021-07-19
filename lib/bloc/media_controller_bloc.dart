@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/controllers/image_slideshow_controller.dart';
@@ -35,7 +34,7 @@ class MediaControllerBloc {
   }
 
   bool get isPlaying => _bloc.type == Type.VIDEO
-      ? _videoController!.value.isPlaying
+      ? (_videoController == null ? true : _videoController!.value.isPlaying)
       : _audioController == null;
 
   Duration get duration => Duration(
@@ -45,7 +44,7 @@ class MediaControllerBloc {
       // int.parse(_bloc.currentMedia!.data.metadata['duration']!) / 1000;
 
   double get currentPosition => _bloc.type == Type.VIDEO
-      ? controller.value.position.inSeconds.toDouble()
+      ? _videoController!.value.position.inSeconds.toDouble()
       : 0.0; // TODO Implement audio player.
 
   final _currentPositionSink = PublishSubject<double>();
@@ -55,13 +54,39 @@ class MediaControllerBloc {
   void seekTo(int position) {
     if(_bloc.type == Type.VIDEO) {
 
-      controller.seekTo(Duration(seconds: position));
+      _videoController?.seekTo(Duration(seconds: position));
     } else if(_bloc.type == Type.AUDIO) {
       // TODO Implement audio player.
     }
   }
 
-  late VoidCallback _currentTimeListener;
+  double get playSpeed => _bloc.type == Type.VIDEO
+      ? controller.value.playbackSpeed
+      : 1.0;  // TODO Implement audio player.
+
+  set speed(double speed) {
+    if(_bloc.type == Type.VIDEO) {
+      _videoController!.setPlaybackSpeed(speed);
+    } else if(_bloc.type == Type.AUDIO) {
+      // TODO Implement audio player.
+    }
+  }
+
+  bool get isLooping => _bloc.type == Type.VIDEO
+      ? _videoController!.value.isLooping
+      : false;  // TODO Implement audio player.
+
+  set looper(bool loop) {
+    if(_bloc.type == Type.VIDEO) {
+      _videoController!.setLooping(loop);
+    } else if(_bloc.type == Type.AUDIO) {
+      // TODO Implement audio player.
+    }
+  }
+
+
+
+  void _currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
   void initAsVideo() {
     _videoController = _bloc.currentMedia!.data.isLocal()
         ? VideoPlayerController.file(_bloc.currentMedia!.file!)
@@ -74,10 +99,11 @@ class MediaControllerBloc {
       if (!controller.value.isPlaying) {
         controller.play();
       }
+      controller.addListener(_currentTimeListener);
     });
     
-    currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
-    _videoController?.addListener(currentTimeListener);
+    // currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
+    // _videoController?.addListener(currentTimeListener);
   }
   
   

@@ -1,19 +1,18 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
-import 'package:super_media_bros_3/widgets/time_slider.dart';
-import 'package:super_media_bros_3/widgets/super_media_buttons.dart';
+import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
 // TODO Unify this under one class with ImageControls and Audio Controls.
 // TODO Use MediaPlayerConfig to pass config into makeControls().
 class VideoControls extends StatefulWidget with MediaControls {
   final Function callback;
 
-  // final VideoPlayerController controller;
-  // final BuildContext context;
-  // final SuperMediaButtons smb;
-
-  // VideoControls(this.context, this.callback);
   const VideoControls(this.callback);
 
   @override
@@ -36,39 +35,51 @@ class _VideoControlsState extends State<VideoControls> {
   // TODO Pull controls config from MediaPlayerConfig.
   Widget makeControls() {
     List<ControlGroup> groups = <ControlGroup>[
-      ControlGroup(<IconButton>[smb.videoPlayBtn], alignment: Alignment.center),
+      ControlGroup(
+        <Widget>[smb.videoPlayBtn],
+        Position.centerAlign(context, isPlayBtn: true),
+      ),
       ControlGroup(
         <IconButton>[smb.seekBackBtn, smb.seekFwdBtn],
-        alignment: Alignment.bottomRight,
-        margins: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 70.0),
+        Position(bottom: 56.0, right: 20.0),
+        // Position.combine(Position.bottomAlign(), Position.rightAlign()),
+        // margins: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 70.0),
       ),
       ControlGroup(<IconButton>[smb.prevBtn, smb.nextBtn],
-          alignment: Alignment.topRight),
+          Position.combine(Position.topAlign(), Position.rightAlign())),
       ControlGroup(
         <IconButton>[smb.speedBtn, smb.detailsBtn],
-        alignment: Alignment.bottomLeft,
-        margins: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 70.0),
+        Position(bottom: 56.0, left: 20.0),
+        // margins: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 70.0),
       ),
       ControlGroup(
         <Widget>[TimeSlider()],
-        alignment: Alignment.bottomCenter,
-        margins: EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
+        Position(bottom: 12.0, left: 10.0, right: 10.0),
+        // margins: EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
       ),
     ];
-
-    // List<Widget> controlWidgets = List.empty(growable: true);
-    // for (ControlGroup group in groups) {
-    //   controlWidgets.add(group.compose());
-    // }
 
     return Material(
       elevation: 7.0,
       child: Stack(
         fit: StackFit.passthrough,
+        // fit: StackFit.expand,
         children: groups,
       ),
       type: MaterialType.transparency,
     );
+
+    // return MediaQuery(
+    //   data: MediaQuery.of(context),
+    //   child: Material(
+    //     elevation: 7.0,
+    //     child: Stack(
+    //       fit: StackFit.passthrough,
+    //       children: groups,
+    //     ),
+    //     type: MaterialType.transparency,
+    //   ),
+    // );
   }
 
 // void onPressed(String btnTag) => widget.callback(btnTag);
