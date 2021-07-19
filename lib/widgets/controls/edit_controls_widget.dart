@@ -33,7 +33,8 @@ class _EditControlsState extends State<EditControls> {
         break;
       case Type.AUDIO:
         title = "Edit:Audio";
-        //controls = AudioControls;
+        controls = VideoControls(callback);
+        // controls = AudioControls;
         break;
     }
 
@@ -47,6 +48,7 @@ class _EditControlsState extends State<EditControls> {
       body: Stack(
         children: [
           Container(
+            constraints: BoxConstraints.expand(),
             child: Image.asset(
               'images/thumbs.png',
               fit: BoxFit.fill,

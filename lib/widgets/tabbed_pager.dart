@@ -33,7 +33,6 @@ const Key AUDIO_KEY = Key(AUDIO_TAG);
 
 class _MediaTabPagerState extends State<MediaTabPager>
     with SingleTickerProviderStateMixin {
-
   static const List<Tab> homeTabs = <Tab>[
     Tab(
       icon: Icon(Icons.home),
@@ -62,7 +61,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          leading: menuBtn,
+          // leading: menuBtn,
           title: Text('Super Media Bros'),
           bottom: TabBar(
             controller: _tabController,
@@ -75,6 +74,51 @@ class _MediaTabPagerState extends State<MediaTabPager>
         children: homeTabs.map((Tab tab) {
           return MediaGridLayout(getBloc(tab));
         }).toList(),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          children: [
+            DrawerHeader(
+              margin: EdgeInsets.all(0.0),
+              child: Center(
+                child: Text(
+                  "Personalize your\nSuper Media Experience:",
+                  style: drawerHeaderStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              padding: EdgeInsets.all(0.0),
+            ),
+            ListTile(
+              leading: Icon(Icons.image),
+              title: Text(
+                "Edit Image Controls",
+                style: drawerTextStyle,
+              ),
+              onTap: () => editControls(Type.IMAGE),
+            ),
+            ListTile(
+              leading: Icon(Icons.movie),
+              onTap: () => editControls(Type.VIDEO),
+              title: Text(
+                "Edit Video Controls",
+                style: drawerTextStyle,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.library_music),
+              onTap: () => editControls(Type.AUDIO),
+              title: Text(
+                "Edit Audio Controls",
+                style: drawerTextStyle,
+              ),
+            ),
+          ],
+        ),
       ),
       // drawer: , // Settings menu eventually.
     );
@@ -92,8 +136,11 @@ class _MediaTabPagerState extends State<MediaTabPager>
     }
   }
 
-  Widget get menuBtn =>
-      IconButton(
+  get drawerTextStyle => TextStyle(color: Colors.white, fontSize: 24.0);
+
+  get drawerHeaderStyle => TextStyle(color: Colors.white, fontSize: 31.0);
+
+  Widget get menuBtn => IconButton(
         onPressed: () => editControls(Type.VIDEO),
         icon: Icon(
           Icons.menu_outlined,
@@ -102,18 +149,11 @@ class _MediaTabPagerState extends State<MediaTabPager>
       );
 
   void editControls(Type type) async {
-    var controller = VideoPlayerController.asset('images/test.mp4');
-    MediaData data = VideoData(Uri.parse(controller.dataSource), Source.LOCAL);
-    MediaBloc bloc = MediaBloc(<MediaData>[data], Type.VIDEO);
-    bloc.loadCurrentMedia();
-
-    controller.dispose();
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              MediaControllerBlocProvider(bloc,
-                  child: EditControls(type))),
+          builder: (context) => MediaControllerBlocProvider.forEditScreen(type,
+              child: EditControls(type))),
     );
   }
 }

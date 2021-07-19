@@ -54,6 +54,7 @@ flutter:
     - images/menu.png
     - images/logo1.png
     - images/audio.png
+    - images/thumbs.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
