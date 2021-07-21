@@ -9,6 +9,7 @@ import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
 import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
 import 'package:video_player/video_player.dart';
 
@@ -91,14 +92,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
                       // height: 40.0,
                       constraints: BoxConstraints.expand(height: 40.0),
                       alignment: Alignment.centerRight,
-                      child: IconButton(
-                        onPressed: () => closeDrawer(),
-                        iconSize: 36.0,
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
-                      )),
+                      child: SuperMediaButtons.closeBtnFrom(context)),
                   Center(
                     child: Text(
                       "Personalize your\nSuper Media Experience:",

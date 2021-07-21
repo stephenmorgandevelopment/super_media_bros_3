@@ -95,7 +95,25 @@ class SuperMediaButtons {
     }
   }
 
-  get repeatAllBtn => IconButton(
+  static IconButton closeBtnFrom(BuildContext context) => IconButton(
+        onPressed: () => Navigator.pop(context),
+        iconSize: 36.0,
+        icon: Icon(
+          Icons.close,
+          color: Colors.white,
+        ),
+      );
+
+  IconButton get closeBtn => IconButton(
+        onPressed: () => Navigator.pop(context),
+        iconSize: 36.0,
+        icon: Icon(
+          Icons.close,
+          color: Colors.white,
+        ),
+      );
+
+  IconButton get repeatAllBtn => IconButton(
         onPressed: () => onPressed(REPEAT_ALL_TAG),
         iconSize: MediaOptions.iconsize,
         icon: Icon(

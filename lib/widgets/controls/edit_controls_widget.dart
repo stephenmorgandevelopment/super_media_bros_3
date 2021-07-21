@@ -7,7 +7,6 @@ import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:super_media_bros_3/widgets/controls/video_controls.dart';
 
-
 const String ADD_CONTROL_GROUP_TAG = "add-control-group";
 const String ADD_CONTROL_BUTTON_TAG = "add-contol-button";
 
@@ -59,67 +58,97 @@ class _EditControlsState extends State<EditControls> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: appbar,
-      endDrawerEnableOpenDragGesture: true,
-      endDrawer: Drawer(
-        key: endDrawerKey,
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: appbar,
+        endDrawerEnableOpenDragGesture: true,
+        endDrawer: Drawer(
+          key: endDrawerKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
+                height: 60.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Media Buttons",
+                        style: headerStyle,
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 0.0),
+                      child: smb.closeBtn,
+                      alignment: Alignment.centerRight,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                  children: smb.controlButtons,
+                ),
+              ),
+            ],
+          ),
+          elevation: 16.0,
+        ),
+        body: Stack(
           children: [
             Container(
-              child: Row()
+              constraints: BoxConstraints.expand(),
+              child: Image.asset(
+                'images/thumbs.png',
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+                isAntiAlias: true,
+              ),
             ),
+            Container(
+              // child: controls,
+              child: DragTarget<ControlGroup>(
+                builder: (BuildContext context, accepted, rejected) {
+                  return controls;
+                },
+              ),
+            )
           ],
         ),
-        GridView.count(
-          crossAxisCount: 3,
-          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-          children: smb.controlButtons,
-        ),
-        elevation: 16.0,
-      ),
-      body: Stack(
-        children: [
-          Container(
-            constraints: BoxConstraints.expand(),
-            child: Image.asset(
-              'images/thumbs.png',
-              fit: BoxFit.fill,
-              filterQuality: FilterQuality.high,
-              isAntiAlias: true,
-            ),
-          ),
-          Container(
-            // child: controls,
-            child: DragTarget<ControlGroup>(
-              builder: (BuildContext context, accepted, rejected) {
-                return controls;
-              },
-            ),
-          )
-        ],
       ),
     );
   }
 
+  TextStyle headerStyle = TextStyle(
+    fontSize: 24.0,
+  );
+
   AppBar get appbar => AppBar(
         title: Text(title),
+        automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Icon(Icons.add_circle_outline_outlined),
+            iconSize: 40.0,
             onPressed: () => addControlGroup(),
           ),
           IconButton(
             icon: Icon(Icons.menu),
+            iconSize: 40.0,
             onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
           ),
         ],
       );
 
-  void addControlGroup() {
-
-  }
+  void addControlGroup() {}
 
   void onPressed() {
     // TODO make this button a draggable and assign new location accordingly.
