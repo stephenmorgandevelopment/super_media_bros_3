@@ -21,9 +21,9 @@ class MediaControllerBlocProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(MediaControllerBlocProvider old) {
-    if (controllerBloc.currentPosition != old.controllerBloc.currentPosition) {
-      return true;
-    }
+    // if (controllerBloc.currentPosition != old.controllerBloc.currentPosition) {
+    //   return true;
+    // }
     if (mediaBloc.currentIndex != old.mediaBloc.currentIndex) {
       return true;
     }

@@ -33,6 +33,8 @@ const Key AUDIO_KEY = Key(AUDIO_TAG);
 
 class _MediaTabPagerState extends State<MediaTabPager>
     with SingleTickerProviderStateMixin {
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   static const List<Tab> homeTabs = <Tab>[
     Tab(
       icon: Icon(Icons.home),
@@ -60,6 +62,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // key: _scaffoldKey,
       appBar: AppBar(
           // leading: menuBtn,
           title: Text('Super Media Bros'),
@@ -81,12 +84,29 @@ class _MediaTabPagerState extends State<MediaTabPager>
           children: [
             DrawerHeader(
               margin: EdgeInsets.all(0.0),
-              child: Center(
-                child: Text(
-                  "Personalize your\nSuper Media Experience:",
-                  style: drawerHeaderStyle,
-                  textAlign: TextAlign.center,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      // height: 40.0,
+                      constraints: BoxConstraints.expand(height: 40.0),
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        onPressed: () => closeDrawer(),
+                        iconSize: 36.0,
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                      )),
+                  Center(
+                    child: Text(
+                      "Personalize your\nSuper Media Experience:",
+                      style: drawerHeaderStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               ),
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -136,9 +156,13 @@ class _MediaTabPagerState extends State<MediaTabPager>
     }
   }
 
+  void closeDrawer() {
+    Navigator.pop(context);
+  }
+
   get drawerTextStyle => TextStyle(color: Colors.white, fontSize: 24.0);
 
-  get drawerHeaderStyle => TextStyle(color: Colors.white, fontSize: 31.0);
+  get drawerHeaderStyle => TextStyle(color: Colors.white, fontSize: 28.0);
 
   Widget get menuBtn => IconButton(
         onPressed: () => editControls(Type.VIDEO),

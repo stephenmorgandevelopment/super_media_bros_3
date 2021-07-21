@@ -11,14 +11,6 @@ class ControlGroup extends StatelessWidget {
   final bool horizontal;
   final Position position;
 
-  // ControlGroup(
-  //   this.controlsWidgets, {
-  //   this.alignment = Alignment.bottomRight,
-  //   this.horizontal = true,
-  //   this.margins = const EdgeInsets.symmetric(horizontal: 5.0, vertical: 20.0),
-  //   this.position,
-  // });
-
   ControlGroup(this.controlsWidgets, this.position, {this.horizontal = true, this.key});
 
   @override
@@ -45,15 +37,8 @@ class ControlGroup extends StatelessWidget {
       right: position.right,
       bottom: position.bottom,
     );
-
-    // return Container(
-    //   margin: margins,
-    //   child: base,
-    //   alignment: alignment,
-    // );
   }
 
-  // Position get position => position;
 }
 
 class Position {

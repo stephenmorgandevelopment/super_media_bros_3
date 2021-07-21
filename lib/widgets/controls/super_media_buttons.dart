@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
-import 'package:super_media_bros_3/widgets/controls/control_group.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
 const String PLAY_TAG = "play-pause";
@@ -18,7 +18,8 @@ const String EDIT_TAG = "edit";
 const String COPY_TAG = "copy";
 const String MOVE_TAG = "move";
 const String DELETE_TAG = "delete";
-const String LOOPING_TAG = "looping";
+const String REPEAT_ONE_TAG = "repeat-one";
+const String REPEAT_ALL_TAG = "repeat-all";
 const String IMG_DETAIL_TAG = "details";
 
 class SuperMediaButtons {
@@ -28,10 +29,93 @@ class SuperMediaButtons {
   SuperMediaButtons(this.context, this.onPressed);
 
   List<IconButton> get controlButtons => <IconButton>[
-    videoPlayBtn, speedBtn, prevBtn, seekBackBtn, seekFwdBtn, nextBtn, detailsBtn,
-    shareBtn, addToBtn, favoriteBtn, bytesBtn, editBtn, copyBtn, moveBtn,
-    deleteBtn, imgDetailsBtn, playBtn
-  ];
+        speedBtn,
+        prevBtn,
+        seekBackBtn,
+        seekFwdBtn,
+        nextBtn,
+        detailsBtn,
+        shareBtn,
+        addToBtn,
+        favoriteBtn,
+        bytesBtn,
+        editBtn,
+        copyBtn,
+        moveBtn,
+        deleteBtn,
+        imgDetailsBtn,
+        playBtn,
+        repeatAllBtn,
+        repeatOneBtn,
+        videoPlayBtn,
+      ];
+
+  IconButton fromTag(String tag) {
+    switch (tag) {
+      case PLAY_TAG:
+        return MediaControllerBlocProvider.of(context).bloc.type == Type.VIDEO
+            ? videoPlayBtn
+            : playBtn;
+      case SPEED_TAG:
+        return speedBtn;
+      case PREV_TAG:
+        return prevBtn;
+      case SEEK_BACK_TAG:
+        return seekBackBtn;
+      case SEEK_FWD_TAG:
+        return seekFwdBtn;
+      case NEXT_TAG:
+        return nextBtn;
+      case DETAILS_TAG:
+        return detailsBtn;
+      case SHARE_TAG:
+        return shareBtn;
+      case ADD_TO_TAG:
+        return addToBtn;
+      case FAVORITE_TAG:
+        return favoriteBtn;
+      case BYTES_TAG:
+        return bytesBtn;
+      case EDIT_TAG:
+        return editBtn;
+      case COPY_TAG:
+        return copyBtn;
+      case MOVE_TAG:
+        return moveBtn;
+      case DELETE_TAG:
+        return deleteBtn;
+      case REPEAT_ONE_TAG:
+        return repeatOneBtn;
+      case REPEAT_ALL_TAG:
+        return repeatAllBtn;
+      case IMG_DETAIL_TAG:
+        return imgDetailsBtn;
+      default:
+        return playBtn;
+    }
+  }
+
+  get repeatAllBtn => IconButton(
+        onPressed: () => onPressed(REPEAT_ALL_TAG),
+        iconSize: MediaOptions.iconsize,
+        icon: Icon(
+          MediaControllerBlocProvider.of(context).isLooping
+              ? Icons.repeat_on_outlined
+              : Icons.repeat_outlined,
+          color: Colors.white38,
+        ),
+      );
+
+  IconButton get repeatOneBtn => IconButton(
+        onPressed: () => onPressed(REPEAT_ONE_TAG),
+        iconSize: MediaOptions.iconsize,
+        icon: Icon(
+          MediaControllerBlocProvider.of(context).isLooping
+              ? Icons.repeat_one_on_outlined
+              : Icons.repeat_one_outlined,
+          color: Colors.white38,
+        ),
+      );
 
   IconButton get playBtn => IconButton(
       onPressed: () => onPressed(PLAY_TAG),
@@ -189,5 +273,4 @@ class SuperMediaButtons {
         color: Colors.white38,
         semanticLabel: "View details from the image metadata.",
       ));
-
 }
