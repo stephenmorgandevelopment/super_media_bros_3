@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
@@ -34,18 +35,18 @@ class _ImageControlsState extends State<ImageControls> {
   Widget makeControls() {
     List<ControlGroup> groups = <ControlGroup>[
       ControlGroup(
-          <Widget>[smb.playBtn],
+          <SuperMediaWidget>[smb.playBtn],
           Position.combine(
             Position.bottomAlign(),
             Position.centerAlign(context, isPlayBtn: true)..top = null,
           )),
-      ControlGroup(<IconButton>[smb.prevBtn, smb.nextBtn],
+      ControlGroup(<SuperMediaWidget>[smb.prevBtn, smb.nextBtn],
           Position.combine(Position.bottomAlign(), Position.rightAlign())),
-      ControlGroup(<IconButton>[smb.favoriteBtn, smb.detailsBtn],
+      ControlGroup(<SuperMediaWidget>[smb.favoriteBtn, smb.detailsBtn],
           Position.combine(Position.rightAlign(), Position.topAlign())),
-      ControlGroup(<IconButton>[smb.editBtn, smb.shareBtn],
+      ControlGroup(<SuperMediaWidget>[smb.editBtn, smb.shareBtn],
           Position.combine(Position.leftAlign(), Position.bottomAlign())),
-      ControlGroup(<IconButton>[smb.moveBtn, smb.copyBtn, smb.deleteBtn],
+      ControlGroup(<SuperMediaWidget>[smb.moveBtn, smb.copyBtn, smb.deleteBtn],
           Position.combine(Position.topAlign(), Position.leftAlign())),
     ];
 

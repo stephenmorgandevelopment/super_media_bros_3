@@ -7,7 +7,7 @@ import 'package:super_media_bros_3/widgets/controls/image_controls.dart';
 import 'package:super_media_bros_3/widgets/media_view.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
-class ImageView extends StatefulWidget with MediaView {
+class ImageView extends MediaView {
   final MediaBloc _bloc;
 
   ImageView(this._bloc);

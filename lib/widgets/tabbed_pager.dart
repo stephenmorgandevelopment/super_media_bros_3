@@ -1,16 +1,17 @@
-import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
+import 'package:super_media_bros_3/themes/text_styles.dart';
 import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
+import 'package:super_media_bros_3/widgets/menus/customize_menu.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaTabPager extends StatefulWidget {
@@ -80,59 +81,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
         }).toList(),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          children: [
-            DrawerHeader(
-              margin: EdgeInsets.all(0.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                      // height: 40.0,
-                      constraints: BoxConstraints.expand(height: 40.0),
-                      alignment: Alignment.centerRight,
-                      child: SuperMediaButtons.closeBtnFrom(context)),
-                  Center(
-                    child: Text(
-                      "Personalize your\nSuper Media Experience:",
-                      style: drawerHeaderStyle,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              padding: EdgeInsets.all(0.0),
-            ),
-            ListTile(
-              leading: Icon(Icons.image),
-              title: Text(
-                "Edit Image Controls",
-                style: drawerTextStyle,
-              ),
-              onTap: () => editControls(Type.IMAGE),
-            ),
-            ListTile(
-              leading: Icon(Icons.movie),
-              onTap: () => editControls(Type.VIDEO),
-              title: Text(
-                "Edit Video Controls",
-                style: drawerTextStyle,
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.library_music),
-              onTap: () => editControls(Type.AUDIO),
-              title: Text(
-                "Edit Audio Controls",
-                style: drawerTextStyle,
-              ),
-            ),
-          ],
-        ),
+        child: CustomizeMenu(),
       ),
       // drawer: , // Settings menu eventually.
     );
@@ -153,10 +102,6 @@ class _MediaTabPagerState extends State<MediaTabPager>
   void closeDrawer() {
     Navigator.pop(context);
   }
-
-  get drawerTextStyle => TextStyle(color: Colors.white, fontSize: 24.0);
-
-  get drawerHeaderStyle => TextStyle(color: Colors.white, fontSize: 28.0);
 
   Widget get menuBtn => IconButton(
         onPressed: () => editControls(Type.VIDEO),

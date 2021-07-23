@@ -9,6 +9,8 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   late MediaBloc bloc;
   late Future<void> initializeControllerFuture;
 
+  String? json;
+
   MediaControllerEditBloc(this.bloc) {
     initializeControllerFuture = initController();
   }

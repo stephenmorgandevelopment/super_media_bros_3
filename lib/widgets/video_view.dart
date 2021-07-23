@@ -10,7 +10,7 @@ import 'package:super_media_bros_3/widgets/controls/video_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoView extends StatefulWidget with MediaView {
+class VideoView extends MediaView {
   static const String VIDEO_VIEW = 'video_view';
 
   // final MediaBloc _bloc;
@@ -25,9 +25,8 @@ class VideoView extends StatefulWidget with MediaView {
   State createState() => _VideoViewState();
 }
 
-class _VideoViewState extends State<VideoView> {
+class _VideoViewState extends MediaViewState {
   VideoControls? controls;
-  late MediaControllerBloc _bloc;
 
   bool isLeftFling = false;
   bool controlsShowing = false;
@@ -35,7 +34,7 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void didChangeDependencies() {
-    _bloc = MediaControllerBlocProvider.of(context);
+    bloc = MediaControllerBlocProvider.of(context);
     log("didChangeDependencies was called.");
 
     super.didChangeDependencies();
@@ -43,17 +42,23 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void dispose() {
-    _bloc.dispose();
+    bloc.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _bloc.initializeControllerFuture,
+      future: bloc.initializeControllerFuture,
       builder: (BuildContext innerContext, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (controlsShowing) {
+            if(controls == null) {
+              controls = VideoControls(onPressed);
+              // TODO Understand why this doesn't work:
+              // var smb = SuperMediaButtons(context, onPressed);
+              // controls = VideoControls.from(smb);
+            }
             return SafeArea(
               child: Scaffold(
                 body: Stack(
@@ -63,13 +68,14 @@ class _VideoViewState extends State<VideoView> {
                     Center(
                       child: GestureDetector(
                         child: AspectRatio(
-                          aspectRatio: _bloc.controller.value.aspectRatio,
-                          child: VideoPlayer(_bloc.controller),
+                          aspectRatio: bloc.controller.value.aspectRatio,
+                          child: VideoPlayer(bloc.controller),
                         ),
                         onTap: () => toggleControls(),
                       ),
                     ),
-                    VideoControls(onPressed),
+                    controls!,
+                    // VideoControls(onPressed),
                     // speedSelectorShowing
                     //     ? ControlGroup(<Widget>[SpeedSelectSlider()],
                     //         Position(bottom: 220.0, right: 20.0, left: 20.0))
@@ -84,13 +90,14 @@ class _VideoViewState extends State<VideoView> {
                 body: Center(
                   child: GestureDetector(
                     child: AspectRatio(
-                      aspectRatio: _bloc.controller.value.aspectRatio,
-                      child: VideoPlayer(_bloc.controller),
+                      aspectRatio: bloc.controller.value.aspectRatio,
+                      child: VideoPlayer(bloc.controller),
                     ),
                     onTap: () => toggleControls(),
                     onPanEnd: (details) => processPan(details),
-                    onPanUpdate: (details) =>
-                        {isLeftFling = (details.delta.dx < 0)},
+                    onPanUpdate: fling.update,//(details) => fling.update(details),
+                    // onPanUpdate: (details) =>
+                    //     {isLeftFling = (details.delta.dx < 0)},
                   ),
                 ),
               ),
@@ -129,8 +136,8 @@ class _VideoViewState extends State<VideoView> {
         onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
         child: Center(
           child: AspectRatio(
-            aspectRatio: _bloc.controller.value.aspectRatio,
-            child: VideoPlayer(_bloc.controller),
+            aspectRatio: bloc.controller.value.aspectRatio,
+            child: VideoPlayer(bloc.controller),
           ),
         ),
       );
@@ -140,20 +147,31 @@ class _VideoViewState extends State<VideoView> {
       return;
     }
 
-    if (isLeftFling) {
-      await _bloc.bloc.getNextMedia();
-    } else {
-      await _bloc.bloc.getPreviousMedia();
+    switch(fling.direction) {
+      case Direction.LEFT:
+        await bloc.bloc.getNextMedia();
+        break;
+      case Direction.RIGHT:
+        await bloc.bloc.getPreviousMedia();
+        break;
+      default:
+        return;
     }
+
+    // if (isLeftFling) {
+    //   await bloc.bloc.getNextMedia();
+    // } else {
+    //   await bloc.bloc.getPreviousMedia();
+    // }
     changeMedia();
   }
 
   void changeMedia() async {
-    await _bloc.controller.pause();
+    await bloc.controller.pause();
 
     MaterialPageRoute videoRoute = MaterialPageRoute(
       builder: (context) =>
-          MediaControllerBlocProvider(_bloc.bloc, child: VideoView()),
+          MediaControllerBlocProvider(bloc.bloc, child: VideoView()),
     );
 
     Navigator.pushReplacement(context, videoRoute);
@@ -172,7 +190,7 @@ class _VideoViewState extends State<VideoView> {
   }
 
   void onPressed(String btnTag) async {
-    dynamic dummy = _bloc;
+    dynamic dummy = bloc;
 
     switch (btnTag) {
       case PLAY_TAG:

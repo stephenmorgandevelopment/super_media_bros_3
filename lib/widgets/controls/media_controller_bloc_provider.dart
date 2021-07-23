@@ -32,7 +32,6 @@ class MediaControllerBlocProvider extends InheritedWidget {
 
   static MediaControllerBloc of(BuildContext context) {
     return
-      (context.dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()
-      as MediaControllerBlocProvider).controllerBloc;
+      (context.dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()!).controllerBloc;
   }
 }

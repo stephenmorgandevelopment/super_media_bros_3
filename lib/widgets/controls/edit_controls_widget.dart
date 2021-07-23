@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/image_controls.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:super_media_bros_3/widgets/controls/video_controls.dart';
@@ -40,6 +43,8 @@ class _EditControlsState extends State<EditControls> {
       case Type.VIDEO:
         title = "Edit:Video";
         controls = VideoControls(onPressed);
+        // TODO Understand why this doesn't work:
+        // controls = VideoControls.from(smb);
         break;
       case Type.AUDIO:
         title = "Edit:Audio";
@@ -78,7 +83,7 @@ class _EditControlsState extends State<EditControls> {
                     Expanded(
                       child: Text(
                         "Media Buttons",
-                        style: headerStyle,
+                        style: editDrawerHeaderStyle,
                         textAlign: TextAlign.left,
                       ),
                     ),
@@ -104,30 +109,32 @@ class _EditControlsState extends State<EditControls> {
         ),
         body: Stack(
           children: [
-            Container(
-              constraints: BoxConstraints.expand(),
-              child: Image.asset(
-                'images/thumbs.png',
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.high,
-                isAntiAlias: true,
-              ),
-            ),
+            // Container(
+            //   constraints: BoxConstraints.expand(),
+            //   child:
+            // ),
             Container(
               // child: controls,
+              constraints: BoxConstraints.expand(),
               child: DragTarget<ControlGroup>(
                 builder: (BuildContext context, accepted, rejected) {
-                  return controls;
+                  return Image.asset(
+                    'images/thumbs.png',
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.high,
+                    isAntiAlias: true,
+                  );
                 },
               ),
-            )
+            ),
+            controls,
           ],
         ),
       ),
     );
   }
 
-  TextStyle headerStyle = TextStyle(
+  TextStyle editDrawerHeaderStyle = TextStyle(
     fontSize: 24.0,
   );
 
@@ -148,9 +155,21 @@ class _EditControlsState extends State<EditControls> {
         ],
       );
 
-  void addControlGroup() {}
+  void addControlGroup() {
+    if (widget.type == Type.VIDEO) {
+      // String json = jsonEncode(controls);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (innerContext) =>
+            SafeArea(
+                child: Scaffold(
+                    body: Text(MediaControllerBlocProvider.of(context).json!))),)
+        ,
+      );
+    }
+  }
 
-  void onPressed() {
+  void onPressed(String tag) {
     // TODO make this button a draggable and assign new location accordingly.
   }
 }

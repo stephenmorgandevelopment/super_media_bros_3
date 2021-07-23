@@ -3,11 +3,14 @@ import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/controllers/image_slideshow_controller.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaControllerBloc {
   MediaBloc _bloc;
   MediaBloc get bloc => _bloc;
+
+  String? json;
 
   ImagerSlideshowController? _slideshowController;
   Object? _audioController;

@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
+const String CLOSE_TAG = "close";
 const String PLAY_TAG = "play-pause";
 const String SPEED_TAG = "speed";
 const String PREV_TAG = "prev";
@@ -22,13 +26,38 @@ const String REPEAT_ONE_TAG = "repeat-one";
 const String REPEAT_ALL_TAG = "repeat-all";
 const String IMG_DETAIL_TAG = "details";
 
+abstract class SuperMediaWidget implements Widget {
+  String get tag;
+  // String get json;
+
+  Map toJson() {
+    Map<String, dynamic> map = Map();
+    map['tag'] = tag;
+    log("SuperMediaWidget<$tag> mapped: ${map.toString()}");
+    return map;
+  }
+}
+
+class SuperMediaButton extends IconButton with SuperMediaWidget {
+  final String tag;
+
+  SuperMediaButton({
+    Function()? onPressed,
+    required Icon icon,
+    double iconSize = MediaOptions.iconsize,
+    required this.tag,
+  }) : super(onPressed: onPressed, icon: icon, iconSize: iconSize);
+}
+
 class SuperMediaButtons {
-  Function onPressed;
-  BuildContext context;
+  final Function onPressed;
+  final BuildContext context;
+
+  get callback => onPressed;
 
   SuperMediaButtons(this.context, this.onPressed);
 
-  List<IconButton> get controlButtons => <IconButton>[
+  List<SuperMediaButton> get controlButtons => <SuperMediaButton>[
         speedBtn,
         prevBtn,
         seekBackBtn,
@@ -50,7 +79,13 @@ class SuperMediaButtons {
         videoPlayBtn,
       ];
 
-  IconButton fromTag(String tag) {
+  // String tagFor(IconButton btn) {
+  //   switch (btn) {
+  //     case playBtn:
+  //   }
+  // }
+
+  SuperMediaButton fromTag(String tag) {
     switch (tag) {
       case PLAY_TAG:
         return MediaControllerBlocProvider.of(context).bloc.type == Type.VIDEO
@@ -95,7 +130,9 @@ class SuperMediaButtons {
     }
   }
 
-  static IconButton closeBtnFrom(BuildContext context) => IconButton(
+  static SuperMediaButton closeBtnFrom(BuildContext context) =>
+      SuperMediaButton(
+        tag: CLOSE_TAG,
         onPressed: () => Navigator.pop(context),
         iconSize: 36.0,
         icon: Icon(
@@ -104,7 +141,8 @@ class SuperMediaButtons {
         ),
       );
 
-  IconButton get closeBtn => IconButton(
+  SuperMediaButton get closeBtn => SuperMediaButton(
+        tag: CLOSE_TAG,
         onPressed: () => Navigator.pop(context),
         iconSize: 36.0,
         icon: Icon(
@@ -113,7 +151,8 @@ class SuperMediaButtons {
         ),
       );
 
-  IconButton get repeatAllBtn => IconButton(
+  SuperMediaButton get repeatAllBtn => SuperMediaButton(
+        tag: REPEAT_ALL_TAG,
         onPressed: () => onPressed(REPEAT_ALL_TAG),
         iconSize: MediaOptions.iconsize,
         icon: Icon(
@@ -124,7 +163,8 @@ class SuperMediaButtons {
         ),
       );
 
-  IconButton get repeatOneBtn => IconButton(
+  SuperMediaButton get repeatOneBtn => SuperMediaButton(
+        tag: REPEAT_ONE_TAG,
         onPressed: () => onPressed(REPEAT_ONE_TAG),
         iconSize: MediaOptions.iconsize,
         icon: Icon(
@@ -135,7 +175,8 @@ class SuperMediaButtons {
         ),
       );
 
-  IconButton get playBtn => IconButton(
+  SuperMediaButton get playBtn => SuperMediaButton(
+      tag: PLAY_TAG,
       onPressed: () => onPressed(PLAY_TAG),
       iconSize: MediaOptions.iconsize * MediaOptions.playBtnMultiplier,
       icon: Icon(
@@ -146,7 +187,8 @@ class SuperMediaButtons {
         semanticLabel: "Start or stop slideshow or audio playback.",
       ));
 
-  IconButton get videoPlayBtn => IconButton(
+  SuperMediaButton get videoPlayBtn => SuperMediaButton(
+      tag: PLAY_TAG,
       onPressed: () => onPressed(PLAY_TAG),
       iconSize: MediaOptions.iconsize * MediaOptions.videoPlayBtnMultiplier,
       icon: Icon(
@@ -157,7 +199,8 @@ class SuperMediaButtons {
         semanticLabel: "Play or pause the video.",
       ));
 
-  IconButton get speedBtn => IconButton(
+  SuperMediaButton get speedBtn => SuperMediaButton(
+      tag: SPEED_TAG,
       onPressed: () => onPressed(SPEED_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
@@ -166,8 +209,9 @@ class SuperMediaButtons {
         semanticLabel: "Adjust playback speed of the video.",
       ));
 
-  IconButton get prevBtn => IconButton(
-      onPressed: () => onPressed("prev"),
+  SuperMediaButton get prevBtn => SuperMediaButton(
+      tag: PREV_TAG,
+      onPressed: () => onPressed(PREV_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.skip_previous_outlined,
@@ -175,8 +219,9 @@ class SuperMediaButtons {
         semanticLabel: "Previous video.",
       ));
 
-  IconButton get seekBackBtn => IconButton(
-      onPressed: () => onPressed("seek-back"),
+  SuperMediaButton get seekBackBtn => SuperMediaButton(
+      tag: SEEK_BACK_TAG,
+      onPressed: () => onPressed(SEEK_BACK_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.fast_rewind_outlined,
@@ -184,8 +229,9 @@ class SuperMediaButtons {
         semanticLabel: "Seek backwards in the video.",
       ));
 
-  IconButton get seekFwdBtn => IconButton(
-      onPressed: () => onPressed("seek-fwd"),
+  SuperMediaButton get seekFwdBtn => SuperMediaButton(
+      tag: SEEK_FWD_TAG,
+      onPressed: () => onPressed(SEEK_FWD_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.fast_forward_outlined,
@@ -193,8 +239,9 @@ class SuperMediaButtons {
         semanticLabel: "Seek forward in the video.",
       ));
 
-  IconButton get nextBtn => IconButton(
-      onPressed: () => onPressed("next"),
+  SuperMediaButton get nextBtn => SuperMediaButton(
+      tag: NEXT_TAG,
+      onPressed: () => onPressed(NEXT_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.skip_next_outlined,
@@ -202,8 +249,9 @@ class SuperMediaButtons {
         semanticLabel: "Next video.",
       ));
 
-  IconButton get detailsBtn => IconButton(
-      onPressed: () => onPressed("details"),
+  SuperMediaButton get detailsBtn => SuperMediaButton(
+      tag: DETAILS_TAG,
+      onPressed: () => onPressed(DETAILS_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.info_outlined,
@@ -211,8 +259,9 @@ class SuperMediaButtons {
         semanticLabel: "View details about the video.",
       ));
 
-  IconButton get shareBtn => IconButton(
-      onPressed: () => onPressed("share"),
+  SuperMediaButton get shareBtn => SuperMediaButton(
+      tag: SHARE_TAG,
+      onPressed: () => onPressed(SHARE_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.share_outlined,
@@ -220,8 +269,9 @@ class SuperMediaButtons {
         semanticLabel: "Open the share manager.",
       ));
 
-  IconButton get addToBtn => IconButton(
-      onPressed: () => onPressed("addto"),
+  SuperMediaButton get addToBtn => SuperMediaButton(
+      tag: ADD_TO_TAG,
+      onPressed: () => onPressed(ADD_TO_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.add_to_photos_outlined,
@@ -229,8 +279,9 @@ class SuperMediaButtons {
         semanticLabel: "Add this to photos, a gallery, or an album.",
       ));
 
-  IconButton get favoriteBtn => IconButton(
-      onPressed: () => onPressed("favorite"),
+  SuperMediaButton get favoriteBtn => SuperMediaButton(
+      tag: FAVORITE_TAG,
+      onPressed: () => onPressed(FAVORITE_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.favorite_border,
@@ -238,8 +289,9 @@ class SuperMediaButtons {
         semanticLabel: "Favorite this image.",
       ));
 
-  IconButton get bytesBtn => IconButton(
-      onPressed: () => onPressed("bytes"),
+  SuperMediaButton get bytesBtn => SuperMediaButton(
+      tag: BYTES_TAG,
+      onPressed: () => onPressed(BYTES_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.code,
@@ -247,8 +299,9 @@ class SuperMediaButtons {
         semanticLabel: "View this image's raw byte data.",
       ));
 
-  IconButton get editBtn => IconButton(
-      onPressed: () => onPressed("edit"),
+  SuperMediaButton get editBtn => SuperMediaButton(
+      tag: EDIT_TAG,
+      onPressed: () => onPressed(EDIT_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.tune,
@@ -256,8 +309,9 @@ class SuperMediaButtons {
         semanticLabel: "Open this image in a photo editor.",
       ));
 
-  IconButton get copyBtn => IconButton(
-      onPressed: () => onPressed("copy"),
+  SuperMediaButton get copyBtn => SuperMediaButton(
+      tag: COPY_TAG,
+      onPressed: () => onPressed(COPY_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.content_copy,
@@ -265,8 +319,9 @@ class SuperMediaButtons {
         semanticLabel: "Copy this image to another album or folder.",
       ));
 
-  IconButton get moveBtn => IconButton(
-      onPressed: () => onPressed("move"),
+  SuperMediaButton get moveBtn => SuperMediaButton(
+      tag: MOVE_TAG,
+      onPressed: () => onPressed(MOVE_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.drive_file_move_outlined,
@@ -274,8 +329,9 @@ class SuperMediaButtons {
         semanticLabel: "Move this image to another album or folder.",
       ));
 
-  IconButton get deleteBtn => IconButton(
-      onPressed: () => onPressed("delete"),
+  SuperMediaButton get deleteBtn => SuperMediaButton(
+      tag: DELETE_TAG,
+      onPressed: () => onPressed(DELETE_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.delete_outlined,
@@ -283,8 +339,9 @@ class SuperMediaButtons {
         semanticLabel: "Delete this image.",
       ));
 
-  IconButton get imgDetailsBtn => IconButton(
-      onPressed: () => onPressed("details"),
+  SuperMediaButton get imgDetailsBtn => SuperMediaButton(
+      tag: DETAILS_TAG,
+      onPressed: () => onPressed(DETAILS_TAG),
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.info_outlined,

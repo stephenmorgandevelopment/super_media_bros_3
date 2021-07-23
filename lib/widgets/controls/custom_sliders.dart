@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
-class TimeSlider extends StatefulWidget {
+const TIME_SLIDER_TAG = "time-slider";
+const SPEED_SLIDER_TAG = "speed-slider";
+
+class TimeSlider extends StatefulWidget with SuperMediaWidget {
   TimeSlider();
+
+  get tag => TIME_SLIDER_TAG;
 
   @override
   State createState() => _TimeSliderState();
@@ -38,7 +44,8 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
       child: Material(
         child: StreamBuilder(
           stream: _bloc.currentPositionStream,
-          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+          initialData: currentPosition,
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot,) {
             if (snapshot.hasData) {
               return buildSlider(snapshot.data!);
             } else {
@@ -115,7 +122,9 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
   }
 }
 
-class SpeedSelectSlider extends StatefulWidget {
+class SpeedSelectSlider extends StatefulWidget with SuperMediaWidget {
+  get tag => SPEED_SLIDER_TAG;
+
   @override
   State createState() => _SpeedSelectSliderState();
 }
