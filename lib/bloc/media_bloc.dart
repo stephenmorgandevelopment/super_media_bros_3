@@ -20,7 +20,6 @@ class MediaBloc {
   int get currentIndex => _currentIndex;
   set currentIndex(int index) {
     _currentIndex = index;
-    loadCurrentMedia();
   }
 
   int get count => mediaList.length;
@@ -58,7 +57,7 @@ class MediaBloc {
     return await repo.getThumbnailBytes(mediaList[index]);
   }
 
-  void loadCurrentMedia() async {
+  Future<void> loadCurrentMedia() async {
     _currentMedia = await getMedia(_currentIndex);
   }
 

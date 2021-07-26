@@ -110,8 +110,20 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "path_provider",
+      "rootUri": "file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path_provider_linux",
       "rootUri": "file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "path_provider_macos",
+      "rootUri": "file:///home/devin-evan/sdks/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -290,7 +302,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-07-22T09:13:47.018814Z",
+  "generated": "2021-07-25T09:12:01.092857Z",
   "generator": "pub",
   "generatorVersion": "2.13.4"
 }

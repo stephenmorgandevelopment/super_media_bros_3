@@ -20,9 +20,13 @@ class Position {
           right: horizontal,
         );
 
-  static Position fromJson(String json) {
-    var map = jsonDecode(json);
+  Position.fromJson(Map<String, dynamic> map)
+      : top = map['top'],
+        bottom = map['bottom'],
+        left = map['left'],
+        right = map['right'];
 
+  static Position fromMap(Map<String, dynamic> map) {
     return Position(
       top: map['top'],
       bottom: map['bottom'],
@@ -38,24 +42,8 @@ class Position {
     map['left'] = left;
     map['right'] = right;
 
-    log("Position mapped: ${map.toString()}");
-
     return map;
-
-    // return <String, dynamic> {'top' };
   }
-
-  // String get json => jsonEncode(this);
-
-
-  // static Position offsetFromPosition(Position position, {double? top, double? right, double? bottom, double? left}) {
-  //   double? offTop = top == null ? position.top : position.top! + top;
-  //   double? offBottom = bottom == null ? position.bottom :  position.bottom! + bottom;
-  //   double? offRight = right == null ? position.right :  position.right! + right;
-  //   double? offLeft = left == null ? position.left :  position.left! + left;
-  //
-  //   return Position(top: offTop, bottom: offBottom, right: offRight, left: offLeft);
-  // }
 
   static Position centerAlign(BuildContext context, {bool isPlayBtn = false}) {
     Size size = MediaQuery.of(context).size;

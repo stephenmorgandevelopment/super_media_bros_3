@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
 const String CLOSE_TAG = "close";
@@ -15,7 +16,7 @@ const String SEEK_FWD_TAG = "seek-fwd";
 const String NEXT_TAG = "next";
 const String DETAILS_TAG = "details";
 const String SHARE_TAG = "share";
-const String ADD_TO_TAG = "addto";
+const String ADD_TO_TAG = "add-to";
 const String FAVORITE_TAG = "favorite";
 const String BYTES_TAG = "bytes";
 const String EDIT_TAG = "edit";
@@ -33,9 +34,20 @@ abstract class SuperMediaWidget implements Widget {
   Map toJson() {
     Map<String, dynamic> map = Map();
     map['tag'] = tag;
-    log("SuperMediaWidget<$tag> mapped: ${map.toString()}");
     return map;
   }
+
+  static SuperMediaWidget fromTag(String tag) {
+    switch(tag) {
+      case TIME_SLIDER_TAG:
+        return TimeSlider();
+      case SPEED_SLIDER_TAG:
+        return SpeedSelectSlider();
+      default:
+        return TimeSlider();
+    }
+  }
+
 }
 
 class SuperMediaButton extends IconButton with SuperMediaWidget {
@@ -47,13 +59,18 @@ class SuperMediaButton extends IconButton with SuperMediaWidget {
     double iconSize = MediaOptions.iconsize,
     required this.tag,
   }) : super(onPressed: onPressed, icon: icon, iconSize: iconSize);
+
+  bool isEqual(Object obj) {
+    return obj is SuperMediaButton && this.tag == obj.tag;
+  }
+
 }
 
 class SuperMediaButtons {
   final Function onPressed;
   final BuildContext context;
 
-  get callback => onPressed;
+  // get callback => onPressed;
 
   SuperMediaButtons(this.context, this.onPressed);
 
@@ -85,7 +102,7 @@ class SuperMediaButtons {
   //   }
   // }
 
-  SuperMediaButton fromTag(String tag) {
+  SuperMediaWidget fromTag(String tag) {
     switch (tag) {
       case PLAY_TAG:
         return MediaControllerBlocProvider.of(context).bloc.type == Type.VIDEO
@@ -126,7 +143,7 @@ class SuperMediaButtons {
       case IMG_DETAIL_TAG:
         return imgDetailsBtn;
       default:
-        return playBtn;
+        return SuperMediaWidget.fromTag(tag);
     }
   }
 

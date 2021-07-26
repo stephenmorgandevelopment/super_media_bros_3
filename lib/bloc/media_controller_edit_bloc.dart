@@ -1,19 +1,31 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/controls/control_group.dart';
+import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
 class MediaControllerEditBloc implements MediaControllerBloc {
   late MediaBloc bloc;
   late Future<void> initializeControllerFuture;
 
-  String? json;
+  List<String> controlGroupsJson = List.empty(growable: true);
+  List<ControlGroup> controlGroups = List.empty(growable: true);
+
+  String currentButtonEditingTag = 'null';
+  SuperMediaButton? currentButtonEditing;
+  Key? currentGroupEditing;
 
   MediaControllerEditBloc(this.bloc) {
     initializeControllerFuture = initController();
   }
+
+  // final _isPlayingSink = BehaviorSubject<bool>();
+  // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
+  // void _isPlayingListener() => _isPlayingSink.sink.add(isPlaying);
 
   bool get isPlaying => true;
   Duration get duration => Duration(seconds: 105);

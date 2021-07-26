@@ -71,6 +71,7 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
 
   Future<void> navigate(BuildContext context, index) async {
     widget.bloc.currentIndex = index;
+    await widget.bloc.loadCurrentMedia();
     switch (widget.bloc.type) {
       case Type.IMAGE:
         Navigator.push(

@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/mediaplayer/media_gesture_detector.dart';
+import 'package:super_media_bros_3/mediaplayer/media_player_config.dart';
 
 abstract class MediaView extends StatefulWidget {
   // final Fling _fling = Fling();
@@ -14,12 +16,18 @@ abstract class MediaView extends StatefulWidget {
 
 }
 
-abstract class MediaViewState extends State<MediaView> {
+abstract class MediaViewState<T extends MediaView> extends State<T> {
   @protected
   final Fling fling = Fling();
 
   @protected
   late final MediaControllerBloc bloc;
+
+  @override
+  void initState() {
+    MediaControlsConfig.init();
+    super.initState();
+  }
 }
 
 class Fling {

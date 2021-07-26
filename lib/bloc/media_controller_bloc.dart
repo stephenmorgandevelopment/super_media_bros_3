@@ -10,7 +10,7 @@ class MediaControllerBloc {
   MediaBloc _bloc;
   MediaBloc get bloc => _bloc;
 
-  String? json;
+  // List<String> groupsJson = List.empty(growable: true);
 
   ImagerSlideshowController? _slideshowController;
   Object? _audioController;
@@ -39,6 +39,10 @@ class MediaControllerBloc {
   bool get isPlaying => _bloc.type == Type.VIDEO
       ? (_videoController == null ? true : _videoController!.value.isPlaying)
       : _audioController == null;
+  
+  // final _isPlayingSink = PublishSubject<bool>();
+  // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
+  // void _isPlayingListener() => _isPlayingSink.sink.add(_videoController!.value.isPlaying);
 
   Duration get duration => Duration(
       milliseconds: int.parse(_bloc.currentMedia!.data.metadata['duration']!));
@@ -53,6 +57,8 @@ class MediaControllerBloc {
   final _currentPositionSink = PublishSubject<double>();
   Stream<double> get currentPositionStream =>
       _currentPositionSink.stream;
+
+  void _currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
 
   void seekTo(int position) {
     if(_bloc.type == Type.VIDEO) {
@@ -89,7 +95,7 @@ class MediaControllerBloc {
 
 
 
-  void _currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
+
   void initAsVideo() {
     _videoController = _bloc.currentMedia!.data.isLocal()
         ? VideoPlayerController.file(_bloc.currentMedia!.file!)
@@ -99,14 +105,12 @@ class MediaControllerBloc {
     initializeControllerFuture = _videoController!.initialize();
 
     initializeControllerFuture.whenComplete(() {
-      if (!controller.value.isPlaying) {
-        controller.play();
+      if (!_videoController!.value.isPlaying) {
+        _videoController!.play();
       }
-      controller.addListener(_currentTimeListener);
+      _videoController!.addListener(_currentTimeListener);
+      // _videoController!.addListener(_isPlayingListener);
     });
-    
-    // currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
-    // _videoController?.addListener(currentTimeListener);
   }
   
   
@@ -114,11 +118,10 @@ class MediaControllerBloc {
   void dispose() {
     _videoController?.removeListener(_currentTimeListener);
     _currentPositionSink.close();
+    // _isPlayingSink.close();
     // _slideshowController?.dispose();
     _videoController?.dispose();
     // _audioController?.dispose();
-
-    
   }
 
 }

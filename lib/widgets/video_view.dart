@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
+import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/details_widget.dart';
 import 'package:super_media_bros_3/widgets/media_view.dart';
@@ -13,19 +14,13 @@ import 'package:video_player/video_player.dart';
 class VideoView extends MediaView {
   static const String VIDEO_VIEW = 'video_view';
 
-  // final MediaBloc _bloc;
-
-  // bool get isPlaying => controlBloc.isPlaying;
-
   VideoView();
-
-  // VideoView.asPagedRoute() : this(MediaBloc.empty());
 
   @override
   State createState() => _VideoViewState();
 }
 
-class _VideoViewState extends MediaViewState {
+class _VideoViewState extends MediaViewState<VideoView> {
   VideoControls? controls;
 
   bool isLeftFling = false;
@@ -53,12 +48,9 @@ class _VideoViewState extends MediaViewState {
       builder: (BuildContext innerContext, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (controlsShowing) {
-            if(controls == null) {
-              controls = VideoControls(onPressed);
-              // TODO Understand why this doesn't work:
-              // var smb = SuperMediaButtons(context, onPressed);
-              // controls = VideoControls.from(smb);
-            }
+            // if(controls == null) {
+            //   // controls = VideoControls(onPressed);
+            // }
             return SafeArea(
               child: Scaffold(
                 body: Stack(
@@ -74,13 +66,19 @@ class _VideoViewState extends MediaViewState {
                         onTap: () => toggleControls(),
                       ),
                     ),
-                    controls!,
+                    // controls!,
+                    // StreamBuilder(
+                    //   stream: bloc.isPlayingStream,
+                    //   builder:
+                    //       (BuildContext streamContext, AsyncSnapshot snapshot) =>
+                    //           VideoControls(onPressed)
+                    // ),
                     // VideoControls(onPressed),
                     // speedSelectorShowing
                     //     ? ControlGroup(<Widget>[SpeedSelectSlider()],
                     //         Position(bottom: 220.0, right: 20.0, left: 20.0))
                     //     : Text(""),
-                  ],
+                  ]..addAll(addControls()),
                 ),
               ),
             );
@@ -110,6 +108,14 @@ class _VideoViewState extends MediaViewState {
     );
   }
 
+  List<Widget> addControls() {
+    if(speedSelectorShowing) {
+      return <Widget> [VideoControls(onPressed), SpeedSelectSlider()];
+    } else {
+      return <Widget>[VideoControls(onPressed)];
+    }
+  }
+
   // List<Widget> buildTree() {
   //   List<Widget> widgetTree =
   //       List.from(<Widget>[videoPlayerWidget], growable: true);
@@ -130,17 +136,17 @@ class _VideoViewState extends MediaViewState {
   //   return widgetTree;
   // }
 
-  dynamic get videoPlayerWidget => GestureDetector(
-        onTap: () => toggleControls(),
-        onPanEnd: (details) => processPan(details),
-        onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
-        child: Center(
-          child: AspectRatio(
-            aspectRatio: bloc.controller.value.aspectRatio,
-            child: VideoPlayer(bloc.controller),
-          ),
-        ),
-      );
+  // dynamic get videoPlayerWidget => GestureDetector(
+  //       onTap: () => toggleControls(),
+  //       onPanEnd: (details) => processPan(details),
+  //       onPanUpdate: (details) => {isLeftFling = (details.delta.dx < 0)},
+  //       child: Center(
+  //         child: AspectRatio(
+  //           aspectRatio: bloc.controller.value.aspectRatio,
+  //           child: VideoPlayer(bloc.controller),
+  //         ),
+  //       ),
+  //     );
 
   void processPan(dynamic details) async {
     if (controlsShowing) {

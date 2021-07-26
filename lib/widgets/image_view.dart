@@ -16,7 +16,7 @@ class ImageView extends MediaView {
   State createState() => _ImageViewState();
 }
 
-class _ImageViewState extends State<ImageView> {
+class _ImageViewState extends MediaViewState<ImageView> {
   late Image _image;
   bool optionsShowing = false;
   bool isLeftFling = false;

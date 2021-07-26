@@ -1,0 +1,83 @@
+{
+  "controls": [
+    {
+      "controlsWidgets": [
+        {
+          "tag": "play-pause"
+        }
+      ],
+      "position": {
+        "top": 323.0,
+        "bottom": 323.0,
+        "left": 131.0,
+        "right": 131.0
+      },
+      "horizontal": true
+    },
+    {
+      "controlsWidgets": [
+        {
+          "tag": "seek-back"
+        },
+        {
+          "tag": "seek-fwd"
+        }
+      ],
+      "position": {
+        "top": null,
+        "bottom": 56.0,
+        "left": null,
+        "right": 20.0
+      },
+      "horizontal": true
+    },
+    {
+      "controlsWidgets": [
+        {
+          "tag": "prev"
+        },
+        {
+          "tag": "next"
+        }
+      ],
+      "position": {
+        "top": 12.0,
+        "bottom": null,
+        "left": null,
+        "right": 12.0
+      },
+      "horizontal": true
+    },
+    {
+      "controlsWidgets": [
+        {
+          "tag": "speed"
+        },
+        {
+          "tag": "details"
+        }
+      ],
+      "position": {
+        "top": null,
+        "bottom": 56.0,
+        "left": 20.0,
+        "right": null
+      },
+      "horizontal": true
+    },
+    {
+      "controlsWidgets": [
+        {
+          "tag": "time-slider"
+        }
+      ],
+      "position": {
+        "top": null,
+        "bottom": 12.0,
+        "left": 10.0,
+        "right": 10.0
+      },
+      "horizontal": true
+    }
+  ]
+}
