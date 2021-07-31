@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
@@ -48,9 +47,9 @@ class _VideoViewState extends MediaViewState<VideoView> {
       builder: (BuildContext innerContext, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (controlsShowing) {
-            // if(controls == null) {
-            //   // controls = VideoControls(onPressed);
-            // }
+            if(controls == null) {
+              controls = VideoControls(onPressed);
+            }
             return SafeArea(
               child: Scaffold(
                 body: Stack(
@@ -66,7 +65,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
                         onTap: () => toggleControls(),
                       ),
                     ),
-                    // controls!,
+                    controls!,
                     // StreamBuilder(
                     //   stream: bloc.isPlayingStream,
                     //   builder:
@@ -78,7 +77,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
                     //     ? ControlGroup(<Widget>[SpeedSelectSlider()],
                     //         Position(bottom: 220.0, right: 20.0, left: 20.0))
                     //     : Text(""),
-                  ]..addAll(addControls()),
+                  ]//..addAll(addControls()),
                 ),
               ),
             );
@@ -108,13 +107,19 @@ class _VideoViewState extends MediaViewState<VideoView> {
     );
   }
 
-  List<Widget> addControls() {
-    if(speedSelectorShowing) {
-      return <Widget> [VideoControls(onPressed), SpeedSelectSlider()];
-    } else {
-      return <Widget>[VideoControls(onPressed)];
-    }
-  }
+
+
+  // List<Widget> addControls() {
+  //   if(speedSelectorShowing) {
+  //     return <Widget> [VideoControls(onPressed), SpeedSelectSlider()];
+  //   } else {
+  //     return <Widget>[VideoControls(onPressed)];
+  //   }
+  // }
+
+  // List<Widget> get controls => speedSelectorShowing ? videoControl
+
+  // Widget get videoControls => VideoControls(onPressed);
 
   // List<Widget> buildTree() {
   //   List<Widget> widgetTree =
@@ -205,7 +210,9 @@ class _VideoViewState extends MediaViewState<VideoView> {
         } else {
           dummy.controller.play();
         }
-        setState(() {});
+        setState(() {
+          // controls!.update();
+        });
         break;
       case SEEK_FWD_TAG:
         int curPos = (await dummy.controller.position)?.inMilliseconds ?? 0;
@@ -236,8 +243,12 @@ class _VideoViewState extends MediaViewState<VideoView> {
         break;
       case SPEED_TAG:
         speedSelectorShowing = !speedSelectorShowing;
-        initState();
+        // controls
+        setState(() {});
+        // initState();
         break;
+      default:
+        toggleControls();
     }
   }
 }

@@ -4,17 +4,25 @@ import 'package:path_provider/path_provider.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 
 class MediaControlsConfig {
-  static List<String> _imageControlsAsJson = List.empty();
+  static List<String> _imageControlsAsJson = List.empty(growable: true);
+  static List<String> get imageControlsAsJson => _imageControlsAsJson;
 
-  static get imageControlsAsJson => _imageControlsAsJson;
+  static List<String> _videoControlsAsJson = List.empty(growable: true);
+  static List<String> get videoControlsAsJson => _videoControlsAsJson;
 
-  static List<String> _videoControlsAsJson = List.empty();
+  static List<String> _audioControlsAsJson = List.empty(growable: true);
+  static List<String> get audioControlsAsJson => _audioControlsAsJson;
 
-  static get videoControlsAsJson => _videoControlsAsJson;
-
-  static List<String> _audioControlsAsJson = List.empty();
-
-  static get audioControlsAsJson => _audioControlsAsJson;
+  static List<String> controlsAsJsonByType(Type type) {
+    switch (type) {
+      case Type.IMAGE:
+        return _imageControlsAsJson;
+      case Type.VIDEO:
+        return _videoControlsAsJson;
+      case Type.AUDIO:
+        return _audioControlsAsJson;
+    }
+  }
 
   MediaControlsConfig();
 
@@ -34,15 +42,15 @@ class MediaControlsConfig {
   static void updateJson(Type type, List<String> groupsJson) {
     switch (type) {
       case Type.IMAGE:
-        // _imageControlsAsJson.clear();
+        _imageControlsAsJson.clear();
         _imageControlsAsJson = groupsJson;
         break;
       case Type.VIDEO:
-        // _videoControlsAsJson.clear();
+        _videoControlsAsJson.clear();
         _videoControlsAsJson = groupsJson;
         break;
       case Type.AUDIO:
-        // _audioControlsAsJson.clear();
+        _audioControlsAsJson.clear();
         _audioControlsAsJson = groupsJson;
         break;
     }

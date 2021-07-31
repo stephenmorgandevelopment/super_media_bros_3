@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/image_controls.dart';
@@ -15,7 +15,7 @@ import 'package:super_media_bros_3/widgets/menus/button_group_menu.dart';
 import 'package:super_media_bros_3/widgets/menus/tune_button_menu.dart';
 
 const String ADD_CONTROL_GROUP_TAG = "add-control-group";
-const String ADD_CONTROL_BUTTON_TAG = "add-contol-button";
+const String ADD_CONTROL_BUTTON_TAG = "add-control-button";
 
 class EditControls extends StatefulWidget {
   final Type type;
@@ -72,6 +72,8 @@ class _EditControlsState extends State<EditControls> {
         break;
     }
 
+    // for(ControlGroup group in )
+
     super.initState();
   }
 
@@ -91,29 +93,55 @@ class _EditControlsState extends State<EditControls> {
           endDrawerEnableOpenDragGesture: true,
           endDrawer: menu,
           floatingActionButton: fab,
-          body: Stack(
-            children: [
-              Container(
-                // child: controls,
+          body: Container(
                 constraints: BoxConstraints.expand(),
                 child: DragTarget<ControlGroup>(
+                  onWillAccept: (controlGroup) =>
+                      verifyControlGroupCorrect(controlGroup),
+                  onAccept: (controlGroup) =>
+                      processControlGroupDrop(controlGroup),
                   builder: (BuildContext context, accepted, rejected) {
-                    return Image.asset(
+                    return Stack(
+                      children: [
+                        Image.asset(
                       'images/thumbs.png',
                       fit: BoxFit.fill,
                       filterQuality: FilterQuality.high,
                       isAntiAlias: true,
-                    );
+                    ),
+                        controls,
+                    ]);
                   },
                 ),
               ),
-              controls,
-            ],
           ),
         ),
-      ),
     );
   }
+
+  Future<void> processControlGroupDrop(ControlGroup controlGroup) async {
+  //  String updatedControlJson = json.encode(controlGroup);
+    // editBloc.updateControlGroupsJson(updatedControlJson, )
+    editBloc.replaceCurrentEditingControlGroupWith(controlGroup);
+
+  }
+
+  bool verifyControlGroupCorrect(ControlGroup? controlGroup) {
+    if (controlGroup == null) {
+      return false;
+    }
+    if (controlGroup.key != editBloc.currentGroupEditingKey) {
+      return false;
+    }
+    return controlGroup is ControlGroup;
+  }
+
+  // void offsetListener(Offset offset) {
+  //   curPos.top = pos.top == null ? null : pos.top + offset.dy;
+  //   curPos.bottom = pos.bottom == null ? null : pos.bottom + offset.dy;
+  //   curPos.left = pos.left == null ? null : pos.left + offset.dx;
+  //   curPos.right = pos.right == null ? null : pos.right + offset.dx;
+  // }
 
   static const String btnMenuTag = "btnGroup";
   static const String tuneBtnTag = "tuneBtnMenu";
@@ -135,16 +163,29 @@ class _EditControlsState extends State<EditControls> {
   get tuneBtnMenu => TuneButtonMenu(editBloc.currentButtonEditingTag);
 
   Future<bool> saveOnExit() async {
+    if(editBloc.currentButtonEditingTag != 'null') {
+
+      setState(() {
+        editBloc.currentButtonEditingTag = 'null';
+        _showModifyFab = false;
+      });
+      return false;
+    }
+
     if (MediaControllerBlocProvider.ofEdit(context)
         .controlGroupsJson
         .isNotEmpty) {
       persistJson();
       log("Config successfully persisted.");
-      return true;
+      // return true;
     } else {
       log("No config persisted.");
-      return true;
+      // return true;
     }
+
+
+
+    return true;
   }
 
   void persistJson() {
@@ -164,12 +205,7 @@ class _EditControlsState extends State<EditControls> {
         return openMenuFab;
       }
     }
-
     return null;
-    // return Positioned(height: 0.0, width: 0.0, top: 0.0,
-    //     child: Material(
-    //       type: MaterialType.transparency,
-    //     ));
   }
 
   get openMenuFab =>
@@ -177,8 +213,7 @@ class _EditControlsState extends State<EditControls> {
       FloatingActionButton(
         mini: false,
         child: Icon(Icons.menu, size: 48.0, color: Colors.white),
-
-        backgroundColor: Color.fromARGB(215, 195, 195, 195),
+        backgroundColor: MediaOptions.fabBackgroundColor,
         splashColor: Colors.orangeAccent,
         onPressed: () =>
             _scaffoldKey.currentState!.openEndDrawer(), // addControlGroup(),
@@ -187,7 +222,7 @@ class _EditControlsState extends State<EditControls> {
   get tuneButtonFab => FloatingActionButton(
         mini: false,
         child: Icon(Icons.tune_outlined, size: 48.0, color: Colors.white),
-        backgroundColor: Color.fromARGB(215, 195, 195, 195),
+        backgroundColor: MediaOptions.fabBackgroundColor,
         splashColor: Colors.orangeAccent,
         onPressed: () =>
             _scaffoldKey.currentState!.openEndDrawer(), // addControlGroup(),
@@ -212,17 +247,16 @@ class _EditControlsState extends State<EditControls> {
   //     );
 
   void onPressed(String tag) {
-    if (_showModifyFab && editBloc.currentButtonEditingTag == tag) {
-      _showModifyFab = false;
-      editBloc.currentButtonEditingTag = 'null';
+    // editBloc.currentButtonEditing
+
+    if (editBloc.currentButtonEditingTag == tag) {
+      _showModifyFab = !_showModifyFab;
     } else if (!_showModifyFab) {
       _showModifyFab = true;
       editBloc.currentButtonEditingTag = tag;
     } else {
       editBloc.currentButtonEditingTag = tag;
     }
-
-    editBloc.currentGroupEditing = getMatchingControlGroups();
 
     setState(() {});
   }
@@ -232,14 +266,15 @@ class _EditControlsState extends State<EditControls> {
   MediaControllerEditBloc get editBloc =>
       _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
 
-  Key? getMatchingControlGroups() {
+  Key? getMatchingControlGroupKey() {
     if (editBloc.currentButtonEditingTag == 'null') {
       return null;
     }
     for (ControlGroup group in editBloc.controlGroups) {
-      if (group.controlsWidgets
-          .contains(smb.fromTag(editBloc.currentButtonEditingTag))) {
-        return group.key;
+      for (SuperMediaWidget widget in group.controlsWidgets) {
+        if (widget.tag == editBloc.currentButtonEditingTag) {
+          return group.key;
+        }
       }
     }
   }

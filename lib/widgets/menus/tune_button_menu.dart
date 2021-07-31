@@ -15,7 +15,9 @@ class TuneButtonMenu extends StatelessWidget {
         child: Column(
           children: [
             MenuHeaderBar("Tune $tag:"),
-            ListView()
+            TuneButtonView("Always gonna..."),
+            TuneButtonView("be WA-INNING..."),
+            TuneButtonView("w/ PLACEHOLDER :)"),
           ],
         )
     );
@@ -23,6 +25,8 @@ class TuneButtonMenu extends StatelessWidget {
 }
 
 class TuneButtonView extends StatefulWidget {
+  final String placeholder;
+  TuneButtonView(this.placeholder);
 
   @override
   State<StatefulWidget> createState() => _TuneButtonViewState();
@@ -33,7 +37,7 @@ class _TuneButtonViewState extends State<TuneButtonView> {
 
   @override
   Widget build(BuildContext context) {
-    return Text("PLACEHOLDER :)");
+    return Text(widget.placeholder);
   }
   // TODO ps.  Make sliders / text inputs / color pickers to configure things like
 //  TODO button colors, time the seek buttons will skip.  The information displayed

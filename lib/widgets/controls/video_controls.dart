@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
-import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
@@ -28,73 +26,112 @@ class VideoControls extends MediaControls {
 
 class _VideoControlsState extends MediaControlsState<VideoControls> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext innerContext) {
+    if (widget.isEdit) {
+      return StreamBuilder(
+          // return Container(
+          //   child: Material(
+          //     elevation: 7.0,
+          //     child: StreamBuilder(
+          stream: editBloc.updatedGroupPosition,
+          builder:
+              (BuildContext innaInnContext, AsyncSnapshot<Position> snapshot) {
+            List<ControlGroup> controlGroups =
+                makeControls(MediaControlsConfig.videoControlsAsJson);
 
-    return Container(
-      child: Material(
-        elevation: 7.0,
-        child: Stack(
-          fit: StackFit.passthrough,
-          // fit: StackFit.expand,
-          children: makeControls(),
-        ),
-        type: MaterialType.transparency,
-      ),
-      constraints: BoxConstraints.expand(),
-      // color: Color.fromARGB(90, 80, 80, 80),
-      alignment: Alignment.center,
-    );
-  }
+            // if (widget.isEdit) {
+            //   editBloc.setCurrentGroupEditing();
+            editBloc.currentGroupEditing?.highlightDragging();
 
-  // TODO Pull controls config from MediaPlayerConfig.
-  @override
-  List<ControlGroup> makeControls() {
-    List<String> groupsJson = MediaControlsConfig.videoControlsAsJson;
-    List<ControlGroup> grps = List.empty(growable: true);
+            if (snapshot.hasData) {
+              ControlGroup editing = editBloc.currentGroupEditing!;
 
-    if (groupsJson.isNotEmpty) {
-      int groupIndex = 0;
-      for (String json in groupsJson) {
-        Key? key = widget.isEdit ? Key("edit-group${groupIndex++}") : null;
-        grps.add(ControlGroup.fromJson(json, smb, key: key));
-      }
+              ControlGroup updatedGroup = ControlGroup(
+                editBloc,
+                editing.controlsWidgets,
+                snapshot.data!,
+                horizontal: editing.horizontal,
+                key: editing.key,
+              );
+
+              // if (controlGroups.remove(editBloc.currentGroupEditing!)) {
+              //   controlGroups.add(updatedGroup);
+              //   // editBloc.setCurrentGroupEditing();
+              //   log("Dart isn't complete trash...${editBloc.currentGroupEditing!} was removed successfully.");
+              // }
+            }
+            // }
+
+            return Container(
+              // color: MediaOptions.controlGroupBackgroundColor,
+              child: Material(
+                elevation: 64.0,
+                child: Stack(
+                  fit: StackFit.passthrough,
+                  children: controlGroups,
+                ),
+                type: MaterialType.transparency,
+              ),
+              constraints: BoxConstraints.expand(),
+              // color: Color.fromARGB(90, 80, 80, 80),
+              alignment: Alignment.center,
+            );
+          });
     } else {
-      grps = makeGeneric();
-      List<String> grpsJson = List.empty(growable: true);
-      for (ControlGroup grp in grps) {
-        grpsJson.add(json.encode(grp));
-        log("grp encoded ${grp.toString()}");
-      }
-
-      MediaControlsConfig.updateJson(Type.VIDEO, grpsJson);
+      return Container(
+        // color: MediaOptions.controlGroupBackgroundColor,
+        child: Material(
+          elevation: 64.0,
+          child: Stack(
+            fit: StackFit.passthrough,
+            // fit: StackFit.expand,
+            children: makeControls(MediaControlsConfig.videoControlsAsJson),
+          ),
+          type: MaterialType.transparency,
+        ),
+        constraints: BoxConstraints.expand(),
+        // color: Color.fromARGB(90, 80, 80, 80),
+        alignment: Alignment.center,
+      );
     }
-
-    if(widget.isEdit) {
-      var bloc = MediaControllerBlocProvider.ofEdit(context);
-      bloc.controlGroups.clear();
-      bloc.controlGroups.addAll(grps);
-    }
-
-    return grps;
   }
 
+  void highlightSelectedGroup() {}
+
+  // void update() {
+  //   setState(() {
+  //
+  //   });
+  // }
+
+  @override
+  List<String> get asJson => MediaControls.jsonListFromGroups(
+      makeControls(MediaControlsConfig.videoControlsAsJson));
+
+  @override
   List<ControlGroup> makeGeneric() {
+    MediaControllerBloc bloc = MediaControllerBlocProvider.of(context);
+
     return <ControlGroup>[
       ControlGroup(
+        bloc,
         <SuperMediaWidget>[smb.videoPlayBtn],
         Position.centerAlign(context, isPlayBtn: true),
       ),
       ControlGroup(
+        bloc,
         <SuperMediaWidget>[smb.seekBackBtn, smb.seekFwdBtn],
         Position(bottom: 56.0, right: 20.0),
       ),
-      ControlGroup(<SuperMediaWidget>[smb.prevBtn, smb.nextBtn],
+      ControlGroup(bloc, <SuperMediaWidget>[smb.prevBtn, smb.nextBtn],
           Position.combine(Position.topAlign(), Position.rightAlign())),
       ControlGroup(
+        bloc,
         <SuperMediaWidget>[smb.speedBtn, smb.detailsBtn],
         Position(bottom: 56.0, left: 20.0),
       ),
       ControlGroup(
+        bloc,
         <SuperMediaWidget>[TimeSlider()],
         Position(bottom: 12.0, left: 10.0, right: 10.0),
       ),

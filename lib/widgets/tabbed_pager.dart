@@ -1,18 +1,13 @@
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
-import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
-import 'package:super_media_bros_3/themes/text_styles.dart';
 import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
-import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
 import 'package:super_media_bros_3/widgets/menus/customize_menu.dart';
-import 'package:video_player/video_player.dart';
 
 class MediaTabPager extends StatefulWidget {
   final List<MediaBloc> mainMediaBlocs;
@@ -62,7 +57,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext innerContext) {
     return Scaffold(
       // key: _scaffoldKey,
       appBar: AppBar(
@@ -81,7 +76,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
         }).toList(),
       ),
       drawer: Drawer(
-        child: CustomizeMenu(),
+        child: CustomizeMenu(context),
       ),
       // drawer: , // Settings menu eventually.
     );
@@ -115,7 +110,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MediaControllerBlocProvider.forEditScreen(type,
+          builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
               child: EditControls(type))),
     );
   }

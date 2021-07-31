@@ -27,7 +27,8 @@ class MediaControllerBlocProvider extends InheritedWidget {
     if (mediaBloc.currentIndex != old.mediaBloc.currentIndex) {
       return true;
     }
-    return false;
+
+    return true;
   }
 
   static MediaControllerEditBloc ofEdit(BuildContext context) {
@@ -37,8 +38,6 @@ class MediaControllerBlocProvider extends InheritedWidget {
   }
 
   static MediaControllerBloc of(BuildContext context) {
-    return (context
-            .dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()!)
-        .controllerBloc;
+    return (context.dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()!).controllerBloc;
   }
 }

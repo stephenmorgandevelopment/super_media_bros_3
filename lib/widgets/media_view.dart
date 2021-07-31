@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
-import 'package:super_media_bros_3/mediaplayer/media_gesture_detector.dart';
-import 'package:super_media_bros_3/mediaplayer/media_player_config.dart';
 
 abstract class MediaView extends StatefulWidget {
   // final Fling _fling = Fling();
-  late final MediaControllerBloc _bloc;
+  // late final MediaControllerBloc _bloc;
 
   // bool get isPlaying;
   // void onPressed(String tag);

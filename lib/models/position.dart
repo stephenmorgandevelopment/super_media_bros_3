@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -19,6 +18,22 @@ class Position {
           left: horizontal,
           right: horizontal,
         );
+
+  Position updateFromOffset(Offset offset) {
+    double? topAdj = top == null ? null : top! + offset.dy;
+    double? bottomAdj = bottom == null ? null : bottom! + offset.dy;
+    double? leftAdj = left == null ? null : left! + offset.dx;
+    double? rightAdj = right == null ? null : right! + offset.dx;
+
+    return Position(
+        top: topAdj,
+        bottom: bottomAdj,
+        left: leftAdj,
+        right: rightAdj,
+    );
+  }
+
+
 
   Position.fromJson(Map<String, dynamic> map)
       : top = map['top'],
@@ -49,7 +64,7 @@ class Position {
     Size size = MediaQuery.of(context).size;
     log("Size is: $size");
 
-    double btnAdjustment = (MediaOptions.iconsize + 16.0) / 2;
+    double btnAdjustment = (MediaOptions.iconsize + 24.0) / 2;
     if (isPlayBtn) {
       btnAdjustment *=
           MediaControllerBlocProvider.of(context).bloc.type == Type.VIDEO

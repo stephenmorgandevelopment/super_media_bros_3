@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
@@ -29,8 +27,49 @@ const String IMG_DETAIL_TAG = "details";
 
 abstract class SuperMediaWidget implements Widget {
   String get tag;
+  // final Color? bgColor;
   // String get json;
+  final bool _selected = false;
+  bool get selected => _selected;
+  // static Widget duplicate(Widget widget) {
+  //   if(widget.debugDescribeChildren());
+  // }
 
+  Widget highlightSelected() {  //SuperMediaWidget widget
+    return Container(
+      padding: EdgeInsets.all(0.0),
+      color: MediaOptions.selectedColor,
+      child: Material(child: this.createElement().widget),
+    );
+  }
+
+  Widget highlightDragging() {   //Widget widget) {
+    return Container(
+      color: Colors.orange,
+      child: Material(child: this.createElement().widget),
+      padding: EdgeInsets.all(0.0),
+      alignment: null,
+    );
+  }
+
+  Widget wrap(
+      void Function()? started,
+      void Function(DraggableDetails details)? ended,
+      void Function()? completed) {
+    return Positioned(
+      child: Draggable(
+        child: this,
+        feedback: this.highlightDragging(),
+        affinity: null,
+        onDragStarted: started,
+        onDragEnd: ended,
+        onDragCompleted: completed,
+        data: [],
+      ),
+    );
+  }
+
+  // TODO this is being called instead of proper toJson in ControlGroup.
   Map toJson() {
     Map<String, dynamic> map = Map();
     map['tag'] = tag;
@@ -38,7 +77,7 @@ abstract class SuperMediaWidget implements Widget {
   }
 
   static SuperMediaWidget fromTag(String tag) {
-    switch(tag) {
+    switch (tag) {
       case TIME_SLIDER_TAG:
         return TimeSlider();
       case SPEED_SLIDER_TAG:
@@ -48,22 +87,46 @@ abstract class SuperMediaWidget implements Widget {
     }
   }
 
+  static SuperMediaWidget of(BuildContext context, onPressed, tag) {
+    SuperMediaButtons smb = SuperMediaButtons(context, onPressed);
+    return smb.fromTag(tag);
+  }
 }
 
 class SuperMediaButton extends IconButton with SuperMediaWidget {
   final String tag;
+  final Stream<bool>? stream;
 
   SuperMediaButton({
     Function()? onPressed,
     required Icon icon,
     double iconSize = MediaOptions.iconsize,
     required this.tag,
+    this.stream,
   }) : super(onPressed: onPressed, icon: icon, iconSize: iconSize);
 
   bool isEqual(Object obj) {
     return obj is SuperMediaButton && this.tag == obj.tag;
   }
 
+  @override
+  Widget build(BuildContext context) {
+    if(stream == null) {
+      return super.build(context);
+    } else {
+      return StreamBuilder(
+        key: Key(tag),
+        stream: stream,
+        builder: (innerContext, snapshot) {
+          try {
+            return super.build(innerContext);
+          } catch (e) {
+            return super.build(context);
+          }
+        },
+      );
+    }
+  }
 }
 
 class SuperMediaButtons {
@@ -206,7 +269,11 @@ class SuperMediaButtons {
 
   SuperMediaButton get videoPlayBtn => SuperMediaButton(
       tag: PLAY_TAG,
-      onPressed: () => onPressed(PLAY_TAG),
+      onPressed: () {
+        onPressed(PLAY_TAG);
+        // TODO find a way to set state from here or add stream.  I'm getting wild
+        // TODO inconsistencies with my play/pause button changing correctly.
+      },
       iconSize: MediaOptions.iconsize * MediaOptions.videoPlayBtnMultiplier,
       icon: Icon(
         MediaControllerBlocProvider.of(context).isPlaying

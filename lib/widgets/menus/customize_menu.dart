@@ -7,11 +7,15 @@ import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provid
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
 class CustomizeMenu extends StatelessWidget {
-  void editControls(BuildContext context, Type type) async {
+  BuildContext callingContext;
+
+  CustomizeMenu(this.callingContext);
+
+  void editControls(Type type) async {
     Navigator.push(
-      context,
+      this.callingContext,
       MaterialPageRoute(
-          builder: (context) => MediaControllerBlocProvider.forEditScreen(type,
+          builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
               child: EditControls(type))),
     );
   }
@@ -86,11 +90,11 @@ class CustomizeMenu extends StatelessWidget {
             "Edit Image Controls",
             style: SuperTextStyles.drawerTextStyle,
           ),
-          onTap: () => editControls(context, Type.IMAGE),
+          onTap: () => editControls(Type.IMAGE),
         ),
         ListTile(
           leading: Icon(Icons.movie),
-          onTap: () => editControls(context, Type.VIDEO),
+          onTap: () => editControls(Type.VIDEO),
           title: Text(
             "Edit Video Controls",
             style: SuperTextStyles.drawerTextStyle,
@@ -98,7 +102,7 @@ class CustomizeMenu extends StatelessWidget {
         ),
         ListTile(
           leading: Icon(Icons.library_music),
-          onTap: () => editControls(context, Type.AUDIO),
+          onTap: () => editControls(Type.AUDIO),
           title: Text(
             "Edit Audio Controls",
             style: SuperTextStyles.drawerTextStyle,

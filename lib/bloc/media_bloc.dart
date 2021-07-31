@@ -16,11 +16,7 @@ class MediaBloc {
   @protected
   final MediaRepo repo;
 
-  int _currentIndex = 0;
-  int get currentIndex => _currentIndex;
-  set currentIndex(int index) {
-    _currentIndex = index;
-  }
+  int currentIndex = 0;
 
   int get count => mediaList.length;
 
@@ -36,20 +32,20 @@ class MediaBloc {
   MediaBloc.empty(Type? type) : this(List.empty(growable: true), type);
 
   Future<MediaResource>? getNextMedia() async {
-    if(_currentIndex >= mediaList.length) {
-      _currentIndex = -1;
+    if(currentIndex >= mediaList.length) {
+      currentIndex = -1;
     }
-    _currentIndex += 1;
-    _currentMedia = await getMedia(_currentIndex);
+    currentIndex += 1;
+    _currentMedia = await getMedia(currentIndex);
     return _currentMedia!;
   }
 
   Future<MediaResource>? getPreviousMedia() async {
-    if(_currentIndex <= 0) {
-      _currentIndex = mediaList.length;
+    if(currentIndex <= 0) {
+      currentIndex = mediaList.length;
     }
-    _currentIndex -= 1;
-    _currentMedia = await getMedia(_currentIndex);
+    currentIndex -= 1;
+    _currentMedia = await getMedia(currentIndex);
     return _currentMedia!;
   }
 
@@ -58,7 +54,7 @@ class MediaBloc {
   }
 
   Future<void> loadCurrentMedia() async {
-    _currentMedia = await getMedia(_currentIndex);
+    _currentMedia = await getMedia(currentIndex);
   }
 
   Future<MediaResource> getMedia(int index) async {
