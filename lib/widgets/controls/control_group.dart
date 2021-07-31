@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
@@ -24,8 +25,8 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
       {this.horizontal = true, this.key}); //: ControlGroupState(_bloc, position, horizontal: hroizontal, key: key);
 
   @override
-  State createState() => ControlGroupState(this.controlsWidgets, this.position,
-      horizontal: this.horizontal, key: this.key);
+  State createState() => ControlGroupState(position); //this.controlsWidgets, this.position,
+  // horizontal: this.horizontal, key: this.key
 
   static List<String> makeJsonListFrom(List<ControlGroup> groups) {
     List<String> grpsJson = List.empty(growable: true);
@@ -50,16 +51,16 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
 
 class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
   get tag => "control-group";
-  get isEdit => (key != null && key.toString().contains(MediaControlsState.editTag));
+  get isEdit => (widget.key != null
+      && widget.key.toString().contains(MediaControlsState.editTag));
 
-  final Key? key;
-  final List<SuperMediaWidget> controlsWidgets;
-  final bool horizontal;
-  Position position;
+  // final Key? key;
+  // final List<SuperMediaWidget> controlsWidgets;
+  // final bool horizontal;
+  Position updatedPosition;
   late final Stream<Position>? streamedPosition;
 
-  ControlGroupState(this.controlsWidgets, this.position,
-      {this.horizontal = true, this.key});
+  ControlGroupState(this.updatedPosition);
 
   @override
   void didChangeDependencies() {
@@ -95,17 +96,17 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
     Widget base = Container(
         padding: EdgeInsets.zero,
         color: isEdit ? MediaOptions.controlGroupBackgroundColor : null,
-        child: horizontal
+        child: widget.horizontal
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: this.controlsWidgets,
+                children: widget.controlsWidgets,
               )
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: this.controlsWidgets,
+                children: widget.controlsWidgets,
               ),
     );
 
@@ -117,30 +118,34 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
 
       MediaControllerEditBloc editBloc = widget._bloc as MediaControllerEditBloc;
 
-      // if(editBloc.currentGroupEditingKey == this.key) {
-      //   editBloc.updatedGroupPosition.listen((posit) {
-      //     setState(() {
-      //       position = posit;
-      //     });
-      //   });
-      // }
+      if(editBloc.currentGroupEditingKey == widget.key) {
+        editBloc.updatedGroupPosition.listen((posit) {
+          log("ControlGroup listener called: posit - ${posit.toString()}");
+          updatedPosition = posit;
+          // setState(() {
+          //   position = posit;
+          // });
+        });
+      }
 
       base = LongPressDraggable(
         child: base,
         feedback: widget.highlightDragging(),
         onDragUpdate: editBloc.updateData,
         onDragStarted: () => editBloc.currentGroupEditing = this.widget,
-        data: position,
+        data: ControlGroup(
+            widget._bloc, widget.controlsWidgets, updatedPosition,
+            horizontal: widget.horizontal, key: widget.key),
       );
     }
 
     return Positioned(
-      key: this.key,
+      key: widget.key,
       child: base,
-      left: position.left,
-      top: position.top,
-      right: position.right,
-      bottom: position.bottom,
+      left: widget.position.left,
+      top: widget.position.top,
+      right: widget.position.right,
+      bottom: widget.position.bottom,
     );
   }
 

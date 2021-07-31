@@ -23,7 +23,7 @@ abstract class MediaControls extends StatefulWidget {
     List<String> grpsJson = List.empty(growable: true);
     for (ControlGroup grp in groups) {
       grpsJson.add(json.encode(grp));
-      log("grp encoded ${grp.toString()}");
+      // log("grp encoded ${grp.toString()}");
     }
 
     return grpsJson;
@@ -92,8 +92,6 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   ControlGroup makeControlGroup(String jsonString, SuperMediaButtons smb,
       {Key? key}) {
     Map<String, dynamic> map = jsonDecode(jsonString);
-
-    log("makeControlGroup - map is : ${map.toString()}");
 
     return ControlGroup(_bloc,
       makeWidgets(map['controlsWidgets'], smb),

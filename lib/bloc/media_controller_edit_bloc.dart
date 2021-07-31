@@ -36,16 +36,10 @@ class MediaControllerEditBloc implements MediaControllerBloc {
     _controlGroups.addAll(grps);
   }
 
-  void replaceCurrentEditingControlGroupWith(ControlGroup controlGroup) {
+  void replaceControlGroupWithUpdated(ControlGroup controlGroup) {
     _controlGroups.remove(currentGroupEditing);
     _controlGroups.add(controlGroup);
   }
-
-
-
-  Stream<Position> get updatedGroupPosition => offsetStream.map((offset) {
-    return currentGroupEditing!.position.updateFromOffset(offset); // ?? Position();
-  });
 
   // BehaviorSubject<String> _currentlyEditingSubject = BehaviorSubject<String>();
   set currentlyEditing(String tagOrKey) {
@@ -77,7 +71,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   // }
 
   Offset _offset = Offset(0.0, 0.0);
-  final BehaviorSubject<Offset> _offsetSubject = BehaviorSubject<Offset>();
+  final PublishSubject<Offset> _offsetSubject = PublishSubject<Offset>();
   // void updateData(DragUpdateDetails details) => _offsetSubject.sink.add(details.delta);
   void updateData(DragUpdateDetails details) {
     log("offsetSubject updated: ${details.toString()}");
@@ -87,6 +81,18 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   Sink<Offset> get offsetSink => _offsetSubject.sink;
   Stream<Offset> get offsetStream => _offsetSubject.stream;
 
+  Offset _runningOffset = Offset(0.0, 0.0);
+  Offset get runningOffset => _runningOffset;
+  set runningOffset(Offset latest) {
+    _runningOffset = Offset(_runningOffset.dx + latest.dx, _runningOffset.dy + latest.dy);
+    log("runningOffset: ${_runningOffset.toString()}");
+  }
+
+  Stream<Position> get updatedGroupPosition => offsetStream.map((offset) {
+    log("updatedGroupPosition called with: offset ${offset.toString()}");
+    return currentGroupEditing!.position.updateFromOffset(offset); // ?? Position();
+  });
+
 
   // final _isPlayingSink = BehaviorSubject<bool>();
   // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
@@ -95,7 +101,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   bool get isPlaying => true;
   Duration get duration => Duration(seconds: 105);
   double get durationSeconds => duration.inSeconds.toDouble();
-  double get currentPosition => Duration(seconds: 47).inSeconds.toDouble();
+  double get currentTimePosition => Duration(seconds: 47).inSeconds.toDouble();
   double get playSpeed => 1.0;
   bool get isLooping => false;
 
@@ -122,7 +128,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
 
   @override
   // TODO: implement currentPositionStream
-  Stream<double> get currentPositionStream => BehaviorSubject.seeded(currentPosition);
+  Stream<double> get currentTimePositionStream => BehaviorSubject.seeded(currentTimePosition);
 
   @override
   set looper(bool loop) {

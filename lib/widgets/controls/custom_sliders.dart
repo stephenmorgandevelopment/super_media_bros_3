@@ -43,7 +43,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       child: Material(
         child: StreamBuilder(
-          stream: _bloc.currentPositionStream,
+          stream: _bloc.currentTimePositionStream,
           initialData: currentPosition,
           builder: (BuildContext context, AsyncSnapshot<double> snapshot,) {
             if (snapshot.hasData) {

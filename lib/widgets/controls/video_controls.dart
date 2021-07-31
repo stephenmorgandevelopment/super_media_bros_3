@@ -33,34 +33,43 @@ class _VideoControlsState extends MediaControlsState<VideoControls> {
           //   child: Material(
           //     elevation: 7.0,
           //     child: StreamBuilder(
-          stream: editBloc.updatedGroupPosition,
+          stream: editBloc.offsetStream,
           builder:
-              (BuildContext innaInnContext, AsyncSnapshot<Position> snapshot) {
+              (BuildContext innaInnContext, AsyncSnapshot<Offset> snapshot) {
             List<ControlGroup> controlGroups =
                 makeControls(MediaControlsConfig.videoControlsAsJson);
 
             // if (widget.isEdit) {
             //   editBloc.setCurrentGroupEditing();
-            editBloc.currentGroupEditing?.highlightDragging();
+            // editBloc.currentGroupEditing?.highlightDragging();
 
-            if (snapshot.hasData) {
-              ControlGroup editing = editBloc.currentGroupEditing!;
-
-              ControlGroup updatedGroup = ControlGroup(
-                editBloc,
-                editing.controlsWidgets,
-                snapshot.data!,
-                horizontal: editing.horizontal,
-                key: editing.key,
-              );
+            // if (snapshot.hasData) {
+            //   ControlGroup editing = editBloc.currentGroupEditing!;
+            //
+            //   ControlGroup updatedGroup = ControlGroup(
+            //     editBloc,
+            //     editing.controlsWidgets,
+            //     snapshot.data!,
+            //     horizontal: editing.horizontal,
+            //     key: editing.key,
+            //   );
+            //
+            //   editBloc.replaceControlGroupWithUpdated(updatedGroup);
 
               // if (controlGroups.remove(editBloc.currentGroupEditing!)) {
               //   controlGroups.add(updatedGroup);
               //   // editBloc.setCurrentGroupEditing();
               //   log("Dart isn't complete trash...${editBloc.currentGroupEditing!} was removed successfully.");
               // }
-            }
             // }
+            // }
+            // editBloc.currentGroupEditing?.highlightDragging();
+            // editBloc.currentButtonEditing?.highlightSelected();
+
+            Offset? latest =  snapshot.data;
+            if(snapshot.hasData && latest != null) {
+              editBloc.runningOffset = latest;
+            }
 
             return Container(
               // color: MediaOptions.controlGroupBackgroundColor,

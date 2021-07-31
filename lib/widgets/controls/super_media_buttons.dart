@@ -239,7 +239,7 @@ class SuperMediaButtons {
           MediaControllerBlocProvider.of(context).isLooping
               ? Icons.repeat_on_outlined
               : Icons.repeat_outlined,
-          color: Colors.white38,
+          color: MediaOptions.superMediaButtonColor,
         ),
       );
 
@@ -251,7 +251,7 @@ class SuperMediaButtons {
           MediaControllerBlocProvider.of(context).isLooping
               ? Icons.repeat_one_on_outlined
               : Icons.repeat_one_outlined,
-          color: Colors.white38,
+          color: MediaOptions.superMediaButtonColor,
         ),
       );
 
@@ -263,7 +263,7 @@ class SuperMediaButtons {
         MediaControllerBlocProvider.of(context).isPlaying
             ? Icons.pause_circle_filled_outlined
             : Icons.play_circle_fill_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Start or stop slideshow or audio playback.",
       ));
 
@@ -279,7 +279,7 @@ class SuperMediaButtons {
         MediaControllerBlocProvider.of(context).isPlaying
             ? Icons.pause_circle_filled_outlined
             : Icons.play_circle_fill_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Play or pause the video.",
       ));
 
@@ -289,7 +289,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.slow_motion_video_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Adjust playback speed of the video.",
       ));
 
@@ -299,7 +299,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.skip_previous_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Previous video.",
       ));
 
@@ -309,7 +309,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.fast_rewind_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Seek backwards in the video.",
       ));
 
@@ -319,7 +319,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.fast_forward_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Seek forward in the video.",
       ));
 
@@ -329,7 +329,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.skip_next_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Next video.",
       ));
 
@@ -339,7 +339,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.info_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "View details about the video.",
       ));
 
@@ -349,7 +349,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.share_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Open the share manager.",
       ));
 
@@ -359,7 +359,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.add_to_photos_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Add this to photos, a gallery, or an album.",
       ));
 
@@ -369,7 +369,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.favorite_border,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Favorite this image.",
       ));
 
@@ -379,7 +379,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.code,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "View this image's raw byte data.",
       ));
 
@@ -389,7 +389,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.tune,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Open this image in a photo editor.",
       ));
 
@@ -399,7 +399,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.content_copy,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Copy this image to another album or folder.",
       ));
 
@@ -409,7 +409,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.drive_file_move_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Move this image to another album or folder.",
       ));
 
@@ -419,7 +419,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.delete_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "Delete this image.",
       ));
 
@@ -429,7 +429,7 @@ class SuperMediaButtons {
       iconSize: MediaOptions.iconsize,
       icon: Icon(
         Icons.info_outlined,
-        color: Colors.white38,
+        color: MediaOptions.superMediaButtonColor,
         semanticLabel: "View details from the image metadata.",
       ));
 }

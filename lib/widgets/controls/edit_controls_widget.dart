@@ -85,7 +85,7 @@ class _EditControlsState extends State<EditControls> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: saveOnExit,
+      onWillPop: onBackPressed,
       child: SafeArea(
         child: Scaffold(
           key: _scaffoldKey,
@@ -93,37 +93,42 @@ class _EditControlsState extends State<EditControls> {
           endDrawerEnableOpenDragGesture: true,
           endDrawer: menu,
           floatingActionButton: fab,
-          body: Container(
-                constraints: BoxConstraints.expand(),
-                child: DragTarget<ControlGroup>(
-                  onWillAccept: (controlGroup) =>
-                      verifyControlGroupCorrect(controlGroup),
-                  onAccept: (controlGroup) =>
-                      processControlGroupDrop(controlGroup),
-                  builder: (BuildContext context, accepted, rejected) {
-                    return Stack(
-                      children: [
-                        Image.asset(
-                      'images/thumbs.png',
-                      fit: BoxFit.fill,
-                      filterQuality: FilterQuality.high,
-                      isAntiAlias: true,
-                    ),
-                        controls,
-                    ]);
-                  },
-                ),
-              ),
-          ),
+          body: Stack(children: [
+             DragTarget<ControlGroup>(
+              onWillAccept: (controlGroup) =>
+                  verifyControlGroupCorrect(controlGroup),
+              onAccept: (controlGroup) => processControlGroupDrop(controlGroup),
+              builder: (BuildContext context, accepted, rejected) {
+                return Container(
+                  constraints: BoxConstraints.expand(),
+                    child: Image.asset(
+                    'images/thumbs.png',
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.high,
+                    isAntiAlias: true,
+                  ),
+                  // controls,
+                );
+              },
+            ),
+            controls,
+          ]),
         ),
+      ),
     );
   }
 
   Future<void> processControlGroupDrop(ControlGroup controlGroup) async {
-  //  String updatedControlJson = json.encode(controlGroup);
+    //  String updatedControlJson = json.encode(controlGroup);
     // editBloc.updateControlGroupsJson(updatedControlJson, )
-    editBloc.replaceCurrentEditingControlGroupWith(controlGroup);
+    editBloc.replaceControlGroupWithUpdated(controlGroup);
 
+    log("Replacement from longPressDraggable: ${controlGroup.toString()}");
+    log("Running offset and updatedPosition ${editBloc.runningOffset.toString()}");
+
+    setState(() {
+
+    });
   }
 
   bool verifyControlGroupCorrect(ControlGroup? controlGroup) {
@@ -162,9 +167,8 @@ class _EditControlsState extends State<EditControls> {
 
   get tuneBtnMenu => TuneButtonMenu(editBloc.currentButtonEditingTag);
 
-  Future<bool> saveOnExit() async {
-    if(editBloc.currentButtonEditingTag != 'null') {
-
+  Future<bool> onBackPressed() async {
+    if (editBloc.currentButtonEditingTag != 'null') {
       setState(() {
         editBloc.currentButtonEditingTag = 'null';
         _showModifyFab = false;
@@ -182,8 +186,6 @@ class _EditControlsState extends State<EditControls> {
       log("No config persisted.");
       // return true;
     }
-
-
 
     return true;
   }

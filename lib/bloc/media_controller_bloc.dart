@@ -49,15 +49,15 @@ class MediaControllerBloc {
   double get durationSeconds => duration.inSeconds.toDouble();
       // int.parse(_bloc.currentMedia!.data.metadata['duration']!) / 1000;
 
-  double get currentPosition => _bloc.type == Type.VIDEO
+  double get currentTimePosition => _bloc.type == Type.VIDEO
       ? _videoController!.value.position.inSeconds.toDouble()
       : 0.0; // TODO Implement audio player.
 
-  final _currentPositionSink = PublishSubject<double>();
-  Stream<double> get currentPositionStream =>
-      _currentPositionSink.stream;
+  final _currentTimePositionSink = PublishSubject<double>();
+  Stream<double> get currentTimePositionStream =>
+      _currentTimePositionSink.stream;
 
-  void _currentTimeListener() => _currentPositionSink.sink.add(currentPosition);
+  void _currentTimeListener() => _currentTimePositionSink.sink.add(currentTimePosition);
 
   void seekTo(int position) {
     if(_bloc.type == Type.VIDEO) {
@@ -116,7 +116,7 @@ class MediaControllerBloc {
   
   void dispose() {
     _videoController?.removeListener(_currentTimeListener);
-    _currentPositionSink.close();
+    _currentTimePositionSink.close();
     // _isPlayingSink.close();
     // _slideshowController?.dispose();
     _videoController?.dispose();

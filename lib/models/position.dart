@@ -11,6 +11,11 @@ class Position {
 
   Position({this.top, this.right, this.bottom, this.left});
 
+  @override
+  String toString() {
+    return "Position(top: $top, right: $right, bottom: $bottom, left: $left)";
+  }
+
   Position.symmetric({horizontal = 0.0, vertical = 0.0})
       : this(
           top: vertical,
