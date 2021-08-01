@@ -44,8 +44,8 @@ class _ImageControlsState extends MediaControlsState<ImageControls> {
 
   @override
   List<ControlGroup> makeGeneric() {
-    MediaControllerBloc bloc =
-      MediaControllerBlocProvider.of(context);
+    // MediaControllerBloc bloc =
+    //   MediaControllerBlocProvider.of(context);
 
     return <ControlGroup>[
       ControlGroup(bloc,

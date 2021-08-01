@@ -24,7 +24,19 @@ class Position {
           right: horizontal,
         );
 
+  void allowUncentering() {
+    if(top?.floor() == bottom?.floor()) {
+      bottom =null;
+    }
+    if(right?.floor() == left?.floor()) {
+      left = null;
+    }
+
+  }
+
   Position updateFromOffset(Offset offset) {
+    allowUncentering();
+
     double? topAdj = top == null ? null : top! + offset.dy;
     double? bottomAdj = bottom == null ? null : bottom! + offset.dy;
     double? leftAdj = left == null ? null : left! + offset.dx;

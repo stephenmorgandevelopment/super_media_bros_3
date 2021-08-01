@@ -22,6 +22,9 @@ class VideoControls extends MediaControls {
 
   @override
   State createState() => _VideoControlsState();
+
+
+
 }
 
 class _VideoControlsState extends MediaControlsState<VideoControls> {
@@ -119,7 +122,7 @@ class _VideoControlsState extends MediaControlsState<VideoControls> {
 
   @override
   List<ControlGroup> makeGeneric() {
-    MediaControllerBloc bloc = MediaControllerBlocProvider.of(context);
+    // MediaControllerBloc bloc = MediaControllerBlocProvider.of(context);
 
     return <ControlGroup>[
       ControlGroup(

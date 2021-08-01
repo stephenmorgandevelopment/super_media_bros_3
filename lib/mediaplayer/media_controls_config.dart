@@ -58,6 +58,23 @@ class MediaControlsConfig {
     writeConfigToPersistence(type, groupsJson);
   }
 
+  static Future<void> clearJson(Type type) async {
+    switch (type) {
+      case Type.IMAGE:
+        _imageControlsAsJson.clear();
+        break;
+      case Type.VIDEO:
+        _videoControlsAsJson.clear();
+        break;
+      case Type.AUDIO:
+        _audioControlsAsJson.clear();
+        break;
+    }
+
+    File file = await getFileByType(type);
+    file.delete();
+  }
+
   static Future<List<String>> readConfigFromPersistence(Type type) async {
     try {
       final file = await getFileByType(type);

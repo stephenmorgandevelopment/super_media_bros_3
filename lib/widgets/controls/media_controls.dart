@@ -15,9 +15,10 @@ abstract class MediaControls extends StatefulWidget {
   @protected
   final Function(String tag) callback;
   final bool isEdit;
+  final Key? key;
 
-  MediaControls(this.callback, {Key? key, this.isEdit = false})
-      : super(key: key);
+  MediaControls(this.callback, {this.key, this.isEdit = false})
+      : super();
 
   static List<String> jsonListFromGroups(List<ControlGroup> groups) {
     List<String> grpsJson = List.empty(growable: true);

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
@@ -25,7 +26,7 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
       {this.horizontal = true, this.key}); //: ControlGroupState(_bloc, position, horizontal: hroizontal, key: key);
 
   @override
-  State createState() => ControlGroupState(position); //this.controlsWidgets, this.position,
+  State createState() => ControlGroupState(); //this.controlsWidgets, this.position,
   // horizontal: this.horizontal, key: this.key
 
   static List<String> makeJsonListFrom(List<ControlGroup> groups) {
@@ -52,18 +53,35 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
 class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
   get tag => "control-group";
   get isEdit => (widget.key != null
-      && widget.key.toString().contains(MediaControlsState.editTag));
+        && widget.key.toString().contains(MediaControlsState.editTag));
 
-  // final Key? key;
-  // final List<SuperMediaWidget> controlsWidgets;
-  // final bool horizontal;
-  Position updatedPosition;
-  late final Stream<Position>? streamedPosition;
+  bool dragging = false;
 
-  ControlGroupState(this.updatedPosition);
+  MediaControllerEditBloc? get editBloc => isEdit ? widget._bloc as MediaControllerEditBloc
+      : null;
+
+  // Position? updatedPosition;
+  late final Stream<Position> streamedPosition;
+  // ControlGroup? updated;
+
+  Stream<Position?>? get updatedPositionStream => editBloc?.updatedGroupPosition;
+
+  get updated async => ControlGroup(
+    widget._bloc,
+    widget.controlsWidgets,
+    (await updatedPositionStream?.last)!,
+    horizontal: widget.horizontal,
+    key: widget.key,
+  );
+      // .updateFromOffset();
+
+  ControlGroupState();
 
   @override
   void didChangeDependencies() {
+    if(isEdit) {
+      // streamedPosition = editBloc?.updatedGroupPosition;
+    }
 
     // if(isEdit) {
       // MediaControllerEditBloc bloc = (MediaControllerBlocProvider.of(context) as MediaControllerEditBloc);
@@ -91,9 +109,13 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
     super.dispose();
   }
 
+  get editBackgourndColor => dragging ? MediaOptions.dragHighlightColor : MediaOptions.controlGroupBackgroundColor;
+
   @override
   Widget build(BuildContext innerContext) {
-    Widget base = Container(
+    Widget base = Material(
+      type: MaterialType.transparency,
+        child: Container(
         padding: EdgeInsets.zero,
         color: isEdit ? MediaOptions.controlGroupBackgroundColor : null,
         child: widget.horizontal
@@ -108,6 +130,7 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: widget.controlsWidgets,
               ),
+    ),
     );
 
     if (isEdit) {
@@ -116,37 +139,74 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
       // MediaControllerEditBloc editBloc =
       //     MediaControllerBlocProvider.ofEdit(context);
 
-      MediaControllerEditBloc editBloc = widget._bloc as MediaControllerEditBloc;
+      // MediaControllerEditBloc C
 
-      if(editBloc.currentGroupEditingKey == widget.key) {
-        editBloc.updatedGroupPosition.listen((posit) {
-          log("ControlGroup listener called: posit - ${posit.toString()}");
-          updatedPosition = posit;
-          // setState(() {
-          //   position = posit;
-          // });
-        });
-      }
+      // if(editBloc.currentGroupEditingKey == widget.key) {
+      //   editBloc.updatedGroupPosition.listen((posit) {
+      //     log("ControlGroup listener called: posit - ${posit.toString()}");
+      //     updatedPosition = posit;
+      //     // setState(() {
+      //     //   position = posit;
+      //     // });
+      //   });
+      // }
 
-      base = LongPressDraggable(
+      // base = Positioned(
+      //   key: widget.key,
+      //   child: base,
+      //   left: widget.position.left,
+      //   top: widget.position.top,
+      //   right: widget.position.right,
+      //   bottom: widget.position.bottom,
+      // );
+
+      return wrap(LongPressDraggable(
         child: base,
-        feedback: widget.highlightDragging(),
-        onDragUpdate: editBloc.updateData,
-        onDragStarted: () => editBloc.currentGroupEditing = this.widget,
-        data: ControlGroup(
-            widget._bloc, widget.controlsWidgets, updatedPosition,
-            horizontal: widget.horizontal, key: widget.key),
-      );
+        feedback: base,
+        // childWhenDragging: null,
+        //feedback: nu.editBloc.updateData?,
+        onDragEnd: _dropped,
+        onDragStarted: () => startDrag(),
+        data: _updatedPosition,
+        // data: ControlGroup(
+        //     widget._bloc, widget.controlsWidgets, updatedPosition,
+        //     horizontal: widget.horizontal, key: widget.key),
+      ));
     }
 
+    return wrap(base);
+
+      // return Positioned(
+      //   key: widget.key,
+      //   child: base,
+      //   left: widget.position.left,
+      //   top: widget.position.top,
+      //   right: widget.position.right,
+      //   bottom: widget.position.bottom,
+      // );
+
+  }
+
+  void startDrag() {
+    editBloc!.currentGroupEditing = widget;
+    dragging = true;
+  }
+
+  wrap(Widget needsWrapped) {
     return Positioned(
       key: widget.key,
-      child: base,
+      child: needsWrapped,
       left: widget.position.left,
       top: widget.position.top,
       right: widget.position.right,
       bottom: widget.position.bottom,
     );
+  }
+
+  Position? _updatedPosition;
+  _dropped(DraggableDetails details) {
+    dragging = false;
+    _updatedPosition = widget.position.updateFromOffset(details.offset);
   }
 
   // static ControlGroup fromMap(Map<String, dynamic> map, SuperMediaButtons smb, {Key? key}) {

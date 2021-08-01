@@ -5,6 +5,7 @@ import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/image_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
@@ -40,6 +41,11 @@ class _EditControlsState extends State<EditControls> {
   late MediaControls controls;
   late SuperMediaButtons smb;
 
+  MediaControllerEditBloc? _editBloc;
+
+  MediaControllerEditBloc get editBloc =>
+      _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
+
   @override
   void initState() {
     smb = SuperMediaButtons(context, onPressed);
@@ -72,13 +78,12 @@ class _EditControlsState extends State<EditControls> {
         break;
     }
 
-    // for(ControlGroup group in )
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
+    editBloc.controlsKey = _mediaControlsKey;
     super.didChangeDependencies();
   }
 
@@ -93,52 +98,80 @@ class _EditControlsState extends State<EditControls> {
           endDrawerEnableOpenDragGesture: true,
           endDrawer: menu,
           floatingActionButton: fab,
-          body: Stack(children: [
-             DragTarget<ControlGroup>(
-              onWillAccept: (controlGroup) =>
-                  verifyControlGroupCorrect(controlGroup),
-              onAccept: (controlGroup) => processControlGroupDrop(controlGroup),
+          body: Container(
+            constraints: BoxConstraints.expand(),
+            child: DragTarget<Position>(
+              onAcceptWithDetails: processControlGroupDrop,
+              onWillAccept: verifyControlGroupCorrect,
+              // onAccept: (_) => persistJson(),
               builder: (BuildContext context, accepted, rejected) {
-                return Container(
-                  constraints: BoxConstraints.expand(),
-                    child: Image.asset(
-                    'images/thumbs.png',
-                    fit: BoxFit.fill,
-                    filterQuality: FilterQuality.high,
-                    isAntiAlias: true,
-                  ),
-                  // controls,
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints.expand(),
+                      child: Image.asset(
+                        'images/thumbs.png',
+                        fit: BoxFit.fill,
+                        filterQuality: FilterQuality.high,
+                        isAntiAlias: true,
+                      ),
+                      // controls,
+                    ),
+                    controls,
+                  ],
                 );
               },
             ),
-            controls,
-          ]),
+          ),
         ),
       ),
     );
   }
 
-  Future<void> processControlGroupDrop(ControlGroup controlGroup) async {
-    //  String updatedControlJson = json.encode(controlGroup);
-    // editBloc.updateControlGroupsJson(updatedControlJson, )
-    editBloc.replaceControlGroupWithUpdated(controlGroup);
+  processControlGroupDrop(DragTargetDetails<Position> details) {
+    log("Processing drop");
 
-    log("Replacement from longPressDraggable: ${controlGroup.toString()}");
-    log("Running offset and updatedPosition ${editBloc.runningOffset.toString()}");
+    Position updatedPosition = details.data;
+    ControlGroup oldGroup = editBloc.currentGroupEditing!;
+    ControlGroup updatedGroup = ControlGroup(
+      editBloc,
+      oldGroup.controlsWidgets,
+      updatedPosition,
+      horizontal: oldGroup.horizontal,
+      key: oldGroup.key,
+    );
 
-    setState(() {
+    editBloc.replaceControlGroupWithUpdated(updatedGroup);
 
-    });
+    log("position.updateFromOffset: ${updatedPosition.toString()}");
+
+    persistJson();
+    setState(() {});
   }
 
-  bool verifyControlGroupCorrect(ControlGroup? controlGroup) {
-    if (controlGroup == null) {
+  // Future<void> processControlGroupDrop(ControlGroup controlGroup) async {
+  //   //  String updatedControlJson = json.encode(controlGroup);
+  //   // editBloc.updateControlGroupsJson(updatedControlJson, )
+  //   editBloc.replaceControlGroupWithUpdated(controlGroup);
+  //
+  //   setState(() {
+  //
+  //   });
+  // }
+
+  bool verifyControlGroupCorrect(Object? object) {
+    log("Will I accept the drop...willAccept called");
+
+    if (object == null) {
+      log("Object is null buddy...no drop for you.");
+      log("Shhhh...don't tell anybody, but I can work around that in a hot second.");
       return false;
     }
-    if (controlGroup.key != editBloc.currentGroupEditingKey) {
-      return false;
-    }
-    return controlGroup is ControlGroup;
+    // if (controlGroup.key != editBloc.currentGroupEditingKey) {
+    //   return false;
+    // }
+    return true;
   }
 
   // void offsetListener(Offset offset) {
@@ -191,9 +224,11 @@ class _EditControlsState extends State<EditControls> {
   }
 
   void persistJson() {
-    var bloc = MediaControllerBlocProvider.ofEdit(context);
-    MediaControlsConfig.writeConfigToPersistence(
-        bloc.bloc.type!, bloc.controlGroupsJson);
+    // MediaControllerEditBloc bloc = MediaControllerBlocProvider.ofEdit(context);
+    MediaControlsConfig.updateJson(
+        editBloc.bloc.type!, editBloc.controlGroupsJson);
+    // MediaControlsConfig.writeConfigToPersistence(
+    // bloc.bloc.type!, bloc.controlGroupsJson);
   }
 
   bool dragging = false;
@@ -262,11 +297,6 @@ class _EditControlsState extends State<EditControls> {
 
     setState(() {});
   }
-
-  MediaControllerEditBloc? _editBloc;
-
-  MediaControllerEditBloc get editBloc =>
-      _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
 
   Key? getMatchingControlGroupKey() {
     if (editBloc.currentButtonEditingTag == 'null') {

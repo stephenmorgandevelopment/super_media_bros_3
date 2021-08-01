@@ -12,8 +12,9 @@ class MediaOptions {
 
   // Colors
   static const Color selectedColor = Color.fromARGB(152, 82, 255, 31);
-  static const Color controlGroupBackgroundColor = Color.fromARGB(135, 135, 135, 135);
+  static const Color controlGroupBackgroundColor = Color.fromARGB(165, 145, 145, 145);
   static const Color fabBackgroundColor = Color.fromARGB(215, 195, 195, 195);
-static const Color superMediaButtonColor = Color.fromARGB(165, 85,85, 85);
+  static const Color superMediaButtonColor = Color.fromARGB(205, 235,235, 235);
+  static const Color dragHighlightColor = Color.fromARGB(139, 255, 157, 0);
 
 }

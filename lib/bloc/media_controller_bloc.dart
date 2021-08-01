@@ -9,6 +9,10 @@ class MediaControllerBloc {
   MediaBloc _bloc;
   MediaBloc get bloc => _bloc;
 
+  // TODO Replace all the calls to bloc.bloc.type with type.
+  // TODO Refactor the _bloc.type to a non-nullable type.
+  Type get type => _bloc.type!;
+
   // List<String> groupsJson = List.empty(growable: true);
 
   ImagerSlideshowController? _slideshowController;
@@ -39,9 +43,9 @@ class MediaControllerBloc {
       ? (_videoController == null ? true : _videoController!.value.isPlaying)
       : _audioController == null;
   
-  // final _isPlayingSink = PublishSubject<bool>();
-  // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
-  // void _isPlayingListener() => _isPlayingSink.sink.add(_videoController!.value.isPlaying);
+  final _isPlayingSink = BehaviorSubject<bool>();
+  Stream<bool> get isPlayingStream => _isPlayingSink.stream;
+  void _isPlayingListener() => _isPlayingSink.sink.add(_videoController!.value.isPlaying);
 
   Duration get duration => Duration(
       milliseconds: int.parse(_bloc.currentMedia!.data.metadata['duration']!));
@@ -108,6 +112,7 @@ class MediaControllerBloc {
         _videoController!.play();
       }
       _videoController!.addListener(_currentTimeListener);
+      _videoController!.addListener(_isPlayingListener);
       // _videoController!.addListener(_isPlayingListener);
     });
   }
@@ -117,6 +122,7 @@ class MediaControllerBloc {
   void dispose() {
     _videoController?.removeListener(_currentTimeListener);
     _currentTimePositionSink.close();
+    _isPlayingSink.close();
     // _isPlayingSink.close();
     // _slideshowController?.dispose();
     _videoController?.dispose();

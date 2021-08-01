@@ -1,5 +1,7 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
@@ -27,26 +29,33 @@ const String IMG_DETAIL_TAG = "details";
 
 abstract class SuperMediaWidget implements Widget {
   String get tag;
+
   // final Color? bgColor;
   // String get json;
   final bool _selected = false;
+
   bool get selected => _selected;
+
   // static Widget duplicate(Widget widget) {
   //   if(widget.debugDescribeChildren());
   // }
 
-  Widget highlightSelected() {  //SuperMediaWidget widget
+  Widget highlightSelected() {
+    //SuperMediaWidget widget
     return Container(
       padding: EdgeInsets.all(0.0),
       color: MediaOptions.selectedColor,
-      child: Material(child: this.createElement().widget),
+      child: Material(child: this), //.createElement().widget),
     );
   }
 
-  Widget highlightDragging() {   //Widget widget) {
+  Widget highlightDragging() {
+    //Widget widget) {
     return Container(
-      color: Colors.orange,
-      child: Material(child: this.createElement().widget),
+      color: MediaOptions.dragHighlightColor,
+      child: Material(
+        child: this,
+      ),
       padding: EdgeInsets.all(0.0),
       alignment: null,
     );
@@ -96,6 +105,7 @@ abstract class SuperMediaWidget implements Widget {
 class SuperMediaButton extends IconButton with SuperMediaWidget {
   final String tag;
   final Stream<bool>? stream;
+  final dynamic builder;
 
   SuperMediaButton({
     Function()? onPressed,
@@ -103,27 +113,35 @@ class SuperMediaButton extends IconButton with SuperMediaWidget {
     double iconSize = MediaOptions.iconsize,
     required this.tag,
     this.stream,
+    this.builder,
   }) : super(onPressed: onPressed, icon: icon, iconSize: iconSize);
 
   bool isEqual(Object obj) {
     return obj is SuperMediaButton && this.tag == obj.tag;
   }
 
+  // WidgetFunction(BuildContext context, AsyncSnapshot snapshot) generalBuilder(
+  generalBuilder(BuildContext context, AsyncSnapshot snapshot) {
+    super.build(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    if(stream == null) {
+    if (stream == null) {
       return super.build(context);
     } else {
       return StreamBuilder(
         key: Key(tag),
         stream: stream,
-        builder: (innerContext, snapshot) {
-          try {
-            return super.build(innerContext);
-          } catch (e) {
-            return super.build(context);
-          }
-        },
+        builder: builder != null ? builder : generalBuilder,
+        // builder: (innerContext, snapshot) {
+        //   try {
+        //     return super.build(innerContext);
+        //   } catch (e) {
+        //     log("${tag}: Built with outer context");
+        //     return super.build(context);
+        //   }
+        // },
       );
     }
   }
@@ -269,6 +287,11 @@ class SuperMediaButtons {
 
   SuperMediaButton get videoPlayBtn => SuperMediaButton(
       tag: PLAY_TAG,
+      // TODO Finish updating play/pause as Stream.
+      // stream: MediaControllerBlocProvider.of(context).isPlayingStream,
+      // builder: (buildContext, snapshot) {
+      //
+      // },
       onPressed: () {
         onPressed(PLAY_TAG);
         // TODO find a way to set state from here or add stream.  I'm getting wild

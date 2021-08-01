@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
@@ -22,19 +26,35 @@ class MenuHeaderBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          // Spacer(
-          //   flex: 1,
-          // ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              title,
-              style: editDrawerHeaderStyle,
-              textAlign: TextAlign.left,
+          Container(
+            child: IconButton(
+              icon: Icon(Icons.save_outlined),
+              iconSize: 36.0,
+              onPressed: () => saveLayout(),
             ),
           ),
           Container(
+          child: IconButton(
+            // icon: Icon(Icons.restore_page_outlined),
+            icon: Icon(Icons.restart_alt_outlined),
+            iconSize: 36.0,
+            onPressed: () => resetDefault(),
+          ),
+          ),
+          Spacer(
+            flex: 1,
+          ),
+          // Expanded(
+          //   flex: 1,
+          //   child: Text(
+          //     title,
+          //     style: editDrawerHeaderStyle,
+          //     textAlign: TextAlign.left,
+          //   ),
+          // ),
+          Container(
             child: IconButton(
+              color: MediaOptions.superMediaButtonColor,
               icon: Icon(Icons.add_circle_outline_outlined),
               iconSize: 36.0,
               onPressed: () => showGeneratedJson(),
@@ -44,6 +64,7 @@ class MenuHeaderBar extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.add_to_photos_outlined),
               iconSize: 36.0,
+              color: MediaOptions.superMediaButtonColor,
               onPressed: () => showPersistedJson(),
             ),
           ),
@@ -55,6 +76,21 @@ class MenuHeaderBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  MediaControllerEditBloc get _bloc => MediaControllerBlocProvider.ofEdit(context);
+  Type get _type => _bloc.type;
+  List<String> get _controlGroupsJson => _bloc.controlGroupsJson;
+
+  Future<void> resetDefault() async {
+    MediaControlsConfig.clearJson(_type);
+
+    List<ControlGroup> genericGroups = _bloc.controlsKey?.currentState?.makeGeneric();
+    MediaControlsConfig.updateJson(_type, ControlGroup.makeJsonListFrom(genericGroups));
+  }
+
+  Future<void> saveLayout() async {
+    return MediaControlsConfig.updateJson(_type, _controlGroupsJson);
   }
 
   void showGeneratedJson() {
