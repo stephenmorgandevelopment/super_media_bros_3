@@ -166,7 +166,7 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
         // childWhenDragging: null,
         //feedback: nu.editBloc.updateData?,
         onDragEnd: _dropped,
-        onDragStarted: () => startDrag(),
+        onDragStarted: startDrag,
         data: widget,
         // data: _updatedPosition,
         // data: ControlGroup(

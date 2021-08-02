@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
+import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
 class MediaControlsConfig {
   static List<String> _imageControlsAsJson = List.empty(growable: true);
@@ -40,6 +41,8 @@ class MediaControlsConfig {
       _audioControlsAsJson.isNotEmpty);
 
   static void updateJson(Type type, List<String> groupsJson) {
+    log("Updating json to: ${groupsJson.join('\n\n\n')}");
+
     switch (type) {
       case Type.IMAGE:
         _imageControlsAsJson.clear();

@@ -47,9 +47,9 @@ class _VideoViewState extends MediaViewState<VideoView> {
       builder: (BuildContext innerContext, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (controlsShowing) {
-            if(controls == null) {
-              controls = VideoControls(onPressed);
-            }
+            // if(controls == null) {
+            //   controls = VideoControls(onPressed);
+            // }
             return SafeArea(
               child: Scaffold(
                 body: Stack(
@@ -65,7 +65,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
                         onTap: () => toggleControls(),
                       ),
                     ),
-                    controls!,
+                    VideoControls(onPressed),
                     // StreamBuilder(
                     //   stream: bloc.isPlayingStream,
                     //   builder:

@@ -46,39 +46,11 @@ class _EditControlsState extends State<EditControls> {
   MediaControllerEditBloc get editBloc =>
       _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
 
-  Future<ControlGroup?> get latestDroppedUpdatedControlGroup async => editBloc.droppedUpdatedControlGroup.last;
+  // Future<ControlGroup?> get latestDroppedUpdatedControlGroup async => editBloc.droppedUpdatedControlGroup.last;
 
   @override
   void initState() {
-    smb = SuperMediaButtons(context, onPressed);
-
-    switch (widget.type) {
-      case Type.IMAGE:
-        title = "Edit:Image";
-        controls = ImageControls(
-          onPressed,
-          key: _mediaControlsKey,
-          isEdit: true,
-        );
-        break;
-      case Type.VIDEO:
-        title = "Edit:Video";
-        controls = VideoControls(
-          onPressed,
-          key: _mediaControlsKey,
-          isEdit: true,
-        );
-        break;
-      case Type.AUDIO:
-        title = "Edit:Audio";
-        controls = VideoControls(
-          onPressed,
-          key: _mediaControlsKey,
-          isEdit: true,
-        );
-        // controls = AudioControls;
-        break;
-    }
+    initControls();
 
     super.initState();
   }
@@ -87,6 +59,16 @@ class _EditControlsState extends State<EditControls> {
   void didChangeDependencies() {
     editBloc.controlsKey = _mediaControlsKey;
 
+    editBloc.refreshStream.listen((_) => setState(() {
+
+    }));
+
+    editBloc.droppedUpdatedControlGroup.listen((updatedGroup) {
+      editBloc.replaceControlGroupWithUpdated(updatedGroup);
+      persistJson();
+      initControls(refresh: true);
+      // setState(() {});
+    });
     super.didChangeDependencies();
   }
 
@@ -101,6 +83,7 @@ class _EditControlsState extends State<EditControls> {
           endDrawerEnableOpenDragGesture: true,
           endDrawer: menu,
           floatingActionButton: fab,
+          floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           body: Container(
             constraints: BoxConstraints.expand(),
             child: DragTarget<ControlGroup>(
@@ -155,6 +138,44 @@ class _EditControlsState extends State<EditControls> {
     );
   }
 
+  void initControls({refresh = false}) {
+    smb = SuperMediaButtons(context, onPressed);
+
+    switch (widget.type) {
+      case Type.IMAGE:
+        title = "Edit:Image";
+        controls = ImageControls(
+          onPressed,
+          key: _mediaControlsKey,
+          isEdit: true,
+        );
+        break;
+      case Type.VIDEO:
+        title = "Edit:Video";
+        controls = VideoControls(
+          onPressed,
+          key: _mediaControlsKey,
+          isEdit: true,
+        );
+        break;
+      case Type.AUDIO:
+        title = "Edit:Audio";
+        controls = VideoControls(
+          onPressed,
+          key: _mediaControlsKey,
+          isEdit: true,
+        );
+        // controls = AudioControls;
+        break;
+
+        if(refresh) {
+          setState(() {
+
+          });
+        }
+    }
+  }
+
   processControlGroupDrop(ControlGroup oldGroup) async {
     log("Processing drop");
 
@@ -167,30 +188,31 @@ class _EditControlsState extends State<EditControls> {
     //   horizontal: oldGroup.horizontal,
     //   key: oldGroup.key,
     // );
-    ControlGroup updatedGroup = (await latestDroppedUpdatedControlGroup)!;
-    editBloc.replaceControlGroupWithUpdated(updatedGroup);
+    // ControlGroup updatedGroup = (await latestDroppedUpdatedControlGroup)!;
+    // editBloc.replaceControlGroupWithUpdated(updatedGroup);
+    //
+    // log("${oldGroup.toString()} was replaced by ${updatedGroup.toString()}");
 
-    log("${oldGroup.toString()} was replaced by ${updatedGroup.toString()}");
-
-    persistJson();
-    setState(() {});
+    // persistJson();
+    // setState(() {});
   }
 
-  bool verifyControlGroupCorrect(Object? oldGroup) {
-    log("Will I accept the drop...willAccept called");
-
-    if (oldGroup == null) {
-      log("Object is null buddy...no drop for you.");
-      log("Shhhh...don't tell anybody, but I can work around that in a hot second.");
-      return false;
-    }
-    if (oldGroup is ControlGroup && oldGroup.key == editBloc.currentGroupEditingKey) {
-      log("${oldGroup} verified.");
-      return true;
-    }
-    log("${oldGroup} is not verified.");
-    return false;
-
+  bool verifyControlGroupCorrect(dynamic oldGroup) {
+    // processControlGroupDrop(oldGroup);
+    // log("Will I accept the drop...willAccept called");
+    //
+    // if (oldGroup == null) {
+    //   log("Object is null buddy...no drop for you.");
+    //   log("Shhhh...don't tell anybody, but I can work around that in a hot second.");
+    //   return false;
+    // }
+    // if (oldGroup is ControlGroup) {// && oldGroup.key == editBloc.currentGroupEditingKey) {
+    //   log("${oldGroup} verified.");
+    //   return true;
+    // }
+    // log("${oldGroup} is not verified. isGroup: ${oldGroup is ControlGroup} and ${oldGroup.key!} == ${editBloc.currentGroupEditingKey}");
+    // return false;
+    return true;
   }
 
   // void offsetListener(Offset offset) {
@@ -313,6 +335,8 @@ class _EditControlsState extends State<EditControls> {
     } else {
       editBloc.currentButtonEditingTag = tag;
     }
+
+
 
     setState(() {});
   }

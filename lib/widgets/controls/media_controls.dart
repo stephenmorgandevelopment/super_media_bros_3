@@ -43,6 +43,11 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   @override
   void didChangeDependencies() {
     _bloc = MediaControllerBlocProvider.of(context);
+    if(widget.isEdit) {
+      editBloc.refreshStream.listen((_) => setState(() {
+
+      }));
+    }
 
     super.didChangeDependencies();
   }

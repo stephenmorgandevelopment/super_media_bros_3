@@ -38,9 +38,15 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   void sinkControlsJson() {
     _controlsJsonSubject.sink.add(controlGroupsJson);
     MediaControlsConfig.updateJson(type, controlGroupsJson);
+    log("sinkControlsJson called with $controlGroupsJson");
+    refreshViews();
   }
   BehaviorSubject<List<String>> _controlsJsonSubject = BehaviorSubject<List<String>>();
   Stream<List<String>> get controlsJsonStringStream => _controlsJsonSubject.stream;
+
+  void refreshViews() => _refreshSubject.sink.add(true);
+  BehaviorSubject _refreshSubject = BehaviorSubject();
+  Stream get refreshStream => _refreshSubject.stream.asBroadcastStream();
 
   // set controlGroupsJson(List<String> groupsJson) {
   //   _controlGroupsJson.clear();
@@ -109,11 +115,11 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   // }
 
   Offset _offset = Offset(0.0, 0.0);
-  final PublishSubject<Offset> _offsetSubject = PublishSubject<Offset>();
+  final ReplaySubject<Offset> _offsetSubject = ReplaySubject<Offset>();
 
   // void updateData(DragUpdateDetails details) => _offsetSubject.sink.add(details.delta);
   void sinkOffset(DraggableDetails details) {
-    // log("offsetSubject updated: ${details.toString()}");
+    log("offsetSubject updated: ${details.toString()}");
     _offsetSubject.sink.add(details.offset);
   }
 
@@ -176,6 +182,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   void dispose() {
     _offsetSubject.close();
     _controlsJsonSubject.close();
+    _refreshSubject.close();
     // _currentlyEditingSubject.close();
   }
 

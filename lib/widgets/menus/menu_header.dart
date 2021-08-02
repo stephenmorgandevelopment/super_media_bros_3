@@ -90,10 +90,12 @@ class MenuHeaderBar extends StatelessWidget {
 
     List<ControlGroup> genericGroups = _bloc.controlsKey?.currentState?.makeGeneric();
     MediaControlsConfig.updateJson(_type, ControlGroup.makeJsonListFrom(genericGroups));
+    _bloc.refreshViews();
   }
 
   Future<void> saveLayout() async {
     return MediaControlsConfig.updateJson(_type, _controlGroupsJson);
+    _bloc.refreshViews();
   }
 
   void showGeneratedJson() {
