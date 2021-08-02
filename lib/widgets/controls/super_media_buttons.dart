@@ -186,7 +186,7 @@ class SuperMediaButtons {
   SuperMediaWidget fromTag(String tag) {
     switch (tag) {
       case PLAY_TAG:
-        return MediaControllerBlocProvider.of(context).bloc.type == Type.VIDEO
+        return MediaControllerBlocProvider.of(context).type == Type.VIDEO
             ? videoPlayBtn
             : playBtn;
       case SPEED_TAG:

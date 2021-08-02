@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
@@ -84,6 +86,7 @@ class MenuHeaderBar extends StatelessWidget {
 
   Future<void> resetDefault() async {
     MediaControlsConfig.clearJson(_type);
+    log("clearing json for _type");
 
     List<ControlGroup> genericGroups = _bloc.controlsKey?.currentState?.makeGeneric();
     MediaControlsConfig.updateJson(_type, ControlGroup.makeJsonListFrom(genericGroups));

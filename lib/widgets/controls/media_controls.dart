@@ -43,12 +43,12 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   @override
   void didChangeDependencies() {
     _bloc = MediaControllerBlocProvider.of(context);
-    smb = SuperMediaButtons(context, widget.callback);
 
     super.didChangeDependencies();
   }
 
   List<ControlGroup> makeControls(List<String> groupsJson) {
+    smb = SuperMediaButtons(context, widget.callback);
     List<ControlGroup> grps = List.empty(growable: true);
 
     if (groupsJson.isNotEmpty) {
@@ -57,64 +57,50 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
         Key? key = widget.isEdit
             ? Key("${MediaControlsState.editTag}${groupIndex++}") : null;
 
-        grps.add(makeControlGroup(json, smb, key: key));
+        grps.add(makeControlGroup(json, key: key));
       }
     } else {
       grps = genericGroups;
       MediaControlsConfig.updateJson(
           _bloc.bloc.type!,
           MediaControls.jsonListFromGroups(grps));
-      // List<String> grpsJson = List.empty(growable: true);
-      // for (ControlGroup grp in grps) {
-      //   grpsJson.add(json.encode(grp));
-      //   log("grp encoded ${grp.toString()}");
-      // }
-
-      // MediaControlsConfig.updateJson(_bloc.bloc.type!, grpsJson);
-
-      //MediaControlsConfig.updateJson(Type.VIDEO, jsonList(genericGroups));
     }
 
     if (widget.isEdit) {
-      // var editBloc = _bloc as MediaControllerEditBloc;
       editBloc.controlGroups = grps;
     }
 
     return grps;
   }
 
-
-
   List<ControlGroup> get genericGroups => makeGeneric();
-
   makeGeneric();
   List<String> get asJson;
 
-  ControlGroup makeControlGroup(String jsonString, SuperMediaButtons smb,
+  ControlGroup makeControlGroup(String jsonString,
       {Key? key}) {
     Map<String, dynamic> map = jsonDecode(jsonString);
 
     return ControlGroup(_bloc,
-      makeWidgets(map['controlsWidgets'], smb),
+      makeWidgets(map['controlsWidgets']),
       Position.fromJson(map['position']),
       horizontal: map['horizontal'],
       key: key,
     );
   }
 
-  List<SuperMediaWidget> makeWidgets(List<dynamic> maps,
-      SuperMediaButtons smb) {
+  List<SuperMediaWidget> makeWidgets(List<dynamic> maps) {
     List<SuperMediaWidget> widgets = List.empty(growable: true);
 
-    MediaControllerEditBloc? _editBloc = widget.isEdit ?
-      MediaControllerBlocProvider.of(context) as MediaControllerEditBloc :
-      null;
+    // MediaControllerEditBloc? _editBloc = widget.isEdit ?
+    //   MediaControllerBlocProvider.of(context) as MediaControllerEditBloc :
+    //   null;
 
     for (Map map in maps) {
       SuperMediaWidget controlsWidget = smb.fromTag(map['tag']);
       widgets.add(controlsWidget);
 
-      if (widget.isEdit && map['tag'] == _editBloc?.currentButtonEditingTag) {
+      if (widget.isEdit && map['tag'] == editBloc.currentButtonEditingTag) {
         controlsWidget.highlightSelected();
       }
     }

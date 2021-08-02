@@ -64,15 +64,15 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
   late final Stream<Position> streamedPosition;
   // ControlGroup? updated;
 
-  Stream<Position?>? get updatedPositionStream => editBloc?.updatedGroupPosition;
+  // Stream<Position?>? get updatedPositionStream => editBloc?.updatedGroupPosition;
 
-  get updated async => ControlGroup(
-    widget._bloc,
-    widget.controlsWidgets,
-    (await updatedPositionStream?.last)!,
-    horizontal: widget.horizontal,
-    key: widget.key,
-  );
+  // get updated async => ControlGroup(
+  //   widget._bloc,
+  //   widget.controlsWidgets,
+  //   (await updatedPositionStream?.last)!,
+  //   horizontal: widget.horizontal,
+  //   key: widget.key,
+  // );
       // .updateFromOffset();
 
   ControlGroupState();
@@ -167,7 +167,8 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
         //feedback: nu.editBloc.updateData?,
         onDragEnd: _dropped,
         onDragStarted: () => startDrag(),
-        data: _updatedPosition,
+        data: widget,
+        // data: _updatedPosition,
         // data: ControlGroup(
         //     widget._bloc, widget.controlsWidgets, updatedPosition,
         //     horizontal: widget.horizontal, key: widget.key),
@@ -175,16 +176,6 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
     }
 
     return wrap(base);
-
-      // return Positioned(
-      //   key: widget.key,
-      //   child: base,
-      //   left: widget.position.left,
-      //   top: widget.position.top,
-      //   right: widget.position.right,
-      //   bottom: widget.position.bottom,
-      // );
-
   }
 
   void startDrag() {
@@ -206,7 +197,8 @@ class ControlGroupState extends State<ControlGroup> {//with SuperMediaWidget {
   Position? _updatedPosition;
   _dropped(DraggableDetails details) {
     dragging = false;
-    _updatedPosition = widget.position.updateFromOffset(details.offset);
+    editBloc?.sinkOffset(details);
+    // _updatedPosition = widget.position.updateFromOffset(details.offset);
   }
 
   // static ControlGroup fromMap(Map<String, dynamic> map, SuperMediaButtons smb, {Key? key}) {

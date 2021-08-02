@@ -23,73 +23,48 @@ class VideoControls extends MediaControls {
   @override
   State createState() => _VideoControlsState();
 
-
-
 }
 
 class _VideoControlsState extends MediaControlsState<VideoControls> {
   @override
+  List<String> get asJson => MediaControls.jsonListFromGroups(
+      makeControls(MediaControlsConfig.videoControlsAsJson));
+
+  @override
   Widget build(BuildContext innerContext) {
-    if (widget.isEdit) {
-      return StreamBuilder(
-          // return Container(
-          //   child: Material(
-          //     elevation: 7.0,
-          //     child: StreamBuilder(
-          stream: editBloc.offsetStream,
-          builder:
-              (BuildContext innaInnContext, AsyncSnapshot<Offset> snapshot) {
-            List<ControlGroup> controlGroups =
-                makeControls(MediaControlsConfig.videoControlsAsJson);
-
-            // if (widget.isEdit) {
-            //   editBloc.setCurrentGroupEditing();
-            // editBloc.currentGroupEditing?.highlightDragging();
-
-            // if (snapshot.hasData) {
-            //   ControlGroup editing = editBloc.currentGroupEditing!;
-            //
-            //   ControlGroup updatedGroup = ControlGroup(
-            //     editBloc,
-            //     editing.controlsWidgets,
-            //     snapshot.data!,
-            //     horizontal: editing.horizontal,
-            //     key: editing.key,
-            //   );
-            //
-            //   editBloc.replaceControlGroupWithUpdated(updatedGroup);
-
-              // if (controlGroups.remove(editBloc.currentGroupEditing!)) {
-              //   controlGroups.add(updatedGroup);
-              //   // editBloc.setCurrentGroupEditing();
-              //   log("Dart isn't complete trash...${editBloc.currentGroupEditing!} was removed successfully.");
-              // }
-            // }
-            // }
-            // editBloc.currentGroupEditing?.highlightDragging();
-            // editBloc.currentButtonEditing?.highlightSelected();
-
-            Offset? latest =  snapshot.data;
-            if(snapshot.hasData && latest != null) {
-              editBloc.runningOffset = latest;
-            }
-
-            return Container(
-              // color: MediaOptions.controlGroupBackgroundColor,
-              child: Material(
-                elevation: 64.0,
-                child: Stack(
-                  fit: StackFit.passthrough,
-                  children: controlGroups,
-                ),
-                type: MaterialType.transparency,
-              ),
-              constraints: BoxConstraints.expand(),
-              // color: Color.fromARGB(90, 80, 80, 80),
-              alignment: Alignment.center,
-            );
-          });
-    } else {
+    // if (widget.isEdit) {
+    //   return StreamBuilder(
+    //       // return Container(
+    //       //   child: Material(
+    //       //     elevation: 7.0,
+    //       //     child: StreamBuilder(
+    //       stream: editBloc.droppedUpdatedControlGroup,
+    //       builder:
+    //           (BuildContext innaInnContext, AsyncSnapshot<ControlGroup> snapshot) {
+    //         List<ControlGroup> controlGroups =
+    //             makeControls(MediaControlsConfig.videoControlsAsJson);
+    //
+    //         if(snapshot.hasData) {
+    //           ControlGroup updatedDropped = snapshot.data!;
+    //           editBloc.replaceControlGroupWithUpdated(updatedDropped);
+    //         }
+    //
+    //         return Container(
+    //           // color: MediaOptions.controlGroupBackgroundColor,
+    //           child: Material(
+    //             elevation: 64.0,
+    //             child: Stack(
+    //               fit: StackFit.passthrough,
+    //               children: editBloc.controlGroups,
+    //             ),
+    //             type: MaterialType.transparency,
+    //           ),
+    //           constraints: BoxConstraints.expand(),
+    //           // color: Color.fromARGB(90, 80, 80, 80),
+    //           alignment: Alignment.center,
+    //         );
+    //       });
+    // } else {
       return Container(
         // color: MediaOptions.controlGroupBackgroundColor,
         child: Material(
@@ -105,7 +80,7 @@ class _VideoControlsState extends MediaControlsState<VideoControls> {
         // color: Color.fromARGB(90, 80, 80, 80),
         alignment: Alignment.center,
       );
-    }
+    // }
   }
 
   void highlightSelectedGroup() {}
@@ -115,10 +90,6 @@ class _VideoControlsState extends MediaControlsState<VideoControls> {
   //
   //   });
   // }
-
-  @override
-  List<String> get asJson => MediaControls.jsonListFromGroups(
-      makeControls(MediaControlsConfig.videoControlsAsJson));
 
   @override
   List<ControlGroup> makeGeneric() {

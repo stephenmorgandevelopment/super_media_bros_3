@@ -22,9 +22,9 @@ class ImageControls extends MediaControls {
 }
 
 class _ImageControlsState extends MediaControlsState<ImageControls> {
-
   @override
-  List<String> get asJson => MediaControls.jsonListFromGroups(makeControls(MediaControlsConfig.imageControlsAsJson));
+  List<String> get asJson => MediaControls.jsonListFromGroups(
+      makeControls(MediaControlsConfig.imageControlsAsJson));
 
   @override
   Widget build(BuildContext context) {

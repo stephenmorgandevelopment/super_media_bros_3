@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
@@ -23,8 +25,23 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   GlobalKey<MediaControlsState>? controlsKey;
 
   // List<String> _controlGroupsJson = List.empty(growable: true);
-  List<String> get controlGroupsJson =>
+  List<String>? _controlGroupsJson;
+  List<String> get controlGroupsJson => _controlGroupsJson ??
       ControlGroup.makeJsonListFrom(_controlGroups);
+
+  // List<String> get controlGroupsJson {
+  //   var encodedString = ControlGroup.makeJsonListFrom(_controlGroups);
+  //   _controlsJsonSubject.sink.add(encodedString);
+  //   return encodedString;
+  // }
+
+  void sinkControlsJson() {
+    _controlsJsonSubject.sink.add(controlGroupsJson);
+    MediaControlsConfig.updateJson(type, controlGroupsJson);
+  }
+  BehaviorSubject<List<String>> _controlsJsonSubject = BehaviorSubject<List<String>>();
+  Stream<List<String>> get controlsJsonStringStream => _controlsJsonSubject.stream;
+
   // set controlGroupsJson(List<String> groupsJson) {
   //   _controlGroupsJson.clear();
   //   _controlGroupsJson.addAll(groupsJson);
@@ -36,7 +53,9 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   // }
 
   List<ControlGroup> _controlGroups = List.empty(growable: true);
+
   List<ControlGroup> get controlGroups => _controlGroups;
+
   set controlGroups(List<ControlGroup> groups) {
     _controlGroups.clear();
     _controlGroups.addAll(groups);
@@ -44,11 +63,16 @@ class MediaControllerEditBloc implements MediaControllerBloc {
 
   void replaceControlGroupWithUpdated(ControlGroup controlGroup) {
     if (_controlGroups.remove(currentGroupEditing)) {
-      log("currentEditingGroup was removed: ${controlGroup.toString}");
+      log("currentEditingGroup was removed: $controlGroup");
       _controlGroups.add(controlGroup);
     } else {
-      log("Dart failed us removinge: ${controlGroup.toString}\n Zero surprise..fixing manually.");
-      manuallyReplaceControlGroupWithUpdated(controlGroup);
+      log("Dart failed us removing: $controlGroup\n Zero surprise..fixing manually.");
+      if(manuallyReplaceControlGroupWithUpdated(controlGroup)) {
+        log("$currentGroupEditing was removed manually: $controlGroup");
+        sinkControlsJson();
+      } else {
+        log("We failed us removing: ${controlGroup.toString}\t lotta nada...");
+      }
     }
   }
 
@@ -63,11 +87,12 @@ class MediaControllerEditBloc implements MediaControllerBloc {
     return successful;
   }
 
-  String currentButtonEditingTag = 'null';
+  String currentButtonEditingTag = 'null';   //=> currentButtonEditing?.tag ?? 'null';
   SuperMediaButton? currentButtonEditing;
 
   Key? get currentGroupEditingKey => currentGroupEditing?.key;
   ControlGroup? currentGroupEditing;
+
   // set _place_currentGroupEditing(ControlGroup group) {
   //   currentGroupEditing = group;
   //
@@ -85,18 +110,30 @@ class MediaControllerEditBloc implements MediaControllerBloc {
 
   Offset _offset = Offset(0.0, 0.0);
   final PublishSubject<Offset> _offsetSubject = PublishSubject<Offset>();
+
   // void updateData(DragUpdateDetails details) => _offsetSubject.sink.add(details.delta);
-  void updateData(DragUpdateDetails details) {
+  void sinkOffset(DraggableDetails details) {
     // log("offsetSubject updated: ${details.toString()}");
-    _offsetSubject.sink.add(details.delta);
+    _offsetSubject.sink.add(details.offset);
   }
 
+  Stream<ControlGroup> get droppedUpdatedControlGroup =>
+      _offsetSubject.stream.map<ControlGroup>((globalOffset) => ControlGroup(
+            this,
+            currentGroupEditing!.controlsWidgets,
+            Position(top: globalOffset.dy, left: globalOffset.dx),
+            horizontal: currentGroupEditing!.horizontal,
+            key: currentGroupEditing!.key,
+          ));
+
   // _offsetSubject
-  Sink<Offset> get offsetSink => _offsetSubject.sink;
-  Stream<Offset> get offsetStream => _offsetSubject.stream;
+  // Sink<Offset> get offsetSink => _offsetSubject.sink;
+  // Stream<Offset> get offsetStream => _offsetSubject.stream;
 
   Offset _runningOffset = Offset(0.0, 0.0);
+
   Offset get runningOffset => _runningOffset;
+
   set runningOffset(Offset latest) {
     _runningOffset =
         Offset(_runningOffset.dx + latest.dx, _runningOffset.dy + latest.dy);
@@ -106,25 +143,30 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   Offset _mRunningOffset(Offset latest) =>
       Offset(_runningOffset.dx + latest.dx, _runningOffset.dy + latest.dy);
 
-  Position? _runningPosition;
-  Position get runningPosition =>
-      _runningPosition ?? currentGroupEditing!.position;
-  Stream<Position> get updatedGroupPosition => offsetStream.map((offset) {
-        // log("Offset  inside updatedGroupPosition: $offset");
-        // log("updatedGroupPosition called with: offset ${offset.toString()}");
-        _runningPosition = runningPosition.updateFromOffset(offset);
-        return _runningPosition!;
-      });
+  // Position? _runningPosition;
+  // Position get runningPosition =>
+  //     _runningPosition ?? currentGroupEditing!.position;
+  // Stream<Position> get updatedGroupPosition => offsetStream.map((offset) {
+  //       // log("Offset  inside updatedGroupPosition: $offset");
+  //       // log("updatedGroupPosition called with: offset ${offset.toString()}");
+  //       _runningPosition = runningPosition.updateFromOffset(offset);
+  //       return _runningPosition!;
+  //     });
 
   // final _isPlayingSink = BehaviorSubject<bool>();
   // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
   // void _isPlayingListener() => _isPlayingSink.sink.add(isPlaying);
 
   bool get isPlaying => true;
+
   Duration get duration => Duration(seconds: 105);
+
   double get durationSeconds => duration.inSeconds.toDouble();
+
   double get currentTimePosition => Duration(seconds: 47).inSeconds.toDouble();
+
   double get playSpeed => 1.0;
+
   bool get isLooping => false;
 
   void seekTo(int time) {}
@@ -133,6 +175,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
 
   void dispose() {
     _offsetSubject.close();
+    _controlsJsonSubject.close();
     // _currentlyEditingSubject.close();
   }
 

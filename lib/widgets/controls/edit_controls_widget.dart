@@ -34,7 +34,7 @@ class _EditControlsState extends State<EditControls> {
 
   // final Key endDrawerKey = Key("smb-drawer");
   bool _showModifyFab = false;
-  bool _showMenuFab = false;
+  bool _showMenuFab = true;
 
   late String title;
   late Type controlsType;
@@ -45,6 +45,8 @@ class _EditControlsState extends State<EditControls> {
 
   MediaControllerEditBloc get editBloc =>
       _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
+
+  Future<ControlGroup?> get latestDroppedUpdatedControlGroup async => editBloc.droppedUpdatedControlGroup.last;
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _EditControlsState extends State<EditControls> {
   @override
   void didChangeDependencies() {
     editBloc.controlsKey = _mediaControlsKey;
+
     super.didChangeDependencies();
   }
 
@@ -100,27 +103,50 @@ class _EditControlsState extends State<EditControls> {
           floatingActionButton: fab,
           body: Container(
             constraints: BoxConstraints.expand(),
-            child: DragTarget<Position>(
-              onAcceptWithDetails: processControlGroupDrop,
+            child: DragTarget<ControlGroup>(
+              onAccept: processControlGroupDrop,
+              // onAcceptWithDetails: processControlGroupDrop,
               onWillAccept: verifyControlGroupCorrect,
               // onAccept: (_) => persistJson(),
               builder: (BuildContext context, accepted, rejected) {
-                return Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Container(
-                      constraints: BoxConstraints.expand(),
-                      child: Image.asset(
-                        'images/thumbs.png',
-                        fit: BoxFit.fill,
-                        filterQuality: FilterQuality.high,
-                        isAntiAlias: true,
-                      ),
-                      // controls,
-                    ),
-                    controls,
-                  ],
+                return StreamBuilder(
+                  stream: editBloc.controlsJsonStringStream,
+                  builder: (BuildContext innaInnContext, AsyncSnapshot<List<String>> snapshot) {
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Container(
+                          constraints: BoxConstraints.expand(),
+                          child: Image.asset(
+                            'images/thumbs.png',
+                            fit: BoxFit.fill,
+                            filterQuality: FilterQuality.high,
+                            isAntiAlias: true,
+                          ),
+                          // controls,
+                        ),
+                        controls,
+                      ],
+                    );
+                  },
                 );
+
+                // return Stack(
+                //   fit: StackFit.expand,
+                //   children: [
+                //     Container(
+                //       constraints: BoxConstraints.expand(),
+                //       child: Image.asset(
+                //         'images/thumbs.png',
+                //         fit: BoxFit.fill,
+                //         filterQuality: FilterQuality.high,
+                //         isAntiAlias: true,
+                //       ),
+                //       // controls,
+                //     ),
+                //     controls,
+                //   ],
+                // );
               },
             ),
           ),
@@ -129,49 +155,42 @@ class _EditControlsState extends State<EditControls> {
     );
   }
 
-  processControlGroupDrop(DragTargetDetails<Position> details) {
+  processControlGroupDrop(ControlGroup oldGroup) async {
     log("Processing drop");
 
-    Position updatedPosition = details.data;
-    ControlGroup oldGroup = editBloc.currentGroupEditing!;
-    ControlGroup updatedGroup = ControlGroup(
-      editBloc,
-      oldGroup.controlsWidgets,
-      updatedPosition,
-      horizontal: oldGroup.horizontal,
-      key: oldGroup.key,
-    );
-
+    // Position updatedPosition = details.data;
+    // ControlGroup oldGroup = editBloc.currentGroupEditing!;
+    // ControlGroup updatedGroup = ControlGroup(
+    //   editBloc,
+    //   oldGroup.controlsWidgets,
+    //   updatedPosition,
+    //   horizontal: oldGroup.horizontal,
+    //   key: oldGroup.key,
+    // );
+    ControlGroup updatedGroup = (await latestDroppedUpdatedControlGroup)!;
     editBloc.replaceControlGroupWithUpdated(updatedGroup);
 
-    log("position.updateFromOffset: ${updatedPosition.toString()}");
+    log("${oldGroup.toString()} was replaced by ${updatedGroup.toString()}");
 
     persistJson();
     setState(() {});
   }
 
-  // Future<void> processControlGroupDrop(ControlGroup controlGroup) async {
-  //   //  String updatedControlJson = json.encode(controlGroup);
-  //   // editBloc.updateControlGroupsJson(updatedControlJson, )
-  //   editBloc.replaceControlGroupWithUpdated(controlGroup);
-  //
-  //   setState(() {
-  //
-  //   });
-  // }
-
-  bool verifyControlGroupCorrect(Object? object) {
+  bool verifyControlGroupCorrect(Object? oldGroup) {
     log("Will I accept the drop...willAccept called");
 
-    if (object == null) {
+    if (oldGroup == null) {
       log("Object is null buddy...no drop for you.");
       log("Shhhh...don't tell anybody, but I can work around that in a hot second.");
       return false;
     }
-    // if (controlGroup.key != editBloc.currentGroupEditingKey) {
-    //   return false;
-    // }
-    return true;
+    if (oldGroup is ControlGroup && oldGroup.key == editBloc.currentGroupEditingKey) {
+      log("${oldGroup} verified.");
+      return true;
+    }
+    log("${oldGroup} is not verified.");
+    return false;
+
   }
 
   // void offsetListener(Offset offset) {
