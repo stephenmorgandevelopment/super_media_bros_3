@@ -17,7 +17,7 @@ class ButtonGroupMenu extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          MenuHeaderBar("All Buttons:"),
+          MenuHeaderBar(null),
           Expanded(
             child: GridView.count(
               crossAxisCount: 3,

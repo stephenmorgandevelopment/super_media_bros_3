@@ -26,16 +26,18 @@ class MediaBloc {
   MediaResource? _currentMedia;
   MediaResource? get currentMedia => _currentMedia;
 
-  // bool get isEmpty => this == MediaBloc.empty();
+  bool isEmpty(Type type) => this == MediaBloc.empty(type);
 
   MediaBloc(this.mediaList, this.type, {this.repo = const MediaRepo()});
   MediaBloc.empty(Type? type) : this(List.empty(growable: true), type);
 
   Future<MediaResource>? getNextMedia() async {
+    log("MediaBloc - currentIndex is $currentIndex - List size is $count");
     if(currentIndex >= mediaList.length) {
       currentIndex = -1;
     }
     currentIndex += 1;
+    log("currentIndex after adjustment is $currentIndex");
     _currentMedia = await getMedia(currentIndex);
     return _currentMedia!;
   }

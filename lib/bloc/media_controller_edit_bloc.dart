@@ -5,7 +5,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
-import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
@@ -24,39 +23,20 @@ class MediaControllerEditBloc implements MediaControllerBloc {
 
   GlobalKey<MediaControlsState>? controlsKey;
 
-  // List<String> _controlGroupsJson = List.empty(growable: true);
-  List<String>? _controlGroupsJson;
-  List<String> get controlGroupsJson => _controlGroupsJson ??
-      ControlGroup.makeJsonListFrom(_controlGroups);
+  List<String> get controlGroupsJson => ControlGroup.makeJsonListFrom(_controlGroups);
 
-  // List<String> get controlGroupsJson {
-  //   var encodedString = ControlGroup.makeJsonListFrom(_controlGroups);
-  //   _controlsJsonSubject.sink.add(encodedString);
-  //   return encodedString;
-  // }
-
+  BehaviorSubject<List<String>> _controlsJsonSubject = BehaviorSubject<List<String>>();
+  Stream<List<String>> get controlsJsonStringStream => _controlsJsonSubject.stream;
   void sinkControlsJson() {
     _controlsJsonSubject.sink.add(controlGroupsJson);
     MediaControlsConfig.updateJson(type, controlGroupsJson);
     log("sinkControlsJson called with $controlGroupsJson");
     refreshViews();
   }
-  BehaviorSubject<List<String>> _controlsJsonSubject = BehaviorSubject<List<String>>();
-  Stream<List<String>> get controlsJsonStringStream => _controlsJsonSubject.stream;
 
-  void refreshViews() => _refreshSubject.sink.add(true);
   BehaviorSubject _refreshSubject = BehaviorSubject();
   Stream get refreshStream => _refreshSubject.stream.asBroadcastStream();
-
-  // set controlGroupsJson(List<String> groupsJson) {
-  //   _controlGroupsJson.clear();
-  //   _controlGroupsJson.addAll(groupsJson);
-  // }
-
-  // void updateControlGroupsJson(String replacement, String replace) {
-  //   _controlGroupsJson.removeWhere((groupJson) => groupJson == replace);
-  //   _controlGroupsJson.add(replacement);
-  // }
+  void refreshViews() => _refreshSubject.sink.add(true);
 
   List<ControlGroup> _controlGroups = List.empty(growable: true);
 
@@ -75,11 +55,11 @@ class MediaControllerEditBloc implements MediaControllerBloc {
       log("Dart failed us removing: $controlGroup\n Zero surprise..fixing manually.");
       if(manuallyReplaceControlGroupWithUpdated(controlGroup)) {
         log("$currentGroupEditing was removed manually: $controlGroup");
-        sinkControlsJson();
-      } else {
-        log("We failed us removing: ${controlGroup.toString}\t lotta nada...");
+        // sinkControlsJson();
       }
     }
+
+    sinkControlsJson();
   }
 
   bool manuallyReplaceControlGroupWithUpdated(ControlGroup controlGroup) {
@@ -127,7 +107,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
       _offsetSubject.stream.map<ControlGroup>((globalOffset) => ControlGroup(
             this,
             currentGroupEditing!.controlsWidgets,
-            Position(top: globalOffset.dy, left: globalOffset.dx),
+            Position(top: globalOffset.dy - 42.0, left: globalOffset.dx),
             horizontal: currentGroupEditing!.horizontal,
             key: currentGroupEditing!.key,
           ));

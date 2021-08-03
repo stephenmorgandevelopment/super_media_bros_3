@@ -14,9 +14,12 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  // TODO Figure out the best way to initialize and keep these in memory.
   static late MediaBloc _imageBloc;
   static late MediaBloc _videoBloc;
   static late MediaBloc _audioBloc;
+
+  // TODO Get rid of these by finding a better way of init'ing previous TODO.
   static bool _isReady = false;
   static late Future<void> _initialized;
 
@@ -36,6 +39,7 @@ class MyApp extends StatelessWidget {
     }
   }
 
+  // TODO Change to async* and attempt conversion to StreamBuilder.
   static Future<void> initData() async {
     List<MediaData> imageList = await MediaAccess.getAllData(Type.IMAGE);
     List<MediaData> videoList = await MediaAccess.getAllData(Type.VIDEO);
@@ -65,6 +69,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -88,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO Attempt conversion to StreamBuilder.
     return FutureBuilder(
         future: mediaFuture,
         builder:

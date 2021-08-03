@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
+import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
 import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
@@ -12,7 +13,9 @@ import 'package:super_media_bros_3/widgets/menus/customize_menu.dart';
 class MediaTabPager extends StatefulWidget {
   final List<MediaBloc> mainMediaBlocs;
 
-  MediaTabPager(this.mainMediaBlocs);
+  MediaTabPager(this.mainMediaBlocs) {
+    MediaControlsConfig.init();
+  }
 
   @override
   State createState() => _MediaTabPagerState();
@@ -98,20 +101,20 @@ class _MediaTabPagerState extends State<MediaTabPager>
     Navigator.pop(context);
   }
 
-  Widget get menuBtn => IconButton(
-        onPressed: () => editControls(Type.VIDEO),
-        icon: Icon(
-          Icons.menu_outlined,
-          color: Colors.white,
-        ),
-      );
-
-  void editControls(Type type) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
-              child: EditControls(type))),
-    );
-  }
+  // Widget get menuBtn => IconButton(
+  //       onPressed: () => editControls(Type.VIDEO),
+  //       icon: Icon(
+  //         Icons.menu_outlined,
+  //         color: Colors.white,
+  //       ),
+  //     );
+  //
+  // void editControls(Type type) async {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //         builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
+  //             child: EditControls(type))),
+  //   );
+  // }
 }

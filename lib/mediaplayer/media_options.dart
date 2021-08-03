@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
 class MediaOptions {
+  // TODO Map these to shared preferences (flutter equivalent).
+  // TODO Save when changed and load at runtime.
+
   // Times
   static int seekForwardTime = 7500;
   static int seekBackwardsTime = 3500;
@@ -9,6 +12,7 @@ class MediaOptions {
   static const double iconsize = 48.0;
   static double videoPlayBtnMultiplier = 2.25;
   static double playBtnMultiplier = videoPlayBtnMultiplier / 1.5;
+  static const fabSize = 48.0;
 
   // Colors
   static const Color selectedColor = Color.fromARGB(152, 82, 255, 31);
