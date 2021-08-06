@@ -9,6 +9,15 @@ import 'package:super_media_bros_3/models/media_resource.dart';
 import 'package:super_media_bros_3/repo/media_repo.dart';
 import 'package:super_media_bros_3/widgets/needs_permission_text.dart';
 
+/// MediaBloc Abstract holder for Lists of associated media.
+/// Association is arbitrary, and can mean anything.
+/// The built in 'type' can be used to identify association as 'Image', 'Video',
+/// or 'Audio'.  Specifying this will assist the media player if only using
+/// one type of media.
+///
+/// Contains functions used to navigate through the list and
+/// return MediaResource objects which contain everything needed by a
+/// media player, to consume and output the media.
 class MediaBloc {
   @protected
   List<MediaData> mediaList;

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
+import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
@@ -104,13 +105,16 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   }
 
   Stream<ControlGroup> get droppedUpdatedControlGroup =>
-      _offsetSubject.stream.map<ControlGroup>((globalOffset) => ControlGroup(
-            this,
-            currentGroupEditing!.controlsWidgets,
-            Position(top: globalOffset.dy - 42.0, left: globalOffset.dx),
-            horizontal: currentGroupEditing!.horizontal,
-            key: currentGroupEditing!.key,
-          ));
+      _offsetSubject.stream.map<ControlGroup>((globalOffset) {
+        log('AppGlobals.statusbarHeight: ${AppGlobals.statusBarHeight}');
+        return ControlGroup(
+          this,
+          currentGroupEditing!.controlsWidgets,
+          Position(top: globalOffset.dy - AppGlobals.statusBarHeight, left: globalOffset.dx),
+          horizontal: currentGroupEditing!.horizontal,
+          key: currentGroupEditing!.key,
+        );
+      });
 
   // _offsetSubject
   // Sink<Offset> get offsetSink => _offsetSubject.sink;

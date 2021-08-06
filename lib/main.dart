@@ -13,6 +13,14 @@ void main() {
   );
 }
 
+class AppGlobals {
+  static double statusBarHeight = 0.0;
+
+  static late MediaBloc _imageBloc;
+  static late MediaBloc _videoBloc;
+  static late MediaBloc _audioBloc;
+}
+
 class MyApp extends StatelessWidget {
   // TODO Figure out the best way to initialize and keep these in memory.
   static late MediaBloc _imageBloc;
@@ -99,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder:
             (BuildContext context, AsyncSnapshot<List<MediaBloc>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
+            // log("statusBarHeight: ${AppGlobals.statusBarHeight}");
             return SafeArea(
               child: MediaTabPager(snapshot.data!),
             );

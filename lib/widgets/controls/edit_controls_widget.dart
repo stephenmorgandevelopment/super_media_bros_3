@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
+import 'package:super_media_bros_3/main.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
@@ -65,6 +66,8 @@ class _EditControlsState extends State<EditControls> {
 
   @override
   Widget build(BuildContext context) {
+    AppGlobals.statusBarHeight = MediaQuery.of(context).padding.top;
+
     return WillPopScope(
       onWillPop: onBackPressed,
       child: SafeArea(
