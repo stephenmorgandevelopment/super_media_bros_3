@@ -80,22 +80,7 @@ class MediaControllerEditBloc implements MediaControllerBloc {
   Key? get currentGroupEditingKey => currentGroupEditing?.key;
   ControlGroup? currentGroupEditing;
 
-  // set _place_currentGroupEditing(ControlGroup group) {
-  //   currentGroupEditing = group;
-  //
-  // }
-
-  // void setCurrentGroupEditing() {
-  //   for(ControlGroup grp in _controlGroups) {
-  //     if(grp.key == currentGroupEditingKey) {
-  //       log("currentGroupEditing set to ${grp.key}");
-  //       currentGroupEditing = grp;
-  //       break;
-  //     }
-  //   }
-  // }
-
-  Offset _offset = Offset(0.0, 0.0);
+  // Offset _offset = Offset(0.0, 0.0);
   final ReplaySubject<Offset> _offsetSubject = ReplaySubject<Offset>();
 
   // void updateData(DragUpdateDetails details) => _offsetSubject.sink.add(details.delta);

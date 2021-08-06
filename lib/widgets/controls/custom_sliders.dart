@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:super_media_bros_3/bloc/custom_sliders_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
@@ -9,7 +10,11 @@ const TIME_SLIDER_TAG = "time-slider";
 const SPEED_SLIDER_TAG = "speed-slider";
 
 class TimeSlider extends StatefulWidget with SuperMediaWidget {
-  TimeSlider();
+  // late final CustomSliderBloc _bloc;
+  late final MediaControllerBloc _bloc;
+
+  // TimeSlider(MediaControllerBloc bloc) : _bloc = CustomSliderBloc(bloc);
+  TimeSlider(this._bloc);
 
   get tag => TIME_SLIDER_TAG;
 
@@ -19,7 +24,7 @@ class TimeSlider extends StatefulWidget with SuperMediaWidget {
 
 class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
   int currentTime = 0;
-  late MediaControllerBloc _bloc;
+  // late MediaControllerBloc _bloc;
 
   @override
   void initState() {
@@ -28,7 +33,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
 
   @override
   void didChangeDependencies() {
-    _bloc = MediaControllerBlocProvider.of(context);
+    // _bloc = MediaControllerBlocProvider.of(context);
     super.didChangeDependencies();
   }
 
@@ -43,7 +48,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       child: Material(
         child: StreamBuilder(
-          stream: _bloc.currentTimePositionStream,
+          stream: widget._bloc.currentTimePositionStream,
           initialData: currentPosition,
           builder: (BuildContext context, AsyncSnapshot<double> snapshot,) {
             if (snapshot.hasData) {
@@ -69,7 +74,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
           child: Slider(
             min: 0.00,
             divisions: null,
-            max: _bloc.durationSeconds,
+            max: widget._bloc.durationSeconds,
             value: data,
             label: formatTime(currentPosition),
             onChanged: (position) => onSeekChanged(position),
@@ -98,7 +103,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
   }
 
   void onUserChanged(double position) {
-    _bloc.seekTo(position.round());
+    widget._bloc.seekTo(position.round());
     setState(() {});
   }
 
@@ -113,7 +118,7 @@ class _TimeSliderState extends State<TimeSlider> with TickerProviderStateMixin {
   }
 
   String formatDuration() {
-    return formatTime(MediaControllerBlocProvider.of(context).durationSeconds);
+    return formatTime(widget._bloc.durationSeconds);
   }
 
   void onSeekChanged(double position) {

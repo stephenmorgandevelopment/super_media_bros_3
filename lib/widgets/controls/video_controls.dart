@@ -46,7 +46,7 @@ class _VideoControlsState extends MediaControlsState<VideoControls> {
           Position.combine(Position.topAlign(), Position.rightAlign())),
       ControlGroup(bloc, <SuperMediaWidget>[smb.speedBtn, smb.detailsBtn],
           Position(bottom: 56.0, left: 20.0)),
-      ControlGroup(bloc, <SuperMediaWidget>[TimeSlider()],
+      ControlGroup(bloc, <SuperMediaWidget>[TimeSlider(bloc)],
           Position(bottom: 12.0, left: 10.0, right: 10.0)),
     ];
   }

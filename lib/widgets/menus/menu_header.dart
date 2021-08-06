@@ -1,13 +1,6 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/bloc/menu_header_bloc.dart';
-import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
-import 'package:super_media_bros_3/models/media_data.dart';
-import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
@@ -35,22 +28,24 @@ class MenuHeaderBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: actionButtonsOrTitle..addAll([
-          Container(
-            child: IconButton(
+          // Container(
+          //   child: IconButton(
+          IconButton(
               color: MediaOptions.superMediaButtonColor,
               icon: Icon(Icons.add_circle_outline_outlined),
               iconSize: 36.0,
               onPressed: () => _bloc.addMediaButton(),
             ),
-          ),
-          Container(
-            child: IconButton(
+          // ),
+          // Container(
+          //   child: IconButton(
+          IconButton(
               icon: Icon(Icons.add_to_photos_outlined),
               iconSize: 36.0,
               color: MediaOptions.superMediaButtonColor,
               onPressed: () => _bloc.addControlGroup(),
             ),
-          ),
+          // ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 0.0),
             child: SuperMediaButtons.closeBtnFrom(context),

@@ -85,14 +85,14 @@ abstract class SuperMediaWidget implements Widget {
     return map;
   }
 
-  static SuperMediaWidget fromTag(String tag) {
+  static SuperMediaWidget fromTag(String tag, MediaControllerBloc bloc) {
     switch (tag) {
       case TIME_SLIDER_TAG:
-        return TimeSlider();
+        return TimeSlider(bloc);
       case SPEED_SLIDER_TAG:
         return SpeedSelectSlider();
       default:
-        return TimeSlider();
+        return TimeSlider(bloc);
     }
   }
 
@@ -224,7 +224,7 @@ class SuperMediaButtons {
       case IMG_DETAIL_TAG:
         return imgDetailsBtn;
       default:
-        return SuperMediaWidget.fromTag(tag);
+        return SuperMediaWidget.fromTag(tag, MediaControllerBlocProvider.of(context));
     }
   }
 

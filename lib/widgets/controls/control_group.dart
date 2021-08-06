@@ -26,12 +26,10 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
 
   ControlGroup(this._bloc, this.controlsWidgets, this.position,
       {this.horizontal = true,
-      this.key}); //: ControlGroupState(_bloc, position, horizontal: hroizontal, key: key);
+      this.key});
 
   @override
-  State createState() =>
-      ControlGroupState(); //this.controlsWidgets, this.position,
-  // horizontal: this.horizontal, key: this.key
+  State createState() => ControlGroupState();
 
   static List<String> makeJsonListFrom(List<ControlGroup> groups) {
     List<String> grpsJson = List.empty(growable: true);
@@ -54,7 +52,6 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
 }
 
 class ControlGroupState extends State<ControlGroup> {
-  //with SuperMediaWidget {
   get tag => "control-group";
 
   get isEdit => (widget.key != null &&
@@ -66,24 +63,6 @@ class ControlGroupState extends State<ControlGroup> {
       isEdit ? widget._bloc as MediaControllerEditBloc : null;
 
   ControlGroupState();
-
-  @override
-  void didChangeDependencies() {
-    // if(isEdit) {
-    // MediaControllerEditBloc bloc = (MediaControllerBlocProvider.of(context) as MediaControllerEditBloc);
-    //
-    // if(bloc.currentGroupEditingKey == this.key) {
-    //   Stream positionStream = bloc.updatedGroupPosition;
-    //   positionStream.listen((posit) {
-    //     position = posit;
-    //     setState(() {});
-    //   });
-    // }
-
-    // }
-
-    super.didChangeDependencies();
-  }
 
   @override
   void dispose() {
