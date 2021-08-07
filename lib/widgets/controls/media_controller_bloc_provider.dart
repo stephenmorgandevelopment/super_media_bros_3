@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
@@ -21,12 +21,9 @@ class MediaControllerBlocProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(MediaControllerBlocProvider old) {
-    // if (controllerBloc.currentPosition != old.controllerBloc.currentPosition) {
+    // if (mediaBloc.currentIndex != old.mediaBloc.currentIndex) {
     //   return true;
     // }
-    if (mediaBloc.currentIndex != old.mediaBloc.currentIndex) {
-      return true;
-    }
 
     return true;
   }
@@ -38,6 +35,8 @@ class MediaControllerBlocProvider extends InheritedWidget {
   }
 
   static MediaControllerBloc of(BuildContext context) {
-    return (context.dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()!).controllerBloc;
+    return (context
+            .dependOnInheritedWidgetOfExactType<MediaControllerBlocProvider>()!)
+        .controllerBloc;
   }
 }

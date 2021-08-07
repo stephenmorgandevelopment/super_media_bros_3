@@ -13,8 +13,6 @@ class MediaControllerBloc {
   // TODO Refactor the _bloc.type to a non-nullable type.
   Type get type => _bloc.type!;
 
-  // List<String> groupsJson = List.empty(growable: true);
-
   ImagerSlideshowController? _slideshowController;
   Object? _audioController;
   VideoPlayerController? _videoController;
@@ -24,7 +22,6 @@ class MediaControllerBloc {
 
   late Future<void> initializeControllerFuture;
 
-  // MediaControllerBloc(this._bloc);
   MediaControllerBloc(this._bloc) {
     initController();
   }
@@ -43,15 +40,14 @@ class MediaControllerBloc {
       ? (_videoController == null ? true : _videoController!.value.isPlaying)
       : _audioController == null;
   
-  final _isPlayingSink = BehaviorSubject<bool>();
-  Stream<bool> get isPlayingStream => _isPlayingSink.stream;
-  void _isPlayingListener() => _isPlayingSink.sink.add(_videoController!.value.isPlaying);
+  // final _isPlayingSink = BehaviorSubject<bool>();
+  // Stream<bool> get isPlayingStream => _isPlayingSink.stream;
+  // void _isPlayingListener() => _isPlayingSink.sink.add(_videoController!.value.isPlaying);
 
   Duration get duration => Duration(
       milliseconds: int.parse(_bloc.currentMedia!.data.metadata['duration']!));
 
   double get durationSeconds => duration.inSeconds.toDouble();
-      // int.parse(_bloc.currentMedia!.data.metadata['duration']!) / 1000;
 
   double get currentTimePosition => _bloc.type == Type.VIDEO
       ? _videoController!.value.position.inSeconds.toDouble()
@@ -112,7 +108,6 @@ class MediaControllerBloc {
         _videoController!.play();
       }
       _videoController!.addListener(_currentTimeListener);
-      _videoController!.addListener(_isPlayingListener);
       // _videoController!.addListener(_isPlayingListener);
     });
   }
@@ -122,7 +117,7 @@ class MediaControllerBloc {
   void dispose() {
     _videoController?.removeListener(_currentTimeListener);
     _currentTimePositionSink.close();
-    _isPlayingSink.close();
+    // _isPlayingSink.close();
     // _isPlayingSink.close();
     // _slideshowController?.dispose();
     _videoController?.dispose();

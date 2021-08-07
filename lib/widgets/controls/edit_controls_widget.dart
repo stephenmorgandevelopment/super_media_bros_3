@@ -65,6 +65,12 @@ class _EditControlsState extends State<EditControls> {
   }
 
   @override
+  void dispose() {
+    _editBloc?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AppGlobals.statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -73,9 +79,6 @@ class _EditControlsState extends State<EditControls> {
       child: SafeArea(
         child: Scaffold(
           key: _scaffoldKey,
-          // appBar: appbar,  // I liked the idea of an appbar, but it
-          //  would make matching positions with the media objects difficult.
-          //  Still bouncing it around.
           endDrawerEnableOpenDragGesture: true,
           endDrawer: menu,
           floatingActionButton: fab,
@@ -83,31 +86,47 @@ class _EditControlsState extends State<EditControls> {
           body: Container(
             constraints: BoxConstraints.expand(),
             child: DragTarget<ControlGroup>(
-              onAccept: processControlGroupDrop,
-              onWillAccept: verifyControlGroupCorrect,
+              // onAccept: processControlGroupDrop,
+              // onWillAccept: verifyControlGroupCorrect,
               builder: (BuildContext context, accepted, rejected) {
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints.expand(),
+                      child: Image.asset(
+                        'images/thumbs.png',
+                        fit: BoxFit.fill,
+                        filterQuality: FilterQuality.high,
+                        isAntiAlias: true,
+                      ),
+                    ),
+                    controls,
+                  ],
+                );
+
                 // TODO Make sure removing this stream builder doesn't break the views.
                 // TODO refreshViews() should be updating all views now.
-                return StreamBuilder(
-                  stream: editBloc.controlsJsonStringStream,
-                  builder: (BuildContext innaInnContext, AsyncSnapshot<List<String>> snapshot) {
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Container(
-                          constraints: BoxConstraints.expand(),
-                          child: Image.asset(
-                            'images/thumbs.png',
-                            fit: BoxFit.fill,
-                            filterQuality: FilterQuality.high,
-                            isAntiAlias: true,
-                          ),
-                        ),
-                        controls,
-                      ],
-                    );
-                  },
-                );
+                // return StreamBuilder(
+                //   stream: editBloc.controlsJsonStringStream,
+                //   builder: (BuildContext innaInnContext, AsyncSnapshot<List<String>> snapshot) {
+                //     return Stack(
+                //       fit: StackFit.expand,
+                //       children: [
+                //         Container(
+                //           constraints: BoxConstraints.expand(),
+                //           child: Image.asset(
+                //             'images/thumbs.png',
+                //             fit: BoxFit.fill,
+                //             filterQuality: FilterQuality.high,
+                //             isAntiAlias: true,
+                //           ),
+                //         ),
+                //         controls,
+                //       ],
+                //     );
+                //   },
+                // );
               },
             ),
           ),
@@ -121,8 +140,7 @@ class _EditControlsState extends State<EditControls> {
   }
 
   void onPressed(String tag) {
-
-    if (editBloc.currentButtonEditingTag == tag) {  // If we have this buttun selected already.
+    if (editBloc.currentButtonEditingTag == tag) {  // If we have this button selected already.
       _showModifyFab = !_showModifyFab;
     } else if (!_showModifyFab) {   // If we don't have anything selected yet.
       _showModifyFab = true;
@@ -164,36 +182,30 @@ class _EditControlsState extends State<EditControls> {
         );
         break;
     }
-
-    // Previously dead code..been way too tired lately.
-    // Probly to be removed.
-    // if(refresh) {
-    //   setState(() {});
-    // }
   }
 
-  processControlGroupDrop(ControlGroup oldGroup) async {
-    log("Processing drop");
-    // Not needed.  Was previously using this until
-    // validation phase began receiving null objects.
-  }
-
-  bool verifyControlGroupCorrect(Object? oldGroup) {
-    if(oldGroup == null) {
-      // This happened a lot in building this out.  I need to figure out why,
-      // but also accept the input for now.  Without a tangible object, there is
-      // no way to actually validate this :(
-      log("EditControls - oldGroup --NULL--.");
-      return true;
-    }
-
-    if(oldGroup is ControlGroup && oldGroup.key == editBloc.currentGroupEditingKey) {
-      log("EditControls - ${oldGroup.tag} validated successfully.");
-      return true;
-    }
-
-    return false;
-  }
+  // processControlGroupDrop(ControlGroup oldGroup) async {
+  //   log("Processing drop");
+  //   // Not needed.  Was previously using this until
+  //   // validation phase began receiving null objects.
+  // }
+  //
+  // bool verifyControlGroupCorrect(Object? oldGroup) {
+  //   if(oldGroup == null) {
+  //     // This happened a lot in building this out.  I need to figure out why,
+  //     // but also accept the input for now.  Without a tangible object, there is
+  //     // no way to actually validate this :(
+  //     log("EditControls - oldGroup --NULL--.");
+  //     return true;
+  //   }
+  //
+  //   if(oldGroup is ControlGroup && oldGroup.key == editBloc.currentGroupEditingKey) {
+  //     log("EditControls - ${oldGroup.tag} validated successfully.");
+  //     return true;
+  //   }
+  //
+  //   return false;
+  // }
 
   static const String btnMenuTag = "btnGroup";
   static const String tuneBtnTag = "tuneBtnMenu";
@@ -267,24 +279,6 @@ class _EditControlsState extends State<EditControls> {
         onPressed: () =>
             _scaffoldKey.currentState!.openEndDrawer(), // addControlGroup(),
       );
-
-  // AppBar get appbar => AppBar(
-  //
-  //       title: Text(title),
-  //       automaticallyImplyLeading: true,
-  //       actions: [
-  //         IconButton(
-  //           icon: Icon(Icons.add_circle_outline_outlined),
-  //           iconSize: 40.0,
-  //           onPressed: () => addControlGroup(),
-  //         ),
-  //         IconButton(
-  //           icon: Icon(Icons.menu),
-  //           iconSize: 40.0,
-  //           onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
-  //         ),
-  //       ],
-  //     );
 
   // Not used yet, but will most likely need.  May be moved to bloc.
   Key? getMatchingControlGroupKey() {

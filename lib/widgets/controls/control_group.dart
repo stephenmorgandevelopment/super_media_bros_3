@@ -1,13 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/position.dart';
-import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controls.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
@@ -25,8 +22,7 @@ class ControlGroup extends StatefulWidget with SuperMediaWidget {
   late final MediaControllerBloc _bloc;
 
   ControlGroup(this._bloc, this.controlsWidgets, this.position,
-      {this.horizontal = true,
-      this.key});
+      {this.horizontal = true, this.key});
 
   @override
   State createState() => ControlGroupState();

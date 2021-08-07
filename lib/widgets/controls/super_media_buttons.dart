@@ -30,18 +30,11 @@ const String IMG_DETAIL_TAG = "details";
 abstract class SuperMediaWidget implements Widget {
   String get tag;
 
-  // final Color? bgColor;
-  // String get json;
   final bool _selected = false;
 
-  bool get selected => _selected;
-
-  // static Widget duplicate(Widget widget) {
-  //   if(widget.debugDescribeChildren());
-  // }
+  // bool get selected => _selected;
 
   Widget highlightSelected() {
-    //SuperMediaWidget widget
     return Container(
       padding: EdgeInsets.all(0.0),
       color: MediaOptions.selectedColor,
@@ -61,24 +54,23 @@ abstract class SuperMediaWidget implements Widget {
     );
   }
 
-  Widget wrap(
-      void Function()? started,
-      void Function(DraggableDetails details)? ended,
-      void Function()? completed) {
-    return Positioned(
-      child: Draggable(
-        child: this,
-        feedback: this.highlightDragging(),
-        affinity: null,
-        onDragStarted: started,
-        onDragEnd: ended,
-        onDragCompleted: completed,
-        data: [],
-      ),
-    );
-  }
+  // Widget wrap(
+  //     void Function()? started,
+  //     void Function(DraggableDetails details)? ended,
+  //     void Function()? completed) {
+  //   return Positioned(
+  //     child: Draggable(
+  //       child: this,
+  //       feedback: this.highlightDragging(),
+  //       affinity: null,
+  //       onDragStarted: started,
+  //       onDragEnd: ended,
+  //       onDragCompleted: completed,
+  //       data: [],
+  //     ),
+  //   );
+  // }
 
-  // TODO this is being called instead of proper toJson in ControlGroup.
   Map toJson() {
     Map<String, dynamic> map = Map();
     map['tag'] = tag;
@@ -90,7 +82,7 @@ abstract class SuperMediaWidget implements Widget {
       case TIME_SLIDER_TAG:
         return TimeSlider(bloc);
       case SPEED_SLIDER_TAG:
-        return SpeedSelectSlider();
+        return SpeedSelectSlider(bloc);
       default:
         return TimeSlider(bloc);
     }
@@ -121,37 +113,25 @@ class SuperMediaButton extends IconButton with SuperMediaWidget {
   }
 
   // WidgetFunction(BuildContext context, AsyncSnapshot snapshot) generalBuilder(
-  generalBuilder(BuildContext context, AsyncSnapshot snapshot) {
-    super.build(context);
-  }
+  // generalBuilder(BuildContext context, AsyncSnapshot snapshot) {
+  //   super.build(context);
+  // }
 
-  @override
-  Widget build(BuildContext context) {
-    if (stream == null) {
-      return super.build(context);
-    } else {
-      return StreamBuilder(
-        key: Key(tag),
-        stream: stream,
-        builder: builder != null ? builder : generalBuilder,
-        // builder: (innerContext, snapshot) {
-        //   try {
-        //     return super.build(innerContext);
-        //   } catch (e) {
-        //     log("${tag}: Built with outer context");
-        //     return super.build(context);
-        //   }
-        // },
-      );
-    }
-  }
+  // @override
+  // Widget build(BuildContext context) {
+  //   SuperMediaWidget superMediaWidget = super.build(context) as SuperMediaWidget;
+  //   if(_selected) {
+  //     return superMediaWidget.highlightSelected();
+  //   }
+  //
+  //   return super.build(context);
+  // }
+
 }
 
 class SuperMediaButtons {
   final Function onPressed;
   final BuildContext context;
-
-  // get callback => onPressed;
 
   SuperMediaButtons(this.context, this.onPressed);
 
@@ -176,12 +156,6 @@ class SuperMediaButtons {
         repeatOneBtn,
         videoPlayBtn,
       ];
-
-  // String tagFor(IconButton btn) {
-  //   switch (btn) {
-  //     case playBtn:
-  //   }
-  // }
 
   SuperMediaWidget fromTag(String tag) {
     switch (tag) {
@@ -287,16 +261,7 @@ class SuperMediaButtons {
 
   SuperMediaButton get videoPlayBtn => SuperMediaButton(
       tag: PLAY_TAG,
-      // TODO Finish updating play/pause as Stream.
-      // stream: MediaControllerBlocProvider.of(context).isPlayingStream,
-      // builder: (buildContext, snapshot) {
-      //
-      // },
-      onPressed: () {
-        onPressed(PLAY_TAG);
-        // TODO find a way to set state from here or add stream.  I'm getting wild
-        // TODO inconsistencies with my play/pause button changing correctly.
-      },
+      onPressed: () => onPressed(PLAY_TAG),
       iconSize: MediaOptions.iconsize * MediaOptions.videoPlayBtnMultiplier,
       icon: Icon(
         MediaControllerBlocProvider.of(context).isPlaying

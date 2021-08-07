@@ -20,5 +20,6 @@ class MediaOptions {
   static const Color fabBackgroundColor = Color.fromARGB(215, 195, 195, 195);
   static const Color superMediaButtonColor = Color.fromARGB(205, 235,235, 235);
   static const Color dragHighlightColor = Color.fromARGB(139, 255, 157, 0);
+  static const Color speedSelectorBackground = Color.fromARGB(198, 56, 234, 169);
 
 }

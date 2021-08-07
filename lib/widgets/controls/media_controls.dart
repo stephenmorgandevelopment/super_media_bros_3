@@ -8,6 +8,7 @@ import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
+import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
 import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
@@ -31,11 +32,20 @@ abstract class MediaControls extends StatefulWidget {
 
 abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   static final String editTag = "edit-group";
+
   late MediaControllerBloc _bloc;
-
   MediaControllerBloc get bloc => _bloc;
-
   MediaControllerEditBloc get editBloc => _bloc as MediaControllerEditBloc;
+
+  void onPressed(String tag) {
+    if(tag.contains(SPEED_TAG)) {
+      toggleSpeedSlider();
+    }
+
+    widget.callback(tag);
+  }
+
+  bool _speedSelectorShowing = false;
 
   @protected
   late SuperMediaButtons smb;
@@ -43,7 +53,7 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   @override
   void didChangeDependencies() {
     _bloc = MediaControllerBlocProvider.of(context);
-    smb = SuperMediaButtons(context, widget.callback);
+    smb = SuperMediaButtons(context, onPressed);
     if (widget.isEdit) {
       editBloc.refreshStream.listen((_) => setState(() {}));
     }
@@ -66,18 +76,23 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
     } else {
       grps = genericGroups;
       MediaControlsConfig.updateJson(
-          _bloc.bloc.type!, MediaControls.jsonListFromGroups(grps));
+          _bloc.type, MediaControls.jsonListFromGroups(grps));
     }
 
     if (widget.isEdit) {
       editBloc.controlGroups = grps;
     }
 
-    return grps;
+    return _speedSelectorShowing ? (grps..add(speedSelector)) : grps;
   }
 
-  List<ControlGroup> get genericGroups => makeGeneric();
+  get speedSelector => ControlGroup(
+    _bloc,
+    <SuperMediaWidget>[SpeedSelectSlider(_bloc)],
+      Position(bottom: 12.0, left: 10.0, right: 10.0),
+  );
 
+  List<ControlGroup> get genericGroups => makeGeneric();
   makeGeneric();
 
   List<String> get asJson;
@@ -115,5 +130,10 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
         makeControls(MediaControlsConfig.controlsAsJsonByType(_bloc.type));
 
     return map;
+  }
+
+  void toggleSpeedSlider() {
+    _speedSelectorShowing = !_speedSelectorShowing;
+    setState(() {});
   }
 }

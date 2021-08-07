@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -11,43 +9,44 @@ import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 
 class MenuHeaderBloc {
   final MediaControllerBloc _blocCached;
+
   Type get _type => _blocCached.type;
 
-  List<String>? get _controlGroupsJson => isEdit ? _bloc.controlGroupsJson : null;
+  List<String>? get _controlGroupsJson =>
+      isEdit ? _bloc.controlGroupsJson : null;
 
-  dynamic get _bloc => isEdit
-      ? _blocCached as MediaControllerEditBloc
-      : _blocCached;
+  dynamic get _bloc =>
+      isEdit ? _blocCached as MediaControllerEditBloc : _blocCached;
 
   bool isEdit;
 
   MenuHeaderBloc(this._blocCached, {this.isEdit = false});
 
   Future<void> resetDefault() async {
-    if(!isEdit) {
+    if (!isEdit) {
       return;
     }
 
     MediaControlsConfig.clearJson(_type);
     log("clearing json for _type");
 
-    List<ControlGroup> genericGroups = _bloc.controlsKey?.currentState?.makeGeneric();
-    MediaControlsConfig.updateJson(_type, ControlGroup.makeJsonListFrom(genericGroups));
+    List<ControlGroup> genericGroups =
+        _bloc.controlsKey?.currentState?.makeGeneric();
+    MediaControlsConfig.updateJson(
+        _type, ControlGroup.makeJsonListFrom(genericGroups));
     _bloc.refreshViews();
   }
 
   Future<void> saveLayout() async {
-    if(!isEdit) {
+    if (!isEdit) {
       return;
     }
     return MediaControlsConfig.updateJson(_type, _controlGroupsJson!);
   }
 
-  void addMediaButton() {
+  // TODO Add media button to MediaController on press.
+  void addMediaButton() {}
 
-  }
-
-  void addControlGroup() {
-
-  }
+  // TODO Add media button group to MediaController on press.
+  void addControlGroup() {}
 }

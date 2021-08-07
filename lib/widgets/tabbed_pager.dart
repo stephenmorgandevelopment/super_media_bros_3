@@ -33,13 +33,9 @@ const Key AUDIO_KEY = Key(AUDIO_TAG);
 
 class _MediaTabPagerState extends State<MediaTabPager>
     with SingleTickerProviderStateMixin {
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static const List<Tab> homeTabs = <Tab>[
-    Tab(
-      icon: Icon(Icons.home),
-      key: HOME_KEY,
-    ),
+    Tab(icon: Icon(Icons.home), key: HOME_KEY),
     Tab(icon: Icon(Icons.image), key: IMAGE_KEY),
     Tab(icon: Icon(Icons.movie), key: VIDEO_KEY),
     Tab(icon: Icon(Icons.library_music), key: AUDIO_KEY),
