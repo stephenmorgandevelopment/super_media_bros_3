@@ -22,8 +22,6 @@ class MediaRepo {
     return mediaFile;
   }
 
-  // Stream<Uint8List?> getBytes(MediaData data) async* {}
-
   Future<Uint8List?> getBytes(MediaData media) async {
     switch (media.type) {
       case Type.IMAGE:
@@ -33,8 +31,6 @@ class MediaRepo {
       case Type.AUDIO:
         return await MediaAccess.getAudioAsBytes(media);
     }
-
-    // return await ImageAccess.getImageAsBytes(media);
   }
 
   Future<Uint8List?> getThumbnailBytes(MediaData media) async {

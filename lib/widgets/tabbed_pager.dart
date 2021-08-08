@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
@@ -33,7 +32,6 @@ const Key AUDIO_KEY = Key(AUDIO_TAG);
 
 class _MediaTabPagerState extends State<MediaTabPager>
     with SingleTickerProviderStateMixin {
-
   static const List<Tab> homeTabs = <Tab>[
     Tab(icon: Icon(Icons.home), key: HOME_KEY),
     Tab(icon: Icon(Icons.image), key: IMAGE_KEY),
@@ -97,20 +95,20 @@ class _MediaTabPagerState extends State<MediaTabPager>
     Navigator.pop(context);
   }
 
-  // Widget get menuBtn => IconButton(
-  //       onPressed: () => editControls(Type.VIDEO),
-  //       icon: Icon(
-  //         Icons.menu_outlined,
-  //         color: Colors.white,
-  //       ),
-  //     );
-  //
-  // void editControls(Type type) async {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //         builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
-  //             child: EditControls(type))),
-  //   );
-  // }
+// Widget get menuBtn => IconButton(
+//       onPressed: () => editControls(Type.VIDEO),
+//       icon: Icon(
+//         Icons.menu_outlined,
+//         color: Colors.white,
+//       ),
+//     );
+//
+// void editControls(Type type) async {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//         builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
+//             child: EditControls(type))),
+//   );
+// }
 }

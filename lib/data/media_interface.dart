@@ -32,14 +32,15 @@ abstract class MediaAccess {
       return MediaAccess.channel
           .invokeMethod<MediaData>('getData', {'media': media});
     } catch (e) {
-      log("MediaAccess-dart: line 27");
+      log("MediaAccess-dart: line 35");
       log(e.toString());
     }
     return null;
   }
 
-
-
+  // TODO Create another message channel to serialize permission
+  // TODO requests and responses to the system.  Then on the Android side,
+  // TODO write a class to request permissions and respond.
   static Future<void> requestPermission() async {
     var status = await Permission.storage.status;
     if (status.isGranted) {
@@ -55,6 +56,9 @@ abstract class MediaAccess {
     }
   }
 
+  // TODO Convert to a smart Stream loader, that is aware of the scroll
+  // TODO position of the grid/list view, and loads N pages to the stream
+  // TODO in both directions.  Responding to user scroll or system changes.
   static Future<List<MediaData>> getAllData(Type mediaType) async {
     List<MediaData>? results;
 
@@ -73,6 +77,12 @@ abstract class MediaAccess {
     return results ?? <MediaData>[];
   }
 
+  // TODO Investigate the possibility of generating a byte stream, in Kotlin,
+  // TODO on the Android side.  Then pipe that byte stream through a
+  // TODO message/method channel.  If possible, then we could now build out
+  // TODO the actual media players in Flutter Dart, rather than just sending
+  // TODO Android a message telling it what to play and when we press buttons.
+  // TODO (Which is all we are really doing at this point. - A La 'VideoPlayer' -)
   Future<Uint8List?> getMediaAsBytes(MediaData media) async {
     Uint8List? bytes;
 

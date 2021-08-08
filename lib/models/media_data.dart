@@ -1,13 +1,6 @@
+enum Type { IMAGE, VIDEO, AUDIO }
 
-
-
-enum Type {
-  IMAGE, VIDEO, AUDIO
-}
-
-enum Source {
-  LOCAL, CLOUD
-}
+enum Source { LOCAL, CLOUD }
 
 abstract class MediaData {
   final Uri uri;
@@ -15,9 +8,6 @@ abstract class MediaData {
   final Source source;
 
   Map<String, String> metadata;
-
-
-  // Type get type => _type;
 
   MediaData(this.uri, this.type, this.source,
       {this.metadata = const <String, String>{}});

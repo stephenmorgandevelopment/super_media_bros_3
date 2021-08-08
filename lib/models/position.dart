@@ -25,13 +25,12 @@ class Position {
         );
 
   void allowUncentering() {
-    if(top?.floor() == bottom?.floor()) {
-      bottom =null;
+    if (top?.floor() == bottom?.floor()) {
+      bottom = null;
     }
-    if(right?.floor() == left?.floor()) {
+    if (right?.floor() == left?.floor()) {
       left = null;
     }
-
   }
 
   Position updateFromOffset(Offset offset) {
@@ -43,14 +42,12 @@ class Position {
     double? rightAdj = right == null ? null : right! + offset.dx;
 
     return Position(
-        top: topAdj,
-        bottom: bottomAdj,
-        left: leftAdj,
-        right: rightAdj,
+      top: topAdj,
+      bottom: bottomAdj,
+      left: leftAdj,
+      right: rightAdj,
     );
   }
-
-
 
   Position.fromJson(Map<String, dynamic> map)
       : top = map['top'],

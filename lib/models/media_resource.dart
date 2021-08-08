@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -16,17 +14,13 @@ class MediaResource {
   MediaData get data => _data;
 
   MediaResource(this._data, this._bytes, this._file) {
-    if(_bytes == null && _file == null) {
+    if (_bytes == null && _file == null) {
       throw Error();
     }
   }
 
-  MediaResource.withBytes(
-      MediaData data,
-      Uint8List bytes) : this(data, bytes, null);
+  MediaResource.withBytes(MediaData data, Uint8List bytes)
+      : this(data, bytes, null);
 
-  MediaResource.withFile(
-      MediaData data,
-      File file) : this(data, null, file);
-
+  MediaResource.withFile(MediaData data, File file) : this(data, null, file);
 }

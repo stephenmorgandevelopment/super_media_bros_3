@@ -2,8 +2,17 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
-import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 
+/// Convenience class for persisting and retrieving our
+/// MediaControls layouts to disk.  Keeps current config in memory for fast
+/// usage.  Must call MediaControlsConfig.init() before reading, or an empty
+/// List will be returned.
+///
+/// Configuration is saved as a List<String>, with each String being it's own
+/// JSON object.  Each item in the List represents a button ControlGroup.
+///
+/// Use ControlGroup.makeJsonListFrom(List<ControlGroup>) for easy conversion of
+/// ControlGroup Widgets into JSON.
 class MediaControlsConfig {
   static List<String> _imageControlsAsJson = List.empty(growable: true);
   static List<String> get imageControlsAsJson => _imageControlsAsJson;

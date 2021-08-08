@@ -17,7 +17,7 @@ class MediaMessageCodec extends StandardMessageCodec {
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if(value is MediaData) {
+    if (value is MediaData) {
       buffer.putUint8(_kMedia);
 
       writeValue(buffer, value.uri.toString());
@@ -38,7 +38,8 @@ class MediaMessageCodec extends StandardMessageCodec {
           buffer.putUint8(_kAUDIO);
           break;
       }
-    } else if(value is Uri) { // Left here in case I want to send Uri's later.
+    } else if (value is Uri) {
+      // Left here in case I want to send Uri's later.
       buffer.putUint8(_kUri);
       super.writeValue(buffer, value.toString());
     } else {
@@ -57,11 +58,15 @@ class MediaMessageCodec extends StandardMessageCodec {
         Map<String, String> metadata = LinkedHashMap.from(map);
         return makeMedia(uri, _type, metadata);
       case _kType:
-        switch(buffer.getUint8()) {
-          case _kIMAGE: return Type.IMAGE;
-          case _kVIDEO: return Type.VIDEO;
-          case _kAUDIO: return Type.AUDIO;
-          default: return null;
+        switch (buffer.getUint8()) {
+          case _kIMAGE:
+            return Type.IMAGE;
+          case _kVIDEO:
+            return Type.VIDEO;
+          case _kAUDIO:
+            return Type.AUDIO;
+          default:
+            return null;
         }
       case _kUri:
         return Uri.parse(readValue(buffer) as String);
@@ -71,7 +76,7 @@ class MediaMessageCodec extends StandardMessageCodec {
   }
 
   MediaData makeMedia(Uri uri, Type type, Map<String, String> metadata) {
-    switch(type) {
+    switch (type) {
       case Type.IMAGE:
         return ImageData(uri, Source.LOCAL, metadata: metadata);
       case Type.VIDEO:
