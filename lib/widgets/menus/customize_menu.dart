@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/text_styles.dart';
@@ -7,7 +6,7 @@ import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provid
 import 'package:super_media_bros_3/widgets/controls/super_media_buttons.dart';
 
 class CustomizeMenu extends StatelessWidget {
-  BuildContext callingContext;
+  final BuildContext callingContext;
 
   CustomizeMenu(this.callingContext);
 
@@ -15,7 +14,8 @@ class CustomizeMenu extends StatelessWidget {
     Navigator.push(
       this.callingContext,
       MaterialPageRoute(
-          builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
+          builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(
+              type,
               child: EditControls(type))),
     );
   }
@@ -28,19 +28,15 @@ class CustomizeMenu extends StatelessWidget {
         DrawerHeader(
           margin: EdgeInsets.all(0.0),
           child: Stack(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                   height: 38.0,
-                  // constraints: BoxConstraints.expand(height: 40.0),
                   alignment: Alignment.topRight,
                   child: SuperMediaButtons.closeBtnFrom(context)),
               Container(
                 margin: EdgeInsets.only(top: 25.0),
                 height: 32.0,
                 alignment: Alignment.topCenter,
-                // margin: EdgeInsets.fromLTRB(0.0, -8.0, 0.0, 8.0),
                 child: Text(
                   "Personalize your",
                   style: SuperTextStyles.drawerHeaderStyle,
@@ -50,10 +46,8 @@ class CustomizeMenu extends StatelessWidget {
               Center(
                 child: Container(
                   padding: EdgeInsets.only(top: 21.0),
-                  // constraints: BoxConstraints.expand(),
+                  // This was a by-product of dozing off at the computer, lol.
                   // center: "He is trying tro get to the center"
-                  //     Container(constraints: BoxConstraints.expand(),
-                  // margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),    //.symmetric(vertical: 5.0),
                   alignment: Alignment.center,
                   child: Text(
                     "Super Media",
@@ -68,8 +62,6 @@ class CustomizeMenu extends StatelessWidget {
                 right: 0.0,
                 bottom: 16.0,
                 child: Container(
-                  // margin: EdgeInsets.only(bottom: 8.0),
-                  // alignment: Alignment.bottomCenter,
                   child: Text(
                     "Experience:",
                     style: SuperTextStyles.drawerHeaderStyle,

@@ -19,12 +19,9 @@ class MediaControllerBlocProvider extends InheritedWidget {
       : controllerBloc = MediaControllerEditBloc(MediaBloc.empty(type)),
         super(key: key, child: child);
 
+  // TODO Investigate a proper implementation of this for better efficiency.
   @override
   bool updateShouldNotify(MediaControllerBlocProvider old) {
-    // if (mediaBloc.currentIndex != old.mediaBloc.currentIndex) {
-    //   return true;
-    // }
-
     return true;
   }
 

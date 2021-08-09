@@ -1,11 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
-import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/themes/tab_themes.dart';
-import 'package:super_media_bros_3/widgets/controls/edit_controls_widget.dart';
-import 'package:super_media_bros_3/widgets/controls/media_controller_bloc_provider.dart';
 import 'package:super_media_bros_3/widgets/grid_view.dart';
 import 'package:super_media_bros_3/widgets/menus/customize_menu.dart';
 
@@ -56,9 +52,7 @@ class _MediaTabPagerState extends State<MediaTabPager>
   @override
   Widget build(BuildContext innerContext) {
     return Scaffold(
-      // key: _scaffoldKey,
       appBar: AppBar(
-          // leading: menuBtn,
           title: Text('Super Media Bros'),
           bottom: TabBar(
             controller: _tabController,
@@ -94,21 +88,4 @@ class _MediaTabPagerState extends State<MediaTabPager>
   void closeDrawer() {
     Navigator.pop(context);
   }
-
-// Widget get menuBtn => IconButton(
-//       onPressed: () => editControls(Type.VIDEO),
-//       icon: Icon(
-//         Icons.menu_outlined,
-//         color: Colors.white,
-//       ),
-//     );
-//
-// void editControls(Type type) async {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//         builder: (innerContext) => MediaControllerBlocProvider.forEditScreen(type,
-//             child: EditControls(type))),
-//   );
-// }
 }

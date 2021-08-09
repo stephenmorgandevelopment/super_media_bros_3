@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/bloc/media_controller_edit_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_controls_config.dart';
-import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/models/position.dart';
 import 'package:super_media_bros_3/widgets/controls/control_group.dart';
 import 'package:super_media_bros_3/widgets/controls/custom_sliders.dart';
@@ -38,7 +36,7 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   MediaControllerEditBloc get editBloc => _bloc as MediaControllerEditBloc;
 
   void onPressed(String tag) {
-    if(tag.contains(SPEED_TAG)) {
+    if (tag.contains(SPEED_TAG)) {
       toggleSpeedSlider();
     }
 
@@ -87,12 +85,13 @@ abstract class MediaControlsState<T extends MediaControls> extends State<T> {
   }
 
   get speedSelector => ControlGroup(
-    _bloc,
-    <SuperMediaWidget>[SpeedSelectSlider(_bloc)],
-      Position(bottom: 12.0, left: 10.0, right: 10.0),
-  );
+        _bloc,
+        <SuperMediaWidget>[SpeedSelectSlider(_bloc)],
+        Position(bottom: 12.0, left: 10.0, right: 10.0),
+      );
 
   List<ControlGroup> get genericGroups => makeGeneric();
+
   makeGeneric();
 
   List<String> get asJson;

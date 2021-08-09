@@ -40,6 +40,7 @@ class _EditControlsState extends State<EditControls> {
   late SuperMediaButtons smb;
 
   MediaControllerEditBloc? _editBloc;
+
   MediaControllerEditBloc get editBloc =>
       _editBloc ?? (_editBloc = MediaControllerBlocProvider.ofEdit(context));
 
@@ -86,8 +87,6 @@ class _EditControlsState extends State<EditControls> {
           body: Container(
             constraints: BoxConstraints.expand(),
             child: DragTarget<ControlGroup>(
-              // onAccept: processControlGroupDrop,
-              // onWillAccept: verifyControlGroupCorrect,
               builder: (BuildContext context, accepted, rejected) {
                 return Stack(
                   fit: StackFit.expand,
@@ -104,29 +103,6 @@ class _EditControlsState extends State<EditControls> {
                     controls,
                   ],
                 );
-
-                // TODO Make sure removing this stream builder doesn't break the views.
-                // TODO refreshViews() should be updating all views now.
-                // return StreamBuilder(
-                //   stream: editBloc.controlsJsonStringStream,
-                //   builder: (BuildContext innaInnContext, AsyncSnapshot<List<String>> snapshot) {
-                //     return Stack(
-                //       fit: StackFit.expand,
-                //       children: [
-                //         Container(
-                //           constraints: BoxConstraints.expand(),
-                //           child: Image.asset(
-                //             'images/thumbs.png',
-                //             fit: BoxFit.fill,
-                //             filterQuality: FilterQuality.high,
-                //             isAntiAlias: true,
-                //           ),
-                //         ),
-                //         controls,
-                //       ],
-                //     );
-                //   },
-                // );
               },
             ),
           ),
@@ -135,17 +111,18 @@ class _EditControlsState extends State<EditControls> {
     );
   }
 
-  void btnMenuCallback(String tag) {
-
-  }
+  void btnMenuCallback(String tag) {}
 
   void onPressed(String tag) {
-    if (editBloc.currentButtonEditingTag == tag) {  // If we have this button selected already.
+    if (editBloc.currentButtonEditingTag == tag) {
+      // If we have this button selected already.
       _showModifyFab = !_showModifyFab;
-    } else if (!_showModifyFab) {   // If we don't have anything selected yet.
+    } else if (!_showModifyFab) {
+      // If we don't have anything selected yet.
       _showModifyFab = true;
       editBloc.currentButtonEditingTag = tag;
-    } else {    // If we have something selected, but not this button.
+    } else {
+      // If we have something selected, but not this button.
       editBloc.currentButtonEditingTag = tag;
     }
 
@@ -184,29 +161,6 @@ class _EditControlsState extends State<EditControls> {
     }
   }
 
-  // processControlGroupDrop(ControlGroup oldGroup) async {
-  //   log("Processing drop");
-  //   // Not needed.  Was previously using this until
-  //   // validation phase began receiving null objects.
-  // }
-  //
-  // bool verifyControlGroupCorrect(Object? oldGroup) {
-  //   if(oldGroup == null) {
-  //     // This happened a lot in building this out.  I need to figure out why,
-  //     // but also accept the input for now.  Without a tangible object, there is
-  //     // no way to actually validate this :(
-  //     log("EditControls - oldGroup --NULL--.");
-  //     return true;
-  //   }
-  //
-  //   if(oldGroup is ControlGroup && oldGroup.key == editBloc.currentGroupEditingKey) {
-  //     log("EditControls - ${oldGroup.tag} validated successfully.");
-  //     return true;
-  //   }
-  //
-  //   return false;
-  // }
-
   static const String btnMenuTag = "btnGroup";
   static const String tuneBtnTag = "tuneBtnMenu";
 
@@ -222,6 +176,7 @@ class _EditControlsState extends State<EditControls> {
   }
 
   get btnGroupMenu => ButtonGroupMenu(btnMenuCallback);
+
   get tuneBtnMenu => TuneButtonMenu(editBloc.currentButtonEditingTag);
 
   Future<bool> onBackPressed() async {
@@ -248,6 +203,7 @@ class _EditControlsState extends State<EditControls> {
   }
 
   bool dragging = false;
+
   get fab {
     if (!dragging) {
       if (_showModifyFab) {
@@ -260,11 +216,13 @@ class _EditControlsState extends State<EditControls> {
     return null;
   }
 
-  get openMenuFab =>
-      // height: 64.0,
-      FloatingActionButton(
+  get openMenuFab => FloatingActionButton(
         mini: false,
-        child: Icon(Icons.menu, size: MediaOptions.fabSize, color: Colors.white,),
+        child: Icon(
+          Icons.menu,
+          size: MediaOptions.fabSize,
+          color: Colors.white,
+        ),
         backgroundColor: MediaOptions.fabBackgroundColor,
         splashColor: Colors.orangeAccent,
         onPressed: () =>
@@ -276,8 +234,7 @@ class _EditControlsState extends State<EditControls> {
         child: Icon(Icons.tune_outlined, size: 48.0, color: Colors.white),
         backgroundColor: MediaOptions.fabBackgroundColor,
         splashColor: Colors.orangeAccent,
-        onPressed: () =>
-            _scaffoldKey.currentState!.openEndDrawer(), // addControlGroup(),
+        onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
       );
 
   // Not used yet, but will most likely need.  May be moved to bloc.

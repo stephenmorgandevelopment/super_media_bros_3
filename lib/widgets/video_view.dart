@@ -49,21 +49,20 @@ class _VideoViewState extends MediaViewState<VideoView> {
             return SafeArea(
               child: Scaffold(
                 body: Stack(
-                  fit: StackFit.expand,
-                  alignment: Alignment.center,
-                  children: [
-                    Center(
-                      child: GestureDetector(
-                        child: AspectRatio(
-                          aspectRatio: bloc.controller.value.aspectRatio,
-                          child: VideoPlayer(bloc.controller),
+                    fit: StackFit.expand,
+                    alignment: Alignment.center,
+                    children: [
+                      Center(
+                        child: GestureDetector(
+                          child: AspectRatio(
+                            aspectRatio: bloc.controller.value.aspectRatio,
+                            child: VideoPlayer(bloc.controller),
+                          ),
+                          onTap: () => toggleControls(),
                         ),
-                        onTap: () => toggleControls(),
                       ),
-                    ),
-                    VideoControls(onPressed),
-                  ]
-                ),
+                      VideoControls(onPressed),
+                    ]),
               ),
             );
           } else {
@@ -77,9 +76,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
                     ),
                     onTap: () => toggleControls(),
                     onPanEnd: (details) => processPan(details),
-                    onPanUpdate: fling.update,//(details) => fling.update(details),
-                    // onPanUpdate: (details) =>
-                    //     {isLeftFling = (details.delta.dx < 0)},
+                    onPanUpdate: fling.update,
                   ),
                 ),
               ),
@@ -97,7 +94,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
       return;
     }
 
-    switch(fling.direction) {
+    switch (fling.direction) {
       case Direction.LEFT:
         await bloc.bloc.getNextMedia();
         break;
@@ -108,11 +105,6 @@ class _VideoViewState extends MediaViewState<VideoView> {
         return;
     }
 
-    // if (isLeftFling) {
-    //   await bloc.bloc.getNextMedia();
-    // } else {
-    //   await bloc.bloc.getPreviousMedia();
-    // }
     changeMedia();
   }
 
@@ -149,9 +141,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
         } else {
           dummy.controller.play();
         }
-        setState(() {
-          // controls!.update();
-        });
+        setState(() {});
         break;
       case SEEK_FWD_TAG:
         int curPos = (await dummy.controller.position)?.inMilliseconds ?? 0;
@@ -182,9 +172,7 @@ class _VideoViewState extends MediaViewState<VideoView> {
         break;
       case SPEED_TAG:
         speedSelectorShowing = !speedSelectorShowing;
-        // controls
         setState(() {});
-        // initState();
         break;
       default:
         toggleControls();

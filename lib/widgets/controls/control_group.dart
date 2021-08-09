@@ -75,7 +75,6 @@ class ControlGroupState extends State<ControlGroup> {
       type: MaterialType.transparency,
       child: Container(
         padding: EdgeInsets.zero,
-        // color: isEdit ? MediaOptions.controlGroupBackgroundColor : null,
         color: isEdit ? editBackgroundColor : null,
         child: widget.horizontal
             ? Row(

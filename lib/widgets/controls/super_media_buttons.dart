@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/bloc/media_controller_bloc.dart';
 import 'package:super_media_bros_3/mediaplayer/media_options.dart';
@@ -29,10 +27,7 @@ const String IMG_DETAIL_TAG = "details";
 
 abstract class SuperMediaWidget implements Widget {
   String get tag;
-
   final bool _selected = false;
-
-  // bool get selected => _selected;
 
   Widget highlightSelected() {
     return Container(
@@ -53,23 +48,6 @@ abstract class SuperMediaWidget implements Widget {
       alignment: null,
     );
   }
-
-  // Widget wrap(
-  //     void Function()? started,
-  //     void Function(DraggableDetails details)? ended,
-  //     void Function()? completed) {
-  //   return Positioned(
-  //     child: Draggable(
-  //       child: this,
-  //       feedback: this.highlightDragging(),
-  //       affinity: null,
-  //       onDragStarted: started,
-  //       onDragEnd: ended,
-  //       onDragCompleted: completed,
-  //       data: [],
-  //     ),
-  //   );
-  // }
 
   Map toJson() {
     Map<String, dynamic> map = Map();
@@ -111,22 +89,6 @@ class SuperMediaButton extends IconButton with SuperMediaWidget {
   bool isEqual(Object obj) {
     return obj is SuperMediaButton && this.tag == obj.tag;
   }
-
-  // WidgetFunction(BuildContext context, AsyncSnapshot snapshot) generalBuilder(
-  // generalBuilder(BuildContext context, AsyncSnapshot snapshot) {
-  //   super.build(context);
-  // }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   SuperMediaWidget superMediaWidget = super.build(context) as SuperMediaWidget;
-  //   if(_selected) {
-  //     return superMediaWidget.highlightSelected();
-  //   }
-  //
-  //   return super.build(context);
-  // }
-
 }
 
 class SuperMediaButtons {
@@ -198,7 +160,8 @@ class SuperMediaButtons {
       case IMG_DETAIL_TAG:
         return imgDetailsBtn;
       default:
-        return SuperMediaWidget.fromTag(tag, MediaControllerBlocProvider.of(context));
+        return SuperMediaWidget.fromTag(
+            tag, MediaControllerBlocProvider.of(context));
     }
   }
 
