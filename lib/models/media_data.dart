@@ -1,3 +1,7 @@
+import 'dart:collection';
+
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
+
 enum Type { IMAGE, VIDEO, AUDIO }
 
 enum Source { LOCAL, CLOUD }
@@ -35,4 +39,25 @@ class AudioData extends MediaData {
   AudioData(Uri uri, Source source,
       {Map<String, String> metadata = const <String, String>{}})
       : super(uri, Type.AUDIO, source, metadata: metadata);
+
+  static Map<String, int> parseAudioList(List<MediaData> mediaList) {
+    Map<String, int> audioIndexes = LinkedHashMap();
+
+    String currentGroup = "";
+    for(int i = 0; i < mediaList.length; i++) {
+      String? group = mediaList[i].metadata[MediaOptions.audioGroupBy];
+
+      if(group == null) {
+        audioIndexes["nodata$i"] = i;
+        continue;
+      }
+
+      if(group != currentGroup) {
+        currentGroup = group;
+        audioIndexes[group] = i;
+      }
+    }
+
+    return audioIndexes;
+  }
 }

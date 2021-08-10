@@ -1,4 +1,4 @@
-package com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils
+package com.stephenmorgandevelopment.super_media_bros_3.method_channel_utils
 
 import android.content.ContentResolver
 import android.provider.MediaStore
@@ -10,7 +10,6 @@ import com.stephenmorgandevelopment.super_media_bros_3.mediastore.VideoAccess
 import com.stephenmorgandevelopment.super_media_bros_3.models.Image
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
-import com.stephenmorgandevelopment.super_media_bros_3.models.Video
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -42,7 +41,7 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
             "getVideoThumbnail" -> getVideoThumbnail(result, call.argument<Media>("video"))
 
             // Audio queries
-            "getAllAudioData" -> getAllAudioData(result)
+            "getAllAudioData" -> getAllAudioData(result, (call.argument<String>("groupBy") ?: "artist"))
             "getAlbumArtwork" -> getAlbumArtwork(result, call.argument<Media>("audio"))
 
             else -> result.notImplemented()
@@ -52,8 +51,8 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
     private fun getAllData(result: MethodChannel.Result, type: Media.Type?) {
         val mediaList = when(type) {
             Media.Type.IMAGE -> imageAccess.query(MediaQuery.Assemble.allImagesData())    //getAllDataForAllImages(result)
-            Media.Type.VIDEO -> videoAccess.query(MediaQuery.Assemble.allImagesData())    //getAllVideosData(result)
-            Media.Type.AUDIO -> audioAccess.query(MediaQuery.Assemble.allImagesData()) //getAllAudioData(result)
+            Media.Type.VIDEO -> videoAccess.query(MediaQuery.Assemble.allData())    //getAllVideosData(result)
+            Media.Type.AUDIO -> audioAccess.query(MediaQuery.Assemble.allData()) //getAllAudioData(result)
             else -> ArrayList()
         }
 
@@ -64,6 +63,22 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
                     TAG,
                     "Error, check permissions.",
                     null)
+        }
+    }
+
+    private fun getAllAudioData(result: MethodChannel.Result, groupBy: String) {
+        val audioQuery = MediaQuery.Assemble.allData(groupBy)
+        Log.i(TAG, "MediaQuery.sortBy = ${audioQuery.sortOrder}")
+
+        val mediaList = audioAccess.query(audioQuery)
+
+        if(mediaList.isNotEmpty()) {
+            result.success(mediaList)
+        } else {
+            result.error(
+                TAG,
+                "Error, check permissions.",
+                null)
         }
     }
 
@@ -85,17 +100,17 @@ class MediaMethodCallHandler(contentResolver: ContentResolver) : MethodChannel.M
         }
     }
 
-    private fun getAllAudioData(result: MethodChannel.Result) {
-        val mediaList: List<Media> = audioAccess.query(MediaQuery.Assemble.allImagesData())
-        if (mediaList.isNotEmpty()) {
-            result.success(mediaList)
-        } else {
-            result.error(
-                    TAG,
-                    "Error, check permissions.",
-                    null)
-        }
-    }
+//    private fun getAllAudioData(result: MethodChannel.Result) {
+//        val mediaList: List<Media> = audioAccess.query(MediaQuery.Assemble.allImagesData())
+//        if (mediaList.isNotEmpty()) {
+//            result.success(mediaList)
+//        } else {
+//            result.error(
+//                    TAG,
+//                    "Error, check permissions.",
+//                    null)
+//        }
+//    }
 
     private fun getAlbumArtwork(result: MethodChannel.Result, media: Media?) {
         if(media == null) {

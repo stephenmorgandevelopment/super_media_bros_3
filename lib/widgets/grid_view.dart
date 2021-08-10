@@ -25,6 +25,21 @@ class MediaGridLayout extends StatefulWidget {
 
 class _MediaGridLayoutState extends State<MediaGridLayout> {
   Future<MediaResource> mediaFuture(int index) => widget.bloc.getMedia(index);
+  Map<String, int>? audioIndexes;
+
+  @override
+  void initState() {
+    if(widget.bloc.type == Type.AUDIO) {
+      parseAudioList();
+    }
+
+    super.initState();
+  }
+
+  void parseAudioList() {//async {
+    audioIndexes = AudioData.parseAudioList(widget.bloc.audioList);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +54,31 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
       child: GridView.builder(
         gridDelegate: delegate,
         scrollDirection: widget.horizontal ? Axis.horizontal : Axis.vertical,
-        itemCount: widget.bloc.count,
-        itemBuilder:
-            builder, //(BuildContext context, int index) => builder(context, index),
+        itemCount: widget.bloc.type != Type.AUDIO
+            ? widget.bloc.count
+            : audioIndexes!.length,
+        itemBuilder: builderSelect,
       ),
     );
+  }
+
+  int mapAudioIndex(int index) {
+    int i = 0;
+    for(MapEntry entry in audioIndexes!.entries) {
+      // TODO Change to (i++ == index) and verify consistency.
+      if(i++ == index) {
+        return entry.value;
+      }
+    }
+    return index;
+  }
+
+  Widget Function(BuildContext, int) get builderSelect => widget.bloc.type == Type.AUDIO ?
+      audioBuilder :
+      builder;
+
+  Widget audioBuilder(BuildContext context, int index) {
+    return builder(context, mapAudioIndex(index));
   }
 
   Widget builder(BuildContext context, int index) {
@@ -64,9 +99,27 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
           } else if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           } else {
-            return Image.asset('images/logo1.png');
+            return IconButton(
+              onPressed: () {
+                navigate(context, index);
+              },
+              icon: defaultIcon,
+            );
           }
         });
+  }
+
+  Icon get defaultIcon {
+    switch (widget.bloc.type) {
+      case Type.IMAGE:
+        return Icon(Icons.image_outlined);
+      case Type.VIDEO:
+        return Icon(Icons.movie_outlined);
+      case Type.AUDIO:
+        return Icon(Icons.audiotrack_outlined);
+      default:
+        return Icon(Icons.description_outlined);
+    }
   }
 
   Future<void> navigate(BuildContext context, index) async {
@@ -91,8 +144,15 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
         );
         break;
       case Type.AUDIO:
-      //TODO Instantiate and navigate to audio player
-      //TODO Start player service.
+        // List<MediaData> groupData = widget.bloc.audioList
+        // MediaBloc groupBloc = MediaBloc()
+        //
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => MediaGridLayout()
+        //   )
+        // )
 
       default:
         log(widget.bloc.type.toString() + index.toString());

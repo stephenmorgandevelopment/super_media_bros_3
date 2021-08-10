@@ -4,6 +4,9 @@ class MediaOptions {
   // TODO Map these to shared preferences (flutter equivalent).
   // TODO Save when changed and load at runtime.
 
+  // Misc Options
+  static String audioGroupBy = "album";
+
   // Times
   static int seekForwardTime = 7500;
   static int seekBackwardsTime = 3500;

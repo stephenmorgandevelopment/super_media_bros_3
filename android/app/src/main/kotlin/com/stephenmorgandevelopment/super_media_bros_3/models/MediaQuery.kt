@@ -47,7 +47,7 @@ data class MediaQuery(
             MediaQuery(
                     PATH_DATA_COLUMNS,
                     ID_SELECTION,
-                    arrayOf(media.metadata[MediaStore.MediaColumns._ID].toString()),
+                    arrayOf(media.metadata[_ID].toString()),
                     null
             )
 

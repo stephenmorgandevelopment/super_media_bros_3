@@ -1,4 +1,4 @@
-package com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils;
+package com.stephenmorgandevelopment.super_media_bros_3.method_channel_utils;
 
 import android.net.Uri;
 
@@ -31,7 +31,7 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 	
 	@Override
 	protected void writeValue(ByteArrayOutputStream stream, Object value) {
-		if (value instanceof Media) {	// || value instanceof Image || value instanceof Video || value instanceof Audio) {
+		if (value instanceof Media) {
 			stream.write(DATA_TYPE_MEDIA);
 			
 			Media media = ((Media) value);

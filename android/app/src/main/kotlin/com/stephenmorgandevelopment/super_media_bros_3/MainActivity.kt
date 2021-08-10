@@ -1,8 +1,8 @@
 package com.stephenmorgandevelopment.super_media_bros_3
 
 import androidx.annotation.NonNull
-import com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils.FlutterMediaMessageCodec
-import com.stephenmorgandevelopment.super_media_bros_3.MethodChannelUtils.MediaMethodCallHandler
+import com.stephenmorgandevelopment.super_media_bros_3.method_channel_utils.FlutterMediaMessageCodec
+import com.stephenmorgandevelopment.super_media_bros_3.method_channel_utils.MediaMethodCallHandler
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

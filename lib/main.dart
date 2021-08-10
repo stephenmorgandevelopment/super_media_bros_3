@@ -107,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
         builder:
             (BuildContext context, AsyncSnapshot<List<MediaBloc>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            // log("statusBarHeight: ${AppGlobals.statusBarHeight}");
             return SafeArea(
               child: MediaTabPager(snapshot.data!),
             );

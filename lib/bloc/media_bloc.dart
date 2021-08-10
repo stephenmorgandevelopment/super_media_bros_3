@@ -21,6 +21,14 @@ import 'package:super_media_bros_3/widgets/needs_permission_text.dart';
 class MediaBloc {
   @protected
   List<MediaData> mediaList;
+  List<MediaData> get audioList {
+    if(type == Type.AUDIO) {
+      return mediaList;
+    } else {
+      return List.empty();
+    }
+  }
+
   final Type? type;
   @protected
   final MediaRepo repo;

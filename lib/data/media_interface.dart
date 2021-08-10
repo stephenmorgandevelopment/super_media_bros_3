@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:super_media_bros_3/mediaplayer/media_options.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 import 'package:super_media_bros_3/platform/media_message_codec.dart';
 
@@ -63,14 +64,21 @@ abstract class MediaAccess {
     List<MediaData>? results;
 
     try {
-      results = Platform.isAndroid
-          ? await MediaAccess.channel.invokeListMethod<MediaData>(
-              'getAllData',
-              {'type': mediaType},
-            )
-          : await iOSandWebPlaceholder();
+      if(mediaType == Type.AUDIO) {
+        results = await channel.invokeListMethod<MediaData>(
+          'getAllAudioData',
+          {'groupBy': MediaOptions.audioGroupBy}
+        );
+      } else {
+        results = await MediaAccess.channel.invokeListMethod<MediaData>(
+          'getAllData',
+          {'type': mediaType},
+        );
+      }
+
+
     } catch (e) {
-      log("MediaAccess-dart: line 58");
+      log("MediaAccess-dart: line 73");
       log(e.toString());
     }
 
@@ -95,7 +103,7 @@ abstract class MediaAccess {
       imageBytes = await MediaAccess.channel
           .invokeMethod<Uint8List>('getImage', {'image': media});
     } catch (e) {
-      log("ImageAccess-dart: line 56");
+      log("ImageAccess-dart: line 98");
       log(e.toString());
     }
     return imageBytes;
@@ -119,7 +127,7 @@ abstract class MediaAccess {
       thumbnail = await MediaAccess.channel
           .invokeMethod<Uint8List>('getThumbnail', {'media': media});
     } catch (e) {
-      log("MediaAccess-dart: line 71");
+      log("MediaAccess-dart: line 122");
       log(e.toString());
     }
     return thumbnail;
