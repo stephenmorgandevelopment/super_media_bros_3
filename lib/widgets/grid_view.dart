@@ -62,10 +62,9 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
     );
   }
 
-  int mapAudioIndex(int index) {
+  int mapMediaListIndexToAudioIndex(int index) {
     int i = 0;
     for(MapEntry entry in audioIndexes!.entries) {
-      // TODO Change to (i++ == index) and verify consistency.
       if(i++ == index) {
         return entry.value;
       }
@@ -73,12 +72,30 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
     return index;
   }
 
+  int mapEndingIndex(int index) {
+    log("index: $index");
+
+    bool returnNext = false;
+    for(MapEntry entry in audioIndexes!.entries) {
+      if(returnNext) {
+        log("endingIndex: ${entry.value - 1}");
+        return (entry.value - 1);
+      }
+
+      if(entry.value == index) {
+        returnNext = true;
+      }
+    }
+
+    return (widget.bloc.audioList.length - 1);
+  }
+
   Widget Function(BuildContext, int) get builderSelect => widget.bloc.type == Type.AUDIO ?
       audioBuilder :
       builder;
 
   Widget audioBuilder(BuildContext context, int index) {
-    return builder(context, mapAudioIndex(index));
+    return builder(context, mapMediaListIndexToAudioIndex(index));
   }
 
   Widget builder(BuildContext context, int index) {
@@ -144,16 +161,39 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
         );
         break;
       case Type.AUDIO:
-        // List<MediaData> groupData = widget.bloc.audioList
-        // MediaBloc groupBloc = MediaBloc()
-        //
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => MediaGridLayout()
-        //   )
-        // )
+        // TODO Extract and cleanup.  Temp to verify correct ranges.
+        int endingIndex = mapEndingIndex(index);
+        List<MediaData> groupData = widget.bloc.audioList.getRange(
+          index,
+          endingIndex
+        ).toList()..add(widget.bloc.audioList[endingIndex]);
 
+        Uint8List? thumbnail = await widget.bloc.getThumbnail(index);
+        Widget artwork = thumbnail != null
+            ? Image.memory(thumbnail, fit: BoxFit.cover)
+            : Icon(Icons.audiotrack_outlined);
+
+        List<Widget> listViewChildren = List.empty(growable: true);
+        for(MediaData track in groupData) {
+          listViewChildren.add(
+            ListTile(
+              leading: artwork,
+              title: Text(track.metadata["_display_name"]!),
+            )
+          );
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: ListView(
+              children: listViewChildren,
+            ),
+          ),
+          ),
+        );
+        break;
       default:
         log(widget.bloc.type.toString() + index.toString());
         break;
