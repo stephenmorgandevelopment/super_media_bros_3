@@ -1,15 +1,14 @@
 package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.ContentUris
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
-import com.stephenmorgandevelopment.super_media_bros_3.models.Image
+import com.stephenmorgandevelopment.super_media_bros_3.FeatureSet
+import com.stephenmorgandevelopment.super_media_bros_3.featureSet
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 import java.io.ByteArrayOutputStream
@@ -27,6 +26,8 @@ interface MediaStoreWrapper {
     fun getAllPathData(): List<Media>?
 
     fun getThumbnail(media: Media): ByteArray?
+
+//    fun genBitmapThumbnail(media: Media) : Bitmap?
 }
 
 open class MediaAccess(protected val contentResolver: ContentResolver) : MediaStoreWrapper {
@@ -57,9 +58,11 @@ open class MediaAccess(protected val contentResolver: ContentResolver) : MediaSt
 
     override fun getThumbnail(media: Media): ByteArray? = generateThumbnail(media)
 
-    protected fun generateThumbnail(media: Media): ByteArray? {
-        val thumb: Bitmap
-        if (android.os.Build.VERSION.SDK_INT >= 29) {
+    @SuppressLint("NewApi") // Needed because the compiler isn't smart enough to
+    // realize that featureSet is actually checking the API for proper versioning.
+    fun genBitmapThumbnail(media: Media) : Bitmap? {
+        val thumb: Bitmap?
+        if (featureSet == FeatureSet.FULL) {
             thumb = contentResolver.loadThumbnail(media.uri, Options.thumbsize, null)
         } else {
             thumb = when (media.type) {
@@ -81,8 +84,15 @@ open class MediaAccess(protected val contentResolver: ContentResolver) : MediaSt
             }
         }
 
+        return thumb
+    }
+
+    // TODO Revert if this fails for any reason.  Been working BONKERS!!!!!
+    protected fun generateThumbnail(media: Media): ByteArray? {
         val outputStream = ByteArrayOutputStream()
-        val success = thumb.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+        val success = genBitmapThumbnail(media)
+            ?.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+            ?: false
 
         return if (success) {
             Log.i(

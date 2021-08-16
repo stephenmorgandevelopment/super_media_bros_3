@@ -3,18 +3,41 @@ package com.stephenmorgandevelopment.super_media_bros_3.mediastore
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
-import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import com.stephenmorgandevelopment.super_media_bros_3.models.Audio
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 
 import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Audio.AudioColumns.*
-import android.util.Log
-import android.util.Size
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
-import java.io.ByteArrayOutputStream
+import com.stephenmorgandevelopment.super_media_bros_3.models.MediaGroup
 
 class AudioAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver) {
+
+//    fun getAllAlbums() : List<MediaGroup> {
+//        val uri : Uri
+//        if(android.os.Build.VERSION.SDK_INT < 29) {
+//            uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
+//        } else {
+//            uri = MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL)
+//        }
+//
+//        val query = MediaQuery.Assemble.allAlbums()
+//
+//        val mediaList =  contentResolver.query(
+//            uri,
+//            query.projection,
+//            query.selection,
+//            query.selectionArgs,
+//            query.sortOrder
+//        )?.use { cursor -> processQuery(cursor) }
+//
+//        return mediaList ?: ArrayList()
+//    }
+
     override fun add(media: Media) {
         TODO("Not yet implemented")
     }

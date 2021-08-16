@@ -12,6 +12,20 @@ import io.flutter.plugin.common.StandardMethodCodec
 private const val MEDIA_DATA_CHANNEL
     = "com.stephenmorgandevelopment.super_media_bros_3/media_data"
 
+val featureSet = when (android.os.Build.VERSION.SDK_INT) {
+    24,25 -> FeatureSet.BASIC
+    in 26..28 -> FeatureSet.LIMITED
+    in 29..100 -> FeatureSet.FULL
+    else -> FeatureSet.UNSUPPORTED  // Google play should never actually allow this.........but when must be exhaustive............ :/
+}
+
+enum class FeatureSet {
+    UNSUPPORTED, // Google play should never actually allow this.........but when must be exhaustive............ :/
+    BASIC,
+    LIMITED,
+    FULL
+}
+
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

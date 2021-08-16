@@ -38,7 +38,9 @@ class _MediaGridLayoutState extends State<MediaGridLayout> {
 
   void parseAudioList() {//async {
     audioIndexes = AudioData.parseAudioList(widget.bloc.audioList);
-
+    // for(MapEntry entry in audioIndexes!.entries) {
+    //
+    // }
   }
 
   @override
