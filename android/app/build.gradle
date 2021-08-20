@@ -37,7 +37,7 @@ android {
     // TODO out some core functionality.  I will revisit minSdkVersion 24 at a later date.
     defaultConfig {
         applicationId "com.stephenmorgandevelopment.super_media_bros_3"
-        minSdkVersion 24
+        minSdkVersion 29
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -72,7 +72,7 @@ dependencies {
     // Interacting with MediaSessions
     implementation("androidx.media2:media2-session:$media2_version")
     // optional - UI widgets for VideoView and MediaControlView
-     implementation("androidx.media2:media2-widget:$media2_version")
+    implementation("androidx.media2:media2-widget:$media2_version")
     // optional - Implementation of a SessionPlayer
     implementation("androidx.media2:media2-player:$media2_version")
 

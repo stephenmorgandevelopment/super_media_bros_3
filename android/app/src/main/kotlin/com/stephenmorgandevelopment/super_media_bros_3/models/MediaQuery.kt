@@ -60,6 +60,14 @@ class MediaQuery(
             sortBy
         )
 
+        fun audioTrackDataForPlayer() : MediaQuery =
+            MediaQuery(
+                Columns.forAudioPlayer(),
+                null,
+                null,
+                null
+            )
+
         fun audioTrackDataForPlayerById(id: String): MediaQuery =
             MediaQuery(
                 Columns.forAudioPlayer(),

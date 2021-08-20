@@ -4,14 +4,16 @@ package com.stephenmorgandevelopment.super_media_bros_3.mediasession
 
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
 import android.os.Process
-import android.provider.ContactsContract
 import androidx.media.AudioAttributesCompat
 import androidx.media.MediaBrowserServiceCompat
+import androidx.media2.common.MediaMetadata
 import androidx.media2.player.MediaPlayer
+import androidx.media2.session.MediaController
 import androidx.media2.session.MediaSession
 import androidx.media2.session.MediaSessionService
+import androidx.media2.session.SessionToken
+import com.stephenmorgandevelopment.super_media_bros_3.MediaRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -30,23 +32,23 @@ class SuperMediaSessionService : MediaSessionService() {
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    private lateinit var callback: MediaSession.SessionCallback
+    private lateinit var sessionCallback: MediaSession.SessionCallback
 
-    private val mediaPlayer: MediaPlayer = MediaPlayer(baseContext)
-    private val mediaSession: MediaSession = MediaSession.Builder(baseContext, mediaPlayer)
-        .apply {
-            setSessionCallback(callbackExecutor, callback)
+    private val mediaPlayer: MediaPlayer = MediaPlayer(baseContext).apply {
+        val attributes: AudioAttributesCompat = AudioAttributesCompat.Builder()
+            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+            .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+            .build()
+
+        setAudioAttributes(attributes)
+    }
+
+    private val mediaSession: MediaSession =
+        MediaSession.Builder(baseContext, mediaPlayer).apply {
+            setSessionCallback(PlayerThreads.callbackThread, sessionCallback)
         }.build()
 
     val sessionToken get() = mediaSession.token
-
-    private var audioAttributes: AudioAttributesCompat = AudioAttributesCompat.Builder()
-        .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-        .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
-        .build()
-
-    var results = mediaPlayer.setAudioAttributes(audioAttributes)
-
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
         Provider.init(applicationContext)
@@ -61,11 +63,15 @@ class SuperMediaSessionService : MediaSessionService() {
         }
     }
 
-    private val callbackExecutor = Executors.newSingleThreadExecutor()
+    override fun onUpdateNotification(session: MediaSession): MediaNotification? {
+        MediaMetadata.Builder()
 
+        return TODO("Get back to this class eventually.....")
+    }
 
     private class Provide(val appContext: Context) {
         val contentResolver = appContext.contentResolver
+        val mediaRepo = MediaRepo(contentResolver)
     }
 
     object Provider {
@@ -77,6 +83,11 @@ class SuperMediaSessionService : MediaSessionService() {
 
         fun provideApplicationContext() = provide.appContext.applicationContext
         fun provideContentResolver() = provide.contentResolver
+        fun provideRepo() = provide.mediaRepo
     }
 }
 
+object PlayerThreads {
+    val jobThread = Executors.newSingleThreadExecutor()
+    val callbackThread = Executors.newSingleThreadExecutor()
+}

@@ -17,27 +17,6 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.MediaGroup
 
 class AudioAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver) {
 
-//    fun getAllAlbums() : List<MediaGroup> {
-//        val uri : Uri
-//        if(android.os.Build.VERSION.SDK_INT < 29) {
-//            uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
-//        } else {
-//            uri = MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL)
-//        }
-//
-//        val query = MediaQuery.Assemble.allAlbums()
-//
-//        val mediaList =  contentResolver.query(
-//            uri,
-//            query.projection,
-//            query.selection,
-//            query.selectionArgs,
-//            query.sortOrder
-//        )?.use { cursor -> processQuery(cursor) }
-//
-//        return mediaList ?: ArrayList()
-//    }
-
     override fun add(media: Media) {
         TODO("Not yet implemented")
     }
@@ -54,51 +33,8 @@ class AudioAccess(contentResolver: ContentResolver) : MediaAccess(contentResolve
         return query(MediaQuery.Assemble.allPathData())
     }
 
-    override fun query(query: MediaQuery): List<Audio> {
-        val mediaList =  contentResolver.query(
-                EXTERNAL_CONTENT_URI,
-                query.projection,
-                query.selection,
-                query.selectionArgs,
-                query.sortOrder
-        )?.use { cursor -> processQuery(cursor) }
-
-        return mediaList ?: ArrayList()
+    override fun query(query: MediaQuery): List<Media> {
+        return super.query(query)
     }
 
-    private fun processQuery(cursor: Cursor) : ArrayList<Audio> {
-        val medias = ArrayList<Audio>()
-        val idColumn = cursor.getColumnIndexOrThrow(_ID)
-
-        while (cursor.moveToNext()) {
-            val uri =
-                    ContentUris.withAppendedId(EXTERNAL_CONTENT_URI, cursor.getLong(idColumn))
-
-            val audio = Audio(uri)
-
-            val metadata: MutableMap<String, String> = LinkedHashMap()
-            loop@ for (column in 0 until cursor.columnCount) {
-                when {
-                    cursor.getType(column) == Cursor.FIELD_TYPE_NULL ->
-                        continue@loop
-
-                    cursor.getType(column) == Cursor.FIELD_TYPE_STRING ->
-                        metadata[cursor.getColumnName(column)] = cursor.getString(column)
-
-                    cursor.getType(column) == Cursor.FIELD_TYPE_BLOB ->
-                        metadata[cursor.getColumnName(column)] = cursor.getBlob(column).toString()
-
-                    cursor.getType(column) == Cursor.FIELD_TYPE_FLOAT ->
-                        metadata[cursor.getColumnName(column)] = cursor.getFloat(column).toString()
-
-                    cursor.getType(column) == Cursor.FIELD_TYPE_INTEGER ->
-                        metadata[cursor.getColumnName(column)] = cursor.getInt(column).toString()
-                }
-            }
-    
-            audio.addMetadata(metadata)
-            medias.add(audio)
-        }
-        return medias
-    }
 }
