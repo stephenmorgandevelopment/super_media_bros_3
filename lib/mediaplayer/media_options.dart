@@ -6,7 +6,7 @@ class MediaOptions {
   // TODO Save when changed and load at runtime.
 
   // Misc Options
-  static By defaultGroupBy = By.ALBUM;
+  static Category defaultGroupBy = Category.ALBUM;
   static String audioGroupBy = "album";
 
 

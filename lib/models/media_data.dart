@@ -40,6 +40,7 @@ class AudioData extends MediaData {
   AudioData(Uri uri, Source source,
       {Map<String, String> metadata = const <String, String>{}})
       : super(uri, Type.AUDIO, source, metadata: metadata);
+  
 
   // static void populateAudioGroupsData(List<MediaData> mediaList) async {
   //   Map<String, int> audioIndexes = await parseAudioList(mediaList);
@@ -83,3 +84,29 @@ class AudioData extends MediaData {
     return audioIndexes;
   }
 }
+
+enum AudioCategory {ALBUM, ARTIST, GENRE, PLAYLIST,
+  // May be removed to better support Scoped storage.
+  FOLDER}
+
+
+// A very dumb workaround to make up for Darts lack of enum features.
+// These are mirrored in Kotlin in a manner that makes actual sense.
+// I will most likely re-explore this in the future, but DANG...
+// I got so many other things to get done on this app right now.
+extension Utils on AudioCategory {
+  String value() {
+    String tmp = this.toString();
+    return tmp.substring(tmp.indexOf(".") + 1).toLowerCase();
+  }
+
+  AudioCategory fromString(String byString) {
+    for(AudioCategory by in AudioCategory.values) {
+      if(by.value() == byString.toLowerCase()) {
+        return by;
+      }
+    }
+    return MediaOptions.defaultGroupBy;
+  }
+}
+

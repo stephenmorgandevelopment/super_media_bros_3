@@ -21,7 +21,6 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.UserLikeRating
 class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
     private val SUPER_UUID = Process.getGidForName(SUPER_MEDIA_BROS_PACKAGE)
     private val MY_UUID = Process.myUid()
-//    private var audioAccess: AudioAccess = AudioAccess(Provider.provideContentResolver())
     private val repo: MediaRepo = Provider.provideRepo()
 
     private val supportedCommands =SessionCommandGroup.Builder()

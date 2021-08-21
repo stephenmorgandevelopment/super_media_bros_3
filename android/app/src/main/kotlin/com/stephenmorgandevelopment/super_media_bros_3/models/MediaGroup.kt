@@ -1,7 +1,7 @@
 package com.stephenmorgandevelopment.super_media_bros_3.models
 
-// Placeholder until I can write a model and method for loading MediaOptions from Flutter.
-private val groupBy = MediaGroup.By.ALBUM
+import com.stephenmorgandevelopment.super_media_bros_3.preferences.MediaOptions
+
 
 object MediaGroups {
     fun genGroupsFromList(mediaList: List<Media>) : List<MediaGroup> {
@@ -10,13 +10,13 @@ object MediaGroups {
 
         var currentGroup = ""
         for(i in 0..mediaList.size) {
-            val group = mediaList[i].metadata[groupBy.value]
+            val group = mediaList[i].metadata[MediaOptions.defaultGroupBy.value]
 
             if(group == null) {
                 groupList.add(
                     com.stephenmorgandevelopment.super_media_bros_3.models.MediaGroup(
                         "nodata$i",
-                        groupBy,
+                        MediaOptions.defaultGroupBy,
                         listOf(mediaList[i])
                     )
                 )
@@ -27,7 +27,7 @@ object MediaGroups {
                 groupList.add(
                     com.stephenmorgandevelopment.super_media_bros_3.models.MediaGroup(
                         group,
-                        groupBy,
+                        MediaOptions.defaultGroupBy,
                         currentMediaList
                     )
                 )
@@ -46,15 +46,15 @@ object MediaGroups {
 
 data class MediaGroup(
     val name: String,
-    val grouping: By,
+    val grouping: Audio.Category,
     val mediaList: List<Media>
 ) {
-    enum class By(val value: String) {
-        ALBUM("album"),
-        ARTIST("artist"),
-        GENRE("genre"),
-        PLAYLIST("playlist"),
-        FOLDER("folder")
-    }
+//    enum class By(val value: String) {
+//        ALBUM("album"),
+//        ARTIST("artist"),
+//        GENRE("genre"),
+//        PLAYLIST("playlist"),
+//        FOLDER("folder")
+//    }
 
 }

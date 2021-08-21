@@ -29,8 +29,8 @@ class MediaQuery(
         fun allData(sortBy: String = SortBy.date_taken): MediaQuery =
                 MediaQuery(null, null, null, sortBy)
 
-        fun allImagesData(sortBy: String = SortBy.date_taken): MediaQuery =
-                MediaQuery(null, null, null, sortBy)
+//        fun allImagesData(sortBy: String = SortBy.date_taken): MediaQuery =
+//                MediaQuery(null, null, null, sortBy)
         
         fun allImagesBasic(sortBy: String = ImageAccess.Prefs.sortOrder): MediaQuery =
                 MediaQuery(Image.Columns.basicDataColumns, null, null, sortBy)
@@ -45,7 +45,7 @@ class MediaQuery(
                         arrayOf(long.toString()),
                         sortBy)
         
-        fun imageData(media: Media) : MediaQuery =
+        fun pathData(media: Media) : MediaQuery =
             MediaQuery(
                     PATH_DATA_COLUMNS,
                     ID_SELECTION,
@@ -89,7 +89,7 @@ class MediaQuery(
         const val date_taken = "datetaken"
         const val abc_asc = "_display_name ASC"
         const val abc_desc = "_display_name DESC"
-        val albums = MediaGroup.By.ALBUM.value
+        val albums = Audio.Category.ALBUMS.value
         const val plus = ", "
 
         fun chain(vararg sortBy: String) : String {
