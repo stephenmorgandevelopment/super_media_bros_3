@@ -32,9 +32,7 @@ class MediaMessageCodec extends StandardMessageCodec {
   /// is a certain order, to be de-serialized on the other end.  If there are
   /// class members which are not primitives, then they must be parsed out in the
   /// same manner as our top level objects.
-  ///
-  /// Note, that because of the way super.writeValue() is written.  Serializing
-  /// primitives is as simple as calling super.writeValue(buffer, value).
+
 
 
   @override
@@ -62,7 +60,7 @@ class MediaMessageCodec extends StandardMessageCodec {
       }
     } else if(value is SuperMediaCommand) {
       buffer.putUint8(_kPlayerCommand);
-      super.writeValue(buffer, value.command);
+      buffer.putInt32(value.command);
     } else if (value is Uri) {
       // Left here in case I want to send Uri's later.
       buffer.putUint8(_kUri);
