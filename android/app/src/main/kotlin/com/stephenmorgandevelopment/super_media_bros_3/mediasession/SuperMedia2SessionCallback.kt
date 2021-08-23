@@ -17,6 +17,7 @@ import com.stephenmorgandevelopment.super_media_bros_3.mediastore.ColumnAll.*
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 import com.stephenmorgandevelopment.super_media_bros_3.models.UserLikeRating
+import com.stephenmorgandevelopment.super_media_bros_3.preferences.MediaOptions
 
 class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
     private val SUPER_UUID = Process.getGidForName(SUPER_MEDIA_BROS_PACKAGE)
@@ -30,6 +31,8 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
         .addCommand(SessionCommand(COMMAND_CODE_PLAYER_SKIP_TO_NEXT_PLAYLIST_ITEM))
         .addCommand(SessionCommand(COMMAND_CODE_PLAYER_SKIP_TO_PREVIOUS_PLAYLIST_ITEM))
         .addCommand(SessionCommand(COMMAND_CODE_PLAYER_PREPARE))
+        .addCommand(SessionCommand(COMMAND_CODE_SESSION_SKIP_FORWARD))
+        .addCommand(SessionCommand(COMMAND_CODE_SESSION_SKIP_BACKWARD))
         .build()
 
     override fun onCommandRequest(
@@ -91,14 +94,20 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): Int {
-        return super.onSkipForward(session, controller)
+        val player = session.player
+        player.seekTo(player.currentPosition + MediaOptions.seekForwardTime)
+
+        return SessionResult.RESULT_SUCCESS
     }
 
     override fun onSkipBackward(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): Int {
-        return super.onSkipBackward(session, controller)
+        val player = session.player
+        player.seekTo(player.currentPosition - MediaOptions.seekBackwardsTime)
+
+        return SessionResult.RESULT_SUCCESS
     }
 
     override fun onSetRating(
@@ -107,17 +116,28 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
         mediaId: String,
         rating: Rating
     ): Int {
-        return super.onSetRating(session, controller, mediaId, rating)
+        // TODO Need to update entry in MediaStore database.  Does nothing at this point.
+        if(isSuperMediaBrosApp3(controller)) {
+            val why = rating as UserLikeRating
+            val metadata = Builder(session.player.currentMediaItem?.metadata!!).apply {
+                putRating(METADATA_KEY_RATING, UserLikeRating(true))
+            }
+        }
+
+        return SessionResult.RESULT_ERROR_NOT_SUPPORTED
     }
 
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): SessionCommandGroup? {
-        val uidMatches =
-            (controller.uid == SUPER_UUID || controller.uid == MY_UUID)
-
-        if(controller.packageName == SUPER_MEDIA_BROS_PACKAGE && uidMatches) {
+//        val uidMatches =
+//            (controller.uid == SUPER_UUID || controller.uid == MY_UUID)
+//
+//        if(controller.packageName == SUPER_MEDIA_BROS_PACKAGE && uidMatches) {
+//            return supportedCommands
+//        }
+        if(isSuperMediaBrosApp3(controller)) {
             return supportedCommands
         }
 
@@ -125,6 +145,8 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
     }
 
     override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
+        session.player.close()
+        session.close()
         super.onDisconnected(session, controller)
     }
 
@@ -150,26 +172,18 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
         return false
     }
 
+    private fun isSuperMediaBrosApp3(controller: MediaSession.ControllerInfo) : Boolean {
+        val uidMatches =
+            (controller.uid == SUPER_UUID || controller.uid == MY_UUID)
 
+        if(controller.packageName == SUPER_MEDIA_BROS_PACKAGE && uidMatches) {
+            return true
+        }
 
+        return false
+    }
 
-
-
-
-    //TODO Needed because Android has SERIOUS versioning issues.
-    //TODO Example:  All these werer available to me under MediaColumns on the first version
-    //TODO of SMB.  Targeting sdk 28 down to sdk 21
-
-    //TODONE Made the interface ColumnAll......took like 30 seconds with copy and paste.
-
-    //TODO Stop spending time trying to figure out why Google sucks and just make a quick
-    //TODO workaround...but not really.  I still don't know what's up with this.  I want to know tho.
-
-    //TODO For whatever reason...android thinks that these arn't available until sdk 30.
-    //TODO Why??  IDK, spent an hour or so trying to figure it out, but making these.
-    //TODO INCLUDING TODO'S took about 3 minutes.
-
-    fun makeMetadataFromMedia(media: Media) : MediaMetadata {
+    private fun makeMetadataFromMedia(media: Media) : MediaMetadata {
         val data = media.metadata
         val audioDescription = "${data[ARTIST]}: ${data[ALBUM]}-${data[CD_TRACK_NUMBER]}"
 
@@ -196,7 +210,11 @@ class SuperMedia2SessionCallback : MediaSession.SessionCallback(), ColumnAll {
         return builder.build()
     }
 
-    fun makeMetadataFromBrowseable(id: String) : MediaMetadata {
+//    makeMediaFromMediaMetadata() {
+//
+//    }
+
+    private fun makeMetadataFromBrowseable(id: String) : MediaMetadata {
         // TODO Write implementation
         return Builder().build()
     }

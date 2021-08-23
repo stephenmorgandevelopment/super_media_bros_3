@@ -2,7 +2,7 @@ package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.net.Uri
 import android.provider.MediaStore
-import com.stephenmorgandevelopment.super_media_bros_3.mediastore.AudioAccess
+import androidx.media2.common.MediaMetadata
 
 class Audio(uri: Uri) : Media(uri) {
     override var type = Type.AUDIO
@@ -20,5 +20,30 @@ class Audio(uri: Uri) : Media(uri) {
         // May be removed to better support Scoped storage.
         FOLDER(MediaStore.Downloads.EXTERNAL_CONTENT_URI, "folder")
     }
+
+//    object Builder {
+//        fun fromMediaMetadata(mediaMetadata: MediaMetadata) {
+//            val contentUri
+//                = Uri.parse(mediaMetadata.getString(MediaMetadata.METADATA_KEY_MEDIA_URI))
+//
+//            val metadata = mediaMetadata.keySet().filterNot {
+//                it == MediaMetadata.METADATA_KEY_MEDIA_URI
+//
+//            }.map {
+////                val entry: Map.Entry<String, String> = MutableMap.MutableEntry
+//                val value = mediaMetadata.getObject(it)
+//                val pair = Pair<String, String>(it, )
+//
+//
+//            }
+//
+//            val audio = Audio(contentUri)
+//
+////            val metadata = LinkedHashMap<String, String>()
+////            for(key in mediaMetadata.keySet()) {
+////
+////            }
+//        }
+//    }
 
 }

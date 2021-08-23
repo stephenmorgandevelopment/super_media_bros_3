@@ -3,6 +3,7 @@ package com.stephenmorgandevelopment.super_media_bros_3.method_channel_utils;
 import android.net.Uri;
 
 import com.stephenmorgandevelopment.super_media_bros_3.models.Audio;
+import com.stephenmorgandevelopment.super_media_bros_3.models.AudioPlayerState;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Image;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Video;
@@ -28,6 +29,9 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 	private static final byte DATA_TYPE_IMAGE = (byte) 200;
 	private static final byte DATA_TYPE_VIDEO = (byte) 201;
 	private static final byte DATA_TYPE_AUDIO = (byte) 202;
+
+	private static final byte DATA_TYPE_PLAYER_STATE = (byte) 210;
+	private static final byte DATA_TYPE_PLAYER_COMMAND = (byte) 211;
 	
 	@Override
 	protected void writeValue(ByteArrayOutputStream stream, Object value) {
@@ -53,6 +57,11 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 					stream.write(DATA_TYPE_AUDIO);
 					break;
 			}
+		} else if (value instanceof AudioPlayerState) {
+			stream.write(DATA_TYPE_PLAYER_STATE);
+
+			// TODO Serialize the AudioPlayerState's primitives to byte arrays, using writeValue().
+
 		} else if (value instanceof Uri) {	// Left here in case I want to send Uri's later.
 			stream.write(DATA_TYPE_URI);
 			super.writeValue(stream, ((Uri)value).toString());

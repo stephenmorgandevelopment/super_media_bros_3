@@ -7,6 +7,7 @@ import androidx.media2.common.MediaItem
 import androidx.media2.common.MediaMetadata
 import androidx.media2.common.SessionPlayer
 import androidx.media2.common.SubtitleData
+import androidx.media2.player.MediaPlayer
 import androidx.media2.session.*
 import com.stephenmorgandevelopment.super_media_bros_3.mediasession.PlayerThreads
 import com.stephenmorgandevelopment.super_media_bros_3.models.AudioPlayerState
@@ -32,35 +33,41 @@ class SuperMediaPlayer(context: Context, private val token: SessionToken) {
     }
 }
 
+private fun sendState(state: Int) {
+    MainActivity.Channels.player.invokeMethod("setPlayerState", state)
+}
+
+private fun sendPlaybackSpeed(speed: Float) {
+    MainActivity.Channels.player.invokeMethod(
+        "updateInfo",
+        listOf<Any>("player_speed", speed))
+}
+
 class SuperMediaControllerCallback : MediaController.ControllerCallback() {
     override fun onPlayerStateChanged(controller: MediaController, state: Int) {
-
-
-
+        sendState(state)
     }
 
     override fun onConnected(controller: MediaController, allowedCommands: SessionCommandGroup) {
-
-
+        sendState(SessionPlayer.PLAYER_STATE_IDLE)
     }
 
     override fun onPlaybackInfoChanged(
         controller: MediaController,
         info: MediaController.PlaybackInfo
     ) {
-
+        // TODO Seems like something should go here, but I can't infer what yet.
 
 
     }
 
     override fun onDisconnected(controller: MediaController) {
 
-
         controller.close()
     }
 
     override fun onPlaybackSpeedChanged(controller: MediaController, speed: Float) {
-        super.onPlaybackSpeedChanged(controller, speed)
+        sendPlaybackSpeed(speed)
     }
 
     override fun onBufferingStateChanged(controller: MediaController, item: MediaItem, state: Int) {

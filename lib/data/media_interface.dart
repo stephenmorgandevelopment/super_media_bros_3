@@ -90,7 +90,7 @@ abstract class MediaAccess {
   // TODO message/method channel.  If possible, then we could now build out
   // TODO the actual media players in Flutter Dart, rather than just sending
   // TODO Android a message telling it what to play and when we press buttons.
-  // TODO (Which is all we are really doing at this point. - A La 'VideoPlayer' -)
+  // TODO (Which is all we are really doing at this point.)
   Future<Uint8List?> getMediaAsBytes(MediaData media) async {
     Uint8List? bytes;
 

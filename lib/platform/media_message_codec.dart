@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:super_media_bros_3/models/SuperMediaCommand.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 
 class MediaMessageCodec extends StandardMessageCodec {
@@ -11,9 +12,30 @@ class MediaMessageCodec extends StandardMessageCodec {
   static const int _kUri = 164;
 
   static const int _kType = 166;
-  static const int _kIMAGE = 200;
-  static const int _kVIDEO = 201;
-  static const int _kAUDIO = 202;
+  static const int _kImage = 200;
+  static const int _kVideo = 201;
+  static const int _kAudio = 202;
+  
+  static const int _kPlayerState = 210;
+  static const int _kPlayerCommand = 211;
+
+
+  /// Override of MediaMessageCodec.writeValue
+  /// This constructs the byte array that Flutter will send to the
+  /// platform.
+  ///
+  /// buffer the actual bytes that will be sent to the platform.  We must
+  /// first write an identifier, to the buffer which notifies, the platform side
+  /// codec, that we are begining a new object of a certain type.
+  ///
+  /// Once we've written the identifying byte.  We then write the objects primitives
+  /// is a certain order, to be de-serialized on the other end.  If there are
+  /// class members which are not primitives, then they must be parsed out in the
+  /// same manner as our top level objects.
+  ///
+  /// Note, that because of the way super.writeValue() is written.  Serializing
+  /// primitives is as simple as calling super.writeValue(buffer, value).
+
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
@@ -27,17 +49,20 @@ class MediaMessageCodec extends StandardMessageCodec {
       switch (value) {
         case Type.IMAGE:
           buffer.putUint8(_kType);
-          buffer.putUint8(_kIMAGE);
+          buffer.putUint8(_kImage);
           break;
         case Type.VIDEO:
           buffer.putUint8(_kType);
-          buffer.putUint8(_kVIDEO);
+          buffer.putUint8(_kVideo);
           break;
         case Type.AUDIO:
           buffer.putUint8(_kType);
-          buffer.putUint8(_kAUDIO);
+          buffer.putUint8(_kAudio);
           break;
       }
+    } else if(value is SuperMediaCommand) {
+      buffer.putUint8(_kPlayerCommand);
+      super.writeValue(buffer, value.command);
     } else if (value is Uri) {
       // Left here in case I want to send Uri's later.
       buffer.putUint8(_kUri);
@@ -59,11 +84,11 @@ class MediaMessageCodec extends StandardMessageCodec {
         return makeMedia(uri, _type, metadata);
       case _kType:
         switch (buffer.getUint8()) {
-          case _kIMAGE:
+          case _kImage:
             return Type.IMAGE;
-          case _kVIDEO:
+          case _kVideo:
             return Type.VIDEO;
-          case _kAUDIO:
+          case _kAudio:
             return Type.AUDIO;
           default:
             return null;

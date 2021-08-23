@@ -10,7 +10,7 @@ abstract class Media(open val uri: Uri) {
     open fun addMetadata(metadata: Map<String, String>) {
         this.metadata.putAll(metadata)
     }
-
+ 
     enum class Type {
         IMAGE, VIDEO, AUDIO
     }

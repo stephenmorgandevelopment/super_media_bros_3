@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:super_media_bros_3/models/media_group.dart';
+import 'package:super_media_bros_3/models/media_data.dart';
 
 class MediaOptions {
   // TODO Map these to shared preferences (flutter equivalent).
   // TODO Save when changed and load at runtime.
-
+  
   // Misc Options
-  static Category defaultGroupBy = Category.ALBUM;
+  static AudioCategory defaultGroupBy = AudioCategory.ALBUM;
   static String audioGroupBy = "album";
-
 
   // Times
   static int seekForwardTime = 7500;
