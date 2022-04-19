@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:super_media_bros_3/models/AudioPlayerState.dart';
 import 'package:super_media_bros_3/models/SuperMediaCommand.dart';
 import 'package:super_media_bros_3/models/media_data.dart';
 
@@ -16,17 +17,18 @@ class MediaMessageCodec extends StandardMessageCodec {
   static const int _kVideo = 201;
   static const int _kAudio = 202;
   
-  static const int _kPlayerState = 210;
+  static const int _kAudioPlayerState = 210;
   static const int _kPlayerCommand = 211;
+  static const int _kSuperMediaState = 214;
 
 
   /// Override of MediaMessageCodec.writeValue
   /// This constructs the byte array that Flutter will send to the
   /// platform.
   ///
-  /// buffer the actual bytes that will be sent to the platform.  We must
+  /// buffer is the actual bytes that will be sent to the platform.  We must
   /// first write an identifier, to the buffer which notifies, the platform side
-  /// codec, that we are begining a new object of a certain type.
+  /// codec, that we are beginning a new object of a certain type.
   ///
   /// Once we've written the identifying byte.  We then write the objects primitives
   /// is a certain order, to be de-serialized on the other end.  If there are
@@ -60,7 +62,7 @@ class MediaMessageCodec extends StandardMessageCodec {
       }
     } else if(value is SuperMediaCommand) {
       buffer.putUint8(_kPlayerCommand);
-      buffer.putInt32(value.command);
+      buffer.putUint32(value.command);
     } else if (value is Uri) {
       // Left here in case I want to send Uri's later.
       buffer.putUint8(_kUri);
@@ -93,6 +95,21 @@ class MediaMessageCodec extends StandardMessageCodec {
         }
       case _kUri:
         return Uri.parse(readValue(buffer) as String);
+      case _kAudioPlayerState:
+        AudioPlayerState playerState =
+                  AudioPlayerState(Uri.parse(readValue(buffer) as String));
+
+        playerState.state = SuperMediaState.values[(readValue(buffer) as int)];
+        playerState.position = readValue(buffer) as int;
+        playerState.isPlaying = readValue(buffer) as bool;
+        playerState.isReady = readValue(buffer) as bool;
+        playerState.isPreparing = readValue(buffer) as bool;
+        playerState.isError = readValue(buffer) as bool;
+        playerState.isBuffering = readValue(buffer) as bool;
+
+        return playerState;
+      case _kSuperMediaState:
+        return  SuperMediaState.values[(readValue(buffer) as int)];
       default:
         return super.readValueOfType(type, buffer);
     }

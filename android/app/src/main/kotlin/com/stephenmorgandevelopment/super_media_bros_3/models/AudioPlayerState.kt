@@ -1,9 +1,10 @@
 package com.stephenmorgandevelopment.super_media_bros_3.models
 
 import android.net.Uri
+import androidx.media2.common.SessionPlayer
 
 
-enum class SuperMediaState(val value: Int) {
+enum class SuperMediaPlayerState(val value: Int) {
     PLAYER_STATE_IDLE(0),
     PLAYER_STATE_PAUSED(1),
     PLAYER_STATE_PLAYING(2),
@@ -15,21 +16,49 @@ enum class SuperMediaState(val value: Int) {
     BUFFERING_STATE_COMPLETE(7)
 }    
 
-class AudioPlayerState(val mediaUri: Uri) {
-    val state: SuperMediaState = SuperMediaState.PLAYER_STATE_IDLE
-    val position: Long = 0
-    val isPlaying: Boolean = false
-    val isReady: Boolean = false
-    val isPreparing: Boolean = false
-    val isError: Boolean = false
-    val isBuffering: Boolean = false
+class AudioPlayerState(
+        val mediaUri: Uri,
+        val initialState: SuperMediaPlayerState = SuperMediaPlayerState.PLAYER_STATE_IDLE
+) {
+    var state: SuperMediaPlayerState
+        private set
 
-    fun getBuffState() : Int {
+    var position: Long = 0
+        private set
+
+    var isPlaying: Boolean = false
+        private set
+
+    var isReady: Boolean = false
+        private set
+
+    var isPreparing: Boolean = false
+        private set
+
+    var isError: Boolean = false
+        private set
+
+    var isBuffering: Boolean = false
+        private set
+
+    var isBufferStarved: Boolean = false
+        private set
+
+    init {
+        state = initialState
+    }
+
+    val bufferState get(): Int {
         if(!isBuffering) {
-            return 0
+            return -1
         }
 
-        return state.value - 4
+        when {
+            isBuffering && isReady -> SessionPlayer.BUFFERING_STATE_BUFFERING_AND_PLAYABLE
+            isBufferStarved -> SessionPlayer.BUFFERING_STATE_BUFFERING_AND_STARVED
+        }
+
+        return SessionPlayer.BUFFERING_STATE_UNKNOWN
     }
 
 //    fun sameMediaAsObject(other: Any?): Boolean {

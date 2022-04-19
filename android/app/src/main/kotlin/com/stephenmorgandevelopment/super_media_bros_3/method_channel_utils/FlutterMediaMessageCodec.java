@@ -6,6 +6,7 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.Audio;
 import com.stephenmorgandevelopment.super_media_bros_3.models.AudioPlayerState;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Image;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media;
+import com.stephenmorgandevelopment.super_media_bros_3.models.SuperMediaPlayerState;
 import com.stephenmorgandevelopment.super_media_bros_3.models.Video;
 
 import java.io.ByteArrayOutputStream;
@@ -30,8 +31,9 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 	private static final byte DATA_TYPE_VIDEO = (byte) 201;
 	private static final byte DATA_TYPE_AUDIO = (byte) 202;
 
-	private static final byte DATA_TYPE_PLAYER_STATE = (byte) 210;
+	private static final byte DATA_TYPE_AUDIO_PLAYER_STATE = (byte) 210;
 	private static final byte DATA_TYPE_PLAYER_COMMAND = (byte) 211;
+	private static final byte DATA_TYPE_SUPER_MEDIA_STATE = (byte) 214;
 	
 	@Override
 	protected void writeValue(ByteArrayOutputStream stream, Object value) {
@@ -42,7 +44,11 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 			writeValue(stream, String.valueOf(media.getUri()));
 			writeValue(stream, media.getType());
 			writeValue(stream, media.getMetadata());
+
 		} else if (value instanceof Media.Type) {
+			/** For efficiency, we write the byte indicating image, video, or audio
+			 * directly to the byte buffer.
+			 */
 			switch ((Media.Type) value) {
 				case IMAGE:
 					stream.write(DATA_TYPE_TYPE);
@@ -58,10 +64,26 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 					break;
 			}
 		} else if (value instanceof AudioPlayerState) {
-			stream.write(DATA_TYPE_PLAYER_STATE);
+			stream.write(DATA_TYPE_AUDIO_PLAYER_STATE);
 
-			// TODO Serialize the AudioPlayerState's primitives to byte arrays, using writeValue().
+			writeValue(stream, value.getMediaUri().toString());
 
+			// Here we pass SuperMediaState's value directly rather than as an object.
+			writeValue(stream, value.getState().getValue());
+
+			writeValue(stream, value.getPosition());
+			writeValue(stream, value.isPlaying());
+			writeValue(stream, value.isReady());
+			writeValue(stream, value.isPreparing());
+			writeValue(stream, value.isError());
+			writeValue(stream, value.isBuffering());
+
+		} else if(value instanceof SuperMediaPlayerState) {
+			// If SuperMediaState gets passed directly, we can parse it to byte stream here.
+			// May be be benificial if we only need to know the state and do not need the
+			// other data.
+			stream.write(DATA_TYPE_SUPER_MEDIA_STATE);
+			writeValue(stream, ((SuperMediaPlayerState) value).getValue());
 		} else if (value instanceof Uri) {	// Left here in case I want to send Uri's later.
 			stream.write(DATA_TYPE_URI);
 			super.writeValue(stream, ((Uri)value).toString());
@@ -86,6 +108,10 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 				
 				return makeMedia(uri, _type, metadata);
 			case DATA_TYPE_TYPE:
+				/***
+				 * Because we wrote this byte directly to the stream.  We must read it directly
+				 * from the stream.
+				 */
 				switch (buffer.get()) {
 					case DATA_TYPE_IMAGE:
 						return Media.Type.IMAGE;
@@ -98,6 +124,9 @@ public class FlutterMediaMessageCodec extends StandardMessageCodec {
 				}
 			case DATA_TYPE_URI:
 				return Uri.parse((String) readValue(buffer));
+			case DATA_TYPE_PLAYER_COMMAND:
+				// Transmit the command in raw long value
+				return (long) readValue(buffer);
 			default:
 				return super.readValueOfType(type, buffer);
 		}

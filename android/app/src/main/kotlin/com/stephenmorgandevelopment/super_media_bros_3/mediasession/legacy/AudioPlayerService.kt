@@ -2,7 +2,6 @@ package com.stephenmorgandevelopment.super_media_bros_3.mediasession
 
 import android.app.Notification
 import android.graphics.Color
-import android.media.MediaSession2Service
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
@@ -14,9 +13,9 @@ import androidx.core.app.NotificationCompat
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
-import androidx.media2.session.MediaSession
-import androidx.media2.session.MediaSessionService
 import com.stephenmorgandevelopment.super_media_bros_3.R
+import com.stephenmorgandevelopment.super_media_bros_3.mediasession.NotificationActions
+import com.stephenmorgandevelopment.super_media_bros_3.mediasession.SuperMediaSessionCallback
 import com.stephenmorgandevelopment.super_media_bros_3.mediastore.AudioAccess
 import com.stephenmorgandevelopment.super_media_bros_3.models.Audio
 import com.stephenmorgandevelopment.super_media_bros_3.models.MediaGroup

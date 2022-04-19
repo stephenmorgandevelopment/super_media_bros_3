@@ -10,7 +10,7 @@ import com.stephenmorgandevelopment.super_media_bros_3.models.MediaQuery
 import com.stephenmorgandevelopment.super_media_bros_3.models.Media
 
 class AudioAccess(contentResolver: ContentResolver) : MediaAccess(contentResolver) {
-    var queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+    var queryUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
     override fun add(media: Media) {
         TODO("Not yet implemented")

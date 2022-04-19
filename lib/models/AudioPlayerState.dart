@@ -15,7 +15,8 @@ class AudioPlayerState {
   Uri mediaUri;
   AudioPlayerState(this.mediaUri);
 
-  double position = 0;
+  SuperMediaState? state;
+  int position = 0;
   bool isPlaying = false;
   bool isReady = false;
   bool isPreparing = false;
